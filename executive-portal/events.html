@@ -336,8 +336,8 @@
     }
 
     .badge-both {
-      background: #dbeafe;
-      color: #1e40af;
+      background: #e0e7ff;
+      color: #3730a3;
     }
 
     .capacity {
@@ -1139,7 +1139,7 @@
         </select>
 
         <div class="form-help">
-          Choose Both when the event can contain both individual and team registration categories.
+          Use Both when the event can contain both individual and team participation.
         </div>
 
       </div>
@@ -1481,14 +1481,18 @@
       let participationBadge;
 
 
-      if (event.participation_type === "team") {
+      if (
+        event.participation_type === "team"
+      ) {
 
         participationBadge =
           `<span class="badge badge-team">Team</span>`;
 
       }
 
-      else if (event.participation_type === "both") {
+      else if (
+        event.participation_type === "both"
+      ) {
 
         participationBadge =
           `<span class="badge badge-both">Both</span>`;
@@ -1662,19 +1666,10 @@
       Number(event.fee || 0);
 
 
-    const storedParticipationType =
-      event.participation_type;
-
-
     document.getElementById(
       "participationType"
     ).value =
-      (
-        storedParticipationType === "team" ||
-        storedParticipationType === "both"
-      )
-        ? storedParticipationType
-        : "individual";
+      event.participation_type || "individual";
 
 
     document.getElementById(
