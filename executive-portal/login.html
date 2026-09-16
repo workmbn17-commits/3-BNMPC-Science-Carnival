@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Executive Login — 3ʳᵈ BNMPC Science Carnival</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <h1>Executive Login</h1>
+  <p>3ʳᵈ BNMPC Science Carnival</p>
+
+  <form id="loginForm">
+
+    <label for="email">Email</label><br>
+    <input
+      type="email"
+      id="email"
+      required
+      autocomplete="email"
+    >
+
+    <br><br>
+
+    <label for="password">Password</label><br>
+    <input
+      type="password"
+      id="password"
+      required
+      autocomplete="current-password"
+    >
+
+    <br><br>
+
+    <button type="submit">Log In</button>
+
+  </form>
+
+  <p id="message"></p>
+
+  <script src="supabase-config.js"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const loginForm = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      message.textContent = "Signing in...";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      message.textContent = "Login successful.";
+
+      window.location.href = "index.html";
+    });
+  </script>
+
+</body>
+</html>
