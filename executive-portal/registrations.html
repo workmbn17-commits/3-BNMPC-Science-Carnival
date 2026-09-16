@@ -36,12 +36,11 @@
       left: 0;
       top: 0;
       bottom: 0;
-      overflow-y: auto;
     }
 
     .brand {
       padding: 4px 12px 28px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,.1);
       margin-bottom: 22px;
     }
 
@@ -63,7 +62,7 @@
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: .08em;
     }
 
     .nav-button {
@@ -77,7 +76,6 @@
       margin-bottom: 4px;
       cursor: pointer;
       font-size: 14px;
-      transition: 0.2s ease;
     }
 
     .nav-button:hover {
@@ -90,26 +88,18 @@
       color: white;
     }
 
-    .sidebar-bottom {
+    .logout-button {
       position: absolute;
       left: 16px;
       right: 16px;
       bottom: 20px;
-    }
-
-    .logout-button {
-      width: 100%;
+      width: calc(100% - 32px);
       border: 1px solid #374151;
       background: transparent;
       color: #d1d5db;
       padding: 11px;
       border-radius: 9px;
       cursor: pointer;
-    }
-
-    .logout-button:hover {
-      background: #1f2937;
-      color: white;
     }
 
     /* MAIN */
@@ -141,18 +131,6 @@
       gap: 12px;
     }
 
-    .user-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #2563eb;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-    }
-
     .user-info {
       text-align: right;
     }
@@ -168,20 +146,32 @@
       margin-top: 2px;
     }
 
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
     .content {
       padding: 32px;
     }
 
-    .page-heading {
+    .heading {
       margin-bottom: 24px;
     }
 
-    .page-heading h1 {
+    .heading h1 {
       margin: 0;
       font-size: 28px;
     }
 
-    .page-heading p {
+    .heading p {
       margin: 7px 0 0;
       color: #6b7280;
       font-size: 14px;
@@ -189,19 +179,18 @@
 
     /* STATS */
 
-    .stats-grid {
+    .stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
-    .stat-card {
+    .stat {
       background: white;
       border: 1px solid #e5e7eb;
       border-radius: 14px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
 
     .stat-label {
@@ -211,329 +200,276 @@
     }
 
     .stat-value {
-      margin-top: 8px;
+      margin-top: 7px;
       font-size: 28px;
       font-weight: 750;
     }
 
-    /* FILTERS */
+    /* SEARCH */
 
-    .filter-panel {
+    .search-box {
       background: white;
       border: 1px solid #e5e7eb;
       border-radius: 14px;
-      padding: 18px;
+      padding: 16px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
 
-    .filters {
-      display: grid;
-      grid-template-columns: 2fr 1.4fr 1.4fr 1.2fr auto;
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 14px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+
+    /* DIRECTORY */
+
+    .directory {
+      display: flex;
+      flex-direction: column;
       gap: 10px;
     }
 
-    input,
-    select {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 9px;
-      background: white;
-      font-size: 13px;
-      color: #172033;
-    }
-
-    input:focus,
-    select:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-
-    .button {
-      border: 0;
-      border-radius: 9px;
-      padding: 11px 15px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .button-primary {
-      background: #2563eb;
-      color: white;
-    }
-
-    .button-primary:hover {
-      background: #1d4ed8;
-    }
-
-    .button-secondary {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    /* TABLE */
-
-    .table-panel {
+    .folder {
       background: white;
       border: 1px solid #e5e7eb;
-      border-radius: 14px;
+      border-radius: 13px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
 
-    .table-header {
+    .folder-header {
+      width: 100%;
+      border: 0;
+      background: white;
       padding: 18px 20px;
-      border-bottom: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-
-    .table-title {
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    .table-subtitle {
-      color: #6b7280;
-      font-size: 12px;
-      margin-top: 3px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1200px;
-    }
-
-    th {
+      gap: 14px;
+      cursor: pointer;
       text-align: left;
-      padding: 13px 16px;
+    }
+
+    .folder-header:hover {
       background: #f8fafc;
-      color: #6b7280;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
     }
 
-    td {
-      padding: 14px 16px;
-      border-bottom: 1px solid #eef2f7;
-      font-size: 13px;
-      vertical-align: top;
+    .folder-icon {
+      font-size: 25px;
+      width: 34px;
+      text-align: center;
     }
 
-    tr:hover td {
-      background: #fafcff;
+    .folder-info {
+      flex: 1;
     }
 
-    .registration-number {
-      font-weight: 700;
-      color: #2563eb;
-    }
-
-    .event-name {
+    .folder-name {
+      font-size: 15px;
       font-weight: 700;
     }
 
-    .subsegment {
-      margin-top: 3px;
+    .folder-meta {
       color: #6b7280;
       font-size: 12px;
+      margin-top: 4px;
     }
 
-    .person-name {
-      font-weight: 700;
-    }
-
-    .secondary {
-      margin-top: 3px;
-      color: #6b7280;
-      font-size: 12px;
-    }
-
-    /* BADGES */
-
-    .badge {
-      display: inline-block;
-      padding: 5px 8px;
+    .folder-count {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 6px 10px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
-      white-space: nowrap;
     }
 
-    .badge-pending {
+    .arrow {
+      color: #6b7280;
+      font-size: 18px;
+      transition: transform .2s;
+    }
+
+    .folder.open > .folder-header .arrow {
+      transform: rotate(90deg);
+    }
+
+    .folder-content {
+      display: none;
+      border-top: 1px solid #e5e7eb;
+      padding: 10px;
+      background: #f8fafc;
+    }
+
+    .folder.open > .folder-content {
+      display: block;
+    }
+
+    /* SUBFOLDER */
+
+    .subfolder {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 11px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .subfolder:last-child {
+      margin-bottom: 0;
+    }
+
+    .subfolder-header {
+      width: 100%;
+      border: 0;
+      background: white;
+      padding: 15px 17px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .subfolder-header:hover {
+      background: #fafafa;
+    }
+
+    .subfolder-icon {
+      font-size: 21px;
+    }
+
+    .subfolder-info {
+      flex: 1;
+    }
+
+    .subfolder-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .subfolder-meta {
+      color: #6b7280;
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    .subfolder-count {
+      color: #4b5563;
+      background: #f3f4f6;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .subfolder-content {
+      display: none;
+      border-top: 1px solid #e5e7eb;
+      padding: 14px;
+    }
+
+    .subfolder.open > .subfolder-content {
+      display: block;
+    }
+
+    /* REGISTRATION LIST */
+
+    .registration-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .registration-row {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 9px;
+      padding: 13px 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .registration-main {
+      flex: 1;
+    }
+
+    .registration-number {
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .registration-name {
+      margin-top: 4px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .registration-details {
+      margin-top: 3px;
+      color: #6b7280;
+      font-size: 11px;
+    }
+
+    .registration-status {
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .pending {
       background: #fff7ed;
       color: #c2410c;
     }
 
-    .badge-approved {
+    .approved {
       background: #ecfdf5;
       color: #047857;
     }
 
-    .badge-rejected {
+    .rejected {
       background: #fef2f2;
       color: #b91c1c;
     }
 
-    .badge-payment {
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-
-    .badge-free {
-      background: #f3f4f6;
-      color: #4b5563;
-    }
-
-    /* ACTIONS */
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .action-button {
-      border: 0;
-      border-radius: 7px;
-      padding: 7px 9px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .approve {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .reject {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .verify {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    .action-button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    /* EMPTY / LOADING */
-
-    .loading,
     .empty {
-      padding: 50px 20px;
+      padding: 25px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .loading {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 45px;
       text-align: center;
       color: #6b7280;
     }
 
     .error {
+      display: none;
       background: #fef2f2;
-      color: #991b1b;
       border: 1px solid #fecaca;
+      color: #991b1b;
       border-radius: 10px;
       padding: 14px;
       margin-bottom: 18px;
-      display: none;
-    }
-
-    /* PAGINATION */
-
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 15px 20px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .page-info {
-      color: #6b7280;
-      font-size: 12px;
-    }
-
-    .page-buttons {
-      display: flex;
-      gap: 7px;
-    }
-
-    /* MODAL */
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-    }
-
-    .modal {
-      width: min(500px, 100%);
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(15,23,42,0.25);
-    }
-
-    .modal h2 {
-      margin: 0;
-      font-size: 19px;
-    }
-
-    .modal p {
-      color: #6b7280;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .modal textarea {
-      width: 100%;
-      min-height: 100px;
-      resize: vertical;
-      padding: 11px;
-      border: 1px solid #d1d5db;
-      border-radius: 9px;
-      font-family: inherit;
       font-size: 13px;
     }
 
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 18px;
-    }
+    @media (max-width: 850px) {
 
-    @media (max-width: 1100px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .filters {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 750px) {
       .sidebar {
         width: 210px;
       }
@@ -541,6 +477,10 @@
       .main {
         margin-left: 210px;
         width: calc(100% - 210px);
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
       }
 
       .content {
@@ -551,17 +491,6 @@
         padding: 0 20px;
       }
 
-      .user-info {
-        display: none;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .filters {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
@@ -569,8 +498,6 @@
 <body>
 
 <div class="app">
-
-  <!-- SIDEBAR -->
 
   <aside class="sidebar">
 
@@ -588,14 +515,14 @@
     <div class="nav-section">Overview</div>
 
     <button class="nav-button"
-      onclick="window.location.href='dashboard.html'">
+      onclick="location.href='dashboard.html'">
       Dashboard
     </button>
 
     <div class="nav-section">Management</div>
 
     <button class="nav-button"
-      onclick="window.location.href='events.html'">
+      onclick="location.href='events.html'">
       Events
     </button>
 
@@ -603,19 +530,19 @@
       Registrations
     </button>
 
-    <button class="nav-button">
+    <button class="nav-button" onclick="location.href='payments.html'">
       Payments
     </button>
 
     <div class="nav-section">People</div>
 
     <button class="nav-button"
-      onclick="window.location.href='staff.html'">
+      onclick="location.href='staff.html'">
       Staff & Executives
     </button>
 
     <button class="nav-button"
-      onclick="window.location.href='assignments.html'">
+      onclick="location.href='assignments.html'">
       Event Assignments
     </button>
 
@@ -629,33 +556,29 @@
       Settings
     </button>
 
-    <div class="sidebar-bottom">
-      <button class="logout-button" id="logoutButton">
-        Log Out
-      </button>
-    </div>
+    <button class="logout-button" id="logoutButton">
+      Log Out
+    </button>
 
   </aside>
 
-
-  <!-- MAIN -->
 
   <main class="main">
 
     <header class="topbar">
 
       <div class="page-title">
-        Registrations
+        Registration Directory
       </div>
 
       <div class="user-area">
 
         <div class="user-info">
-          <div class="user-name" id="topUserName">
+          <div class="user-name" id="userName">
             Loading...
           </div>
 
-          <div class="user-role" id="topUserRole">
+          <div class="user-role" id="userRole">
             Loading...
           </div>
         </div>
@@ -671,33 +594,50 @@
 
     <section class="content">
 
-      <div class="page-heading">
-        <h1>Registration Management</h1>
+      <div class="heading">
 
-        <p id="pageDescription">
-          Review participant and team registrations.
+        <h1>Registration Directory</h1>
+
+        <p>
+          Browse registrations by main event and sub-segment.
         </p>
+
       </div>
 
 
       <div id="errorBox" class="error"></div>
 
 
-      <!-- STATS -->
+      <div class="stats">
 
-      <div class="stats-grid">
+        <div class="stat">
 
-        <div class="stat-card">
+          <div class="stat-label">
+            Accessible Events
+          </div>
+
+          <div class="stat-value" id="eventCount">
+            —
+          </div>
+
+        </div>
+
+
+        <div class="stat">
+
           <div class="stat-label">
             Total Registrations
           </div>
 
-          <div class="stat-value" id="totalCount">
+          <div class="stat-value" id="registrationCount">
             —
           </div>
+
         </div>
 
-        <div class="stat-card">
+
+        <div class="stat">
+
           <div class="stat-label">
             Pending Approval
           </div>
@@ -705,154 +645,31 @@
           <div class="stat-value" id="pendingCount">
             —
           </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-label">
-            Payment Pending
-          </div>
-
-          <div class="stat-value" id="paymentPendingCount">
-            —
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-label">
-            Confirmed
-          </div>
-
-          <div class="stat-value" id="confirmedCount">
-            —
-          </div>
-        </div>
-
-      </div>
-
-
-      <!-- FILTERS -->
-
-      <div class="filter-panel">
-
-        <div class="filters">
-
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Search registration, name, phone, institution..."
-          >
-
-          <select id="eventFilter">
-            <option value="">All accessible events</option>
-          </select>
-
-          <select id="statusFilter">
-            <option value="">All registration statuses</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-
-          <select id="paymentFilter">
-            <option value="">All payment statuses</option>
-            <option value="pending">Payment Pending</option>
-            <option value="verified">Payment Verified</option>
-            <option value="rejected">Payment Rejected</option>
-            <option value="not_required">No Payment Required</option>
-          </select>
-
-          <button
-            class="button button-primary"
-            id="refreshButton">
-            Refresh
-          </button>
 
         </div>
 
       </div>
 
 
-      <!-- TABLE -->
+      <div class="search-box">
 
-      <div class="table-panel">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search events, sub-segments, registration numbers, names, institutions..."
+        >
 
-        <div class="table-header">
-
-          <div>
-            <div class="table-title">
-              Registrations
-            </div>
-
-            <div class="table-subtitle" id="tableSubtitle">
-              Loading registrations...
-            </div>
-          </div>
-
-        </div>
+      </div>
 
 
-        <div id="tableLoading" class="loading">
-          Loading registrations...
-        </div>
+      <div id="loading" class="loading">
+        Loading registration directory...
+      </div>
 
 
-        <div id="emptyState" class="empty" style="display:none;">
-          No registrations found.
-        </div>
-
-
-        <div id="tableWrap" class="table-wrap" style="display:none;">
-
-          <table>
-
-            <thead>
-
-              <tr>
-                <th>Registration</th>
-                <th>Event</th>
-                <th>Participant / Team</th>
-                <th>Class</th>
-                <th>Institution</th>
-                <th>Payment</th>
-                <th>Registration</th>
-                <th>Confirmation</th>
-                <th>Actions</th>
-              </tr>
-
-            </thead>
-
-            <tbody id="registrationTableBody"></tbody>
-
-          </table>
-
-        </div>
-
-
-        <div class="pagination">
-
-          <div class="page-info" id="pageInfo">
-            —
-          </div>
-
-          <div class="page-buttons">
-
-            <button
-              class="button button-secondary"
-              id="previousButton">
-              Previous
-            </button>
-
-            <button
-              class="button button-secondary"
-              id="nextButton">
-              Next
-            </button>
-
-          </div>
-
-        </div>
-
+      <div id="directory"
+           class="directory"
+           style="display:none;">
       </div>
 
     </section>
@@ -862,67 +679,26 @@
 </div>
 
 
-<!-- ACTION MODAL -->
-
-<div class="modal-overlay" id="modalOverlay">
-
-  <div class="modal">
-
-    <h2 id="modalTitle">
-      Review Registration
-    </h2>
-
-    <p id="modalDescription">
-      Confirm this action.
-    </p>
-
-    <textarea
-      id="reasonInput"
-      placeholder="Optional reason..."
-    ></textarea>
-
-    <div class="modal-actions">
-
-      <button
-        class="button button-secondary"
-        id="cancelModalButton">
-        Cancel
-      </button>
-
-      <button
-        class="button button-primary"
-        id="confirmModalButton">
-        Confirm
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
 <script src="supabase-config.js"></script>
 
 <script>
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
 
-  let currentProfile = null;
-  let currentPage = 0;
-  const PAGE_SIZE = 25;
-
-  let currentAction = null;
-  let currentRegistration = null;
+  let profile = null;
+  let registrations = [];
+  let events = [];
+  let subsegments = [];
 
 
-  /* -------------------------------------------------------
-     AUTH / PROFILE
-  ------------------------------------------------------- */
+  /* =====================================================
+     AUTH
+  ===================================================== */
 
   async function loadProfile() {
 
@@ -932,1014 +708,888 @@
       }
     } = await supabaseClient.auth.getSession();
 
+
     if (!session) {
-      window.location.href = "login.html";
+
+      location.href = "login.html";
       return false;
+
     }
 
 
     const {
       data,
       error
-    } = await supabaseClient.rpc("get_my_staff_profile");
+    } =
+      await supabaseClient.rpc(
+        "get_my_staff_profile"
+      );
 
 
     if (error) {
 
       showError(
-        "Unable to load your staff profile: " +
+        "Unable to load staff profile: " +
         error.message
       );
 
       return false;
+
     }
 
 
     if (!data || data.length === 0) {
 
       showError(
-        "No staff profile was found for this account."
+        "No staff profile was found."
       );
 
       return false;
+
     }
 
 
-    currentProfile = data[0];
+    profile = data[0];
 
 
-    document.getElementById("topUserName").textContent =
-      currentProfile.full_name;
-
-    document.getElementById("topUserRole").textContent =
-      formatRole(currentProfile.role);
-
-
-    const firstLetter =
-      currentProfile.full_name
-        ? currentProfile.full_name.trim().charAt(0).toUpperCase()
-        : "?";
-
-    document.getElementById("userAvatar").textContent =
-      firstLetter;
-
-
-    if (currentProfile.account_status !== "active") {
+    if (
+      profile.account_status !== "active"
+    ) {
 
       showError(
         "Your staff account is not active."
       );
 
       return false;
+
     }
 
 
-    const allowedRoles = [
+    const allowed = [
       "supreme_executive",
       "higher_executive",
       "segment_executive"
     ];
 
 
-    if (!allowedRoles.includes(currentProfile.role)) {
+    if (!allowed.includes(profile.role)) {
 
       showError(
-        "Registration management is not available for your role."
+        "You do not have access to registration management."
       );
 
       return false;
-    }
-
-
-    if (currentProfile.role === "segment_executive") {
-
-      document.getElementById("pageDescription").textContent =
-        "Review registrations for your assigned events and their sub-segments.";
-
-    } else {
-
-      document.getElementById("pageDescription").textContent =
-        "Review registrations across the science carnival.";
 
     }
+
+
+    document.getElementById("userName")
+      .textContent =
+      profile.full_name;
+
+
+    document.getElementById("userRole")
+      .textContent =
+      formatRole(profile.role);
+
+
+    document.getElementById("userAvatar")
+      .textContent =
+      profile.full_name
+        ? profile.full_name
+            .trim()
+            .charAt(0)
+            .toUpperCase()
+        : "?";
 
 
     return true;
+
   }
 
 
-  /* -------------------------------------------------------
-     EVENTS
-  ------------------------------------------------------- */
+  /* =====================================================
+     LOAD DATA
+     ===================================================== */
 
-  async function loadAccessibleEvents() {
+  async function loadData() {
 
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from("events")
-      .select("id,name,slug")
-      .order("name");
+    showLoading();
 
 
-    if (error) {
+    const eventResult =
+      await supabaseClient
+        .from("events")
+        .select(
+          "id,name,slug,has_subsegments"
+        )
+        .order("name");
+
+
+    if (eventResult.error) {
 
       showError(
-        "Unable to load accessible events: " +
-        error.message
+        "Unable to load events: " +
+        eventResult.error.message
       );
 
       return;
+
     }
 
 
-    const select =
-      document.getElementById("eventFilter");
+    events =
+      eventResult.data || [];
 
 
-    select.innerHTML =
-      '<option value="">All accessible events</option>';
+    const subsegmentResult =
+      await supabaseClient
+        .from("subsegments")
+        .select(
+          "id,event_id,name,slug"
+        )
+        .order("name");
 
 
-    (data || []).forEach(event => {
+    if (subsegmentResult.error) {
 
-      const option =
-        document.createElement("option");
+      showError(
+        "Unable to load sub-segments: " +
+        subsegmentResult.error.message
+      );
 
-      option.value = event.id;
-      option.textContent = event.name;
+      return;
 
-      select.appendChild(option);
-
-    });
-
-  }
+    }
 
 
-  /* -------------------------------------------------------
-     REGISTRATIONS
-  ------------------------------------------------------- */
-
-  async function loadRegistrations() {
-
-    hideError();
+    subsegments =
+      subsegmentResult.data || [];
 
 
-    document.getElementById("tableLoading")
-      .style.display = "block";
-
-    document.getElementById("tableWrap")
-      .style.display = "none";
-
-    document.getElementById("emptyState")
-      .style.display = "none";
-
-
-    const search =
-      document.getElementById("searchInput")
-        .value.trim();
-
-    const eventId =
-      document.getElementById("eventFilter")
-        .value;
-
-    const registrationStatus =
-      document.getElementById("statusFilter")
-        .value;
-
-    const paymentStatus =
-      document.getElementById("paymentFilter")
-        .value;
-
-
-    let query =
-      supabaseClient
+    const registrationResult =
+      await supabaseClient
         .from("registration_management_directory")
-        .select("*", {
-          count: "exact"
-        });
-
-
-    if (eventId) {
-
-      query =
-        query.eq("event_id", eventId);
-
-    }
-
-
-    if (registrationStatus) {
-
-      query =
-        query.eq(
-          "registration_status",
-          registrationStatus
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
         );
 
-    }
 
-
-    if (paymentStatus) {
-
-      query =
-        query.eq(
-          "payment_status",
-          paymentStatus
-        );
-
-    }
-
-
-    if (search) {
-
-      const safeSearch =
-        search.replace(/,/g, " ");
-
-
-      query =
-        query.or(
-          "registration_number.ilike.%" +
-          safeSearch +
-          "%," +
-          "participant_name.ilike.%" +
-          safeSearch +
-          "%," +
-          "phone.ilike.%" +
-          safeSearch +
-          "%," +
-          "institution.ilike.%" +
-          safeSearch +
-          "%," +
-          "team_name.ilike.%" +
-          safeSearch +
-          "%"
-        );
-
-    }
-
-
-    const from =
-      currentPage * PAGE_SIZE;
-
-    const to =
-      from + PAGE_SIZE - 1;
-
-
-    const {
-      data,
-      error,
-      count
-    } =
-      await query
-        .order("created_at", {
-          ascending: false
-        })
-        .range(from, to);
-
-
-    if (error) {
-
-      document.getElementById("tableLoading")
-        .style.display = "none";
+    if (registrationResult.error) {
 
       showError(
         "Unable to load registrations: " +
-        error.message
+        registrationResult.error.message
       );
 
       return;
+
     }
 
 
-    document.getElementById("tableLoading")
-      .style.display = "none";
+    registrations =
+      registrationResult.data || [];
 
 
-    const registrations =
-      data || [];
+    updateStats();
 
-
-    updateStats(count || 0);
-
-
-    if (registrations.length === 0) {
-
-      document.getElementById("emptyState")
-        .style.display = "block";
-
-      document.getElementById("tableSubtitle")
-        .textContent =
-        "No registrations match the current filters.";
-
-      updatePagination(count || 0);
-
-      return;
-    }
-
-
-    document.getElementById("tableWrap")
-      .style.display = "block";
-
-
-    renderRegistrations(registrations);
-
-
-    document.getElementById("tableSubtitle")
-      .textContent =
-      (count || 0) +
-      " accessible registration(s)";
-
-
-    updatePagination(count || 0);
+    renderDirectory();
 
   }
 
 
-  /* -------------------------------------------------------
-     RENDER
-  ------------------------------------------------------- */
+  /* =====================================================
+     DIRECTORY
+  ===================================================== */
 
-  function renderRegistrations(registrations) {
+  function renderDirectory() {
 
-    const tbody =
+    const directory =
       document.getElementById(
-        "registrationTableBody"
+        "directory"
       );
 
 
-    tbody.innerHTML = "";
+    const search =
+      document.getElementById(
+        "searchInput"
+      )
+      .value
+      .trim()
+      .toLowerCase();
 
 
-    registrations.forEach(registration => {
-
-      const row =
-        document.createElement("tr");
+    directory.innerHTML = "";
 
 
-      const participant =
-        registration.participation_type === "team"
-          ? (
-              registration.team_name ||
-              "Unnamed Team"
-            )
-          : (
-              registration.participant_name ||
-              "Unnamed Participant"
-            );
+    let visibleEventCount = 0;
 
 
-      const secondary =
-        registration.participation_type === "team"
-          ? (
-              registration.participant_name ||
-              "Team registration"
-            )
-          : (
-              registration.phone ||
-              ""
-            );
+    events.forEach(event => {
 
-
-      const paymentBadge =
-        getPaymentBadge(
-          registration.payment_status
+      const eventSubs =
+        subsegments.filter(
+          s => s.event_id === event.id
         );
 
 
-      const registrationBadge =
-        getRegistrationBadge(
-          registration.registration_status
+      const eventRegistrations =
+        registrations.filter(
+          r => r.event_id === event.id
         );
 
 
-      const confirmationBadge =
-        getConfirmationBadge(
-          registration.confirmation_status
+      const eventMatches =
+        !search ||
+        event.name.toLowerCase().includes(search) ||
+        event.slug.toLowerCase().includes(search);
+
+
+      const matchingRegistrations =
+        eventRegistrations.filter(
+          r => registrationMatches(
+            r,
+            search
+          )
         );
 
 
-      row.innerHTML = `
+      const matchingSubs =
+        eventSubs.filter(
+          s =>
+            !search ||
+            s.name.toLowerCase().includes(search) ||
+            s.slug.toLowerCase().includes(search)
+        );
 
-        <td>
 
-          <div class="registration-number">
-            ${escapeHtml(
-              registration.registration_number
-            )}
+      if (
+        search &&
+        !eventMatches &&
+        matchingRegistrations.length === 0 &&
+        matchingSubs.length === 0
+      ) {
+
+        return;
+
+      }
+
+
+      visibleEventCount++;
+
+
+      const folder =
+        document.createElement("div");
+
+      folder.className = "folder";
+
+
+      const header =
+        document.createElement("button");
+
+      header.className =
+        "folder-header";
+
+
+      const hasSubfolders =
+        event.has_subsegments &&
+        eventSubs.length > 0;
+
+
+      header.innerHTML = `
+
+        <div class="folder-icon">
+          ${hasSubfolders ? "📁" : "📂"}
+        </div>
+
+        <div class="folder-info">
+
+          <div class="folder-name">
+            ${escapeHtml(event.name)}
           </div>
 
-          <div class="secondary">
-            ${formatParticipationType(
-              registration.participation_type
-            )}
-          </div>
-
-        </td>
-
-
-        <td>
-
-          <div class="event-name">
-            ${escapeHtml(
-              registration.event_name
-            )}
-          </div>
-
-          ${
-            registration.subsegment_name
-              ? `
-                <div class="subsegment">
-                  ${escapeHtml(
-                    registration.subsegment_name
-                  )}
-                </div>
-              `
-              : ""
-          }
-
-        </td>
-
-
-        <td>
-
-          <div class="person-name">
-            ${escapeHtml(participant)}
-          </div>
-
-          <div class="secondary">
-            ${escapeHtml(secondary)}
-          </div>
-
-        </td>
-
-
-        <td>
-          ${escapeHtml(
-            registration.class_group_name ||
-            registration.class_group_code ||
-            "—"
-          )}
-        </td>
-
-
-        <td>
-          ${escapeHtml(
-            registration.institution || "—"
-          )}
-        </td>
-
-
-        <td>
-
-          ${paymentBadge}
-
-          ${
-            registration.transaction_id
-              ? `
-                <div class="secondary">
-                  TXN:
-                  ${escapeHtml(
-                    registration.transaction_id
-                  )}
-                </div>
-              `
-              : ""
-          }
-
-        </td>
-
-
-        <td>
-          ${registrationBadge}
-        </td>
-
-
-        <td>
-          ${confirmationBadge}
-        </td>
-
-
-        <td>
-
-          <div class="actions">
-
+          <div class="folder-meta">
             ${
-              registration.payment_required &&
-              registration.payment_status === "pending"
-                ? `
-                  <button
-                    class="action-button verify"
-                    onclick="openAction(
-                      'payment_verify',
-                      '${registration.id}'
-                    )">
-                    Verify Payment
-                  </button>
-
-                  <button
-                    class="action-button reject"
-                    onclick="openAction(
-                      'payment_reject',
-                      '${registration.id}'
-                    )">
-                    Reject Payment
-                  </button>
-                `
-                : ""
+              hasSubfolders
+                ? eventSubs.length +
+                  " sub-segment(s)"
+                : "Main event registrations"
             }
-
-
-            ${
-              registration.registration_status === "pending" &&
-              (
-                !registration.payment_required ||
-                registration.payment_status === "verified"
-              )
-                ? `
-                  <button
-                    class="action-button approve"
-                    onclick="openAction(
-                      'approve',
-                      '${registration.id}'
-                    )">
-                    Approve
-                  </button>
-                `
-                : ""
-            }
-
-
-            ${
-              registration.registration_status === "pending"
-                ? `
-                  <button
-                    class="action-button reject"
-                    onclick="openAction(
-                      'reject',
-                      '${registration.id}'
-                    )">
-                    Reject
-                  </button>
-                `
-                : ""
-            }
-
           </div>
 
-        </td>
+        </div>
+
+        <div class="folder-count">
+          ${eventRegistrations.length}
+        </div>
+
+        <div class="arrow">
+          ›
+        </div>
 
       `;
 
 
-      tbody.appendChild(row);
+      const content =
+        document.createElement("div");
+
+      content.className =
+        "folder-content";
+
+
+      header.addEventListener(
+        "click",
+        () => {
+
+          folder.classList.toggle(
+            "open"
+          );
+
+        }
+      );
+
+
+      folder.appendChild(header);
+
+
+      if (hasSubfolders) {
+
+        eventSubs.forEach(sub => {
+
+          const subRegistrations =
+            eventRegistrations.filter(
+              r =>
+                r.subsegment_id ===
+                sub.id
+            );
+
+
+          if (
+            search &&
+            !eventMatches &&
+            !matchingSubs.some(
+              x => x.id === sub.id
+            ) &&
+            !subRegistrations.some(
+              r =>
+                registrationMatches(
+                  r,
+                  search
+                )
+            )
+          ) {
+
+            return;
+
+          }
+
+
+          const subfolder =
+            createSubfolder(
+              sub,
+              subRegistrations,
+              search
+            );
+
+
+          content.appendChild(
+            subfolder
+          );
+
+        });
+
+
+        /*
+         * Registrations without a sub-segment
+         * are kept in a separate section.
+         */
+
+        const directRegistrations =
+          eventRegistrations.filter(
+            r => !r.subsegment_id
+          );
+
+
+        if (
+          directRegistrations.length > 0
+        ) {
+
+          const directSubfolder =
+            createDirectRegistrationFolder(
+              directRegistrations,
+              search
+            );
+
+
+          content.appendChild(
+            directSubfolder
+          );
+
+        }
+
+      } else {
+
+        content.appendChild(
+          createRegistrationList(
+            eventRegistrations,
+            search
+          )
+        );
+
+      }
+
+
+      folder.appendChild(content);
+
+      directory.appendChild(folder);
 
     });
 
-  }
 
+    if (visibleEventCount === 0) {
 
-  /* -------------------------------------------------------
-     ACTIONS
-  ------------------------------------------------------- */
-
-  function openAction(action, registrationId) {
-
-    currentAction = action;
-    currentRegistration = registrationId;
-
-
-    const title =
-      document.getElementById("modalTitle");
-
-    const description =
-      document.getElementById("modalDescription");
-
-    const reason =
-      document.getElementById("reasonInput");
-
-
-    reason.value = "";
-
-
-    if (action === "approve") {
-
-      title.textContent =
-        "Approve Registration";
-
-      description.textContent =
-        "This will approve the registration. Continue?";
+      directory.innerHTML =
+        `
+          <div class="loading">
+            No matching events or registrations found.
+          </div>
+        `;
 
     }
 
 
-    if (action === "reject") {
+    document.getElementById("loading")
+      .style.display = "none";
 
-      title.textContent =
-        "Reject Registration";
-
-      description.textContent =
-        "This will reject the registration. You may provide a reason.";
-
-    }
-
-
-    if (action === "payment_verify") {
-
-      title.textContent =
-        "Verify Payment";
-
-      description.textContent =
-        "This will mark the submitted payment as verified.";
-
-    }
-
-
-    if (action === "payment_reject") {
-
-      title.textContent =
-        "Reject Payment";
-
-      description.textContent =
-        "This will reject the submitted payment. You may provide a reason.";
-
-    }
-
-
-    document.getElementById("modalOverlay")
-      .style.display = "flex";
+    directory.style.display = "flex";
 
   }
 
 
-  async function performAction() {
+  /* =====================================================
+     SUBFOLDER
+     ===================================================== */
 
-    if (!currentAction || !currentRegistration) {
-      return;
-    }
+  function createSubfolder(
+    sub,
+    subRegistrations,
+    search
+  ) {
+
+    const container =
+      document.createElement("div");
+
+    container.className =
+      "subfolder";
 
 
-    const reason =
-      document.getElementById("reasonInput")
-        .value.trim();
+    const header =
+      document.createElement("button");
+
+    header.className =
+      "subfolder-header";
 
 
-    const confirmButton =
-      document.getElementById(
-        "confirmModalButton"
+    header.innerHTML = `
+
+      <div class="subfolder-icon">
+        📁
+      </div>
+
+      <div class="subfolder-info">
+
+        <div class="subfolder-name">
+          ${escapeHtml(sub.name)}
+        </div>
+
+        <div class="subfolder-meta">
+          ${escapeHtml(sub.slug)}
+        </div>
+
+      </div>
+
+      <div class="subfolder-count">
+        ${subRegistrations.length}
+      </div>
+
+      <div class="arrow">
+        ›
+      </div>
+
+    `;
+
+
+    const content =
+      document.createElement("div");
+
+    content.className =
+      "subfolder-content";
+
+
+    header.addEventListener(
+      "click",
+      () => {
+
+        container.classList.toggle(
+          "open"
+        );
+
+      }
+    );
+
+
+    content.appendChild(
+      createRegistrationList(
+        subRegistrations,
+        search
+      )
+    );
+
+
+    container.appendChild(header);
+    container.appendChild(content);
+
+
+    return container;
+
+  }
+
+
+  /* =====================================================
+     DIRECT REGISTRATION FOLDER
+     ===================================================== */
+
+  function createDirectRegistrationFolder(
+    registrationsForFolder,
+    search
+  ) {
+
+    const container =
+      document.createElement("div");
+
+    container.className =
+      "subfolder";
+
+
+    const header =
+      document.createElement("button");
+
+    header.className =
+      "subfolder-header";
+
+
+    header.innerHTML = `
+
+      <div class="subfolder-icon">
+        📂
+      </div>
+
+      <div class="subfolder-info">
+
+        <div class="subfolder-name">
+          Direct Registrations
+        </div>
+
+        <div class="subfolder-meta">
+          Registrations without a sub-segment
+        </div>
+
+      </div>
+
+      <div class="subfolder-count">
+        ${registrationsForFolder.length}
+      </div>
+
+      <div class="arrow">
+        ›
+      </div>
+
+    `;
+
+
+    const content =
+      document.createElement("div");
+
+    content.className =
+      "subfolder-content";
+
+
+    header.addEventListener(
+      "click",
+      () => {
+
+        container.classList.toggle(
+          "open"
+        );
+
+      }
+    );
+
+
+    content.appendChild(
+      createRegistrationList(
+        registrationsForFolder,
+        search
+      )
+    );
+
+
+    container.appendChild(header);
+    container.appendChild(content);
+
+
+    return container;
+
+  }
+
+
+  /* =====================================================
+     REGISTRATION LIST
+     ===================================================== */
+
+  function createRegistrationList(
+    list,
+    search
+  ) {
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.className =
+      "registration-list";
+
+
+    const filtered =
+      list.filter(
+        r =>
+          !search ||
+          registrationMatches(
+            r,
+            search
+          )
       );
 
 
-    confirmButton.disabled = true;
-    confirmButton.textContent = "Processing...";
+    if (filtered.length === 0) {
 
+      wrapper.innerHTML =
+        `
+          <div class="empty">
+            No registrations found.
+          </div>
+        `;
 
-    try {
-
-      if (currentAction === "approve") {
-
-        const {
-          error
-        } =
-          await supabaseClient.rpc(
-            "review_registration",
-            {
-              p_registration_id:
-                currentRegistration,
-
-              p_new_status:
-                "approved",
-
-              p_rejection_reason:
-                null
-            }
-          );
-
-
-        if (error) {
-          throw error;
-        }
-
-      }
-
-
-      if (currentAction === "reject") {
-
-        const {
-          error
-        } =
-          await supabaseClient.rpc(
-            "review_registration",
-            {
-              p_registration_id:
-                currentRegistration,
-
-              p_new_status:
-                "rejected",
-
-              p_rejection_reason:
-                reason || null
-            }
-          );
-
-
-        if (error) {
-          throw error;
-        }
-
-      }
-
-
-      if (currentAction === "payment_verify") {
-
-        const {
-          error
-        } =
-          await supabaseClient.rpc(
-            "review_registration_payment",
-            {
-              p_registration_id:
-                currentRegistration,
-
-              p_new_status:
-                "verified",
-
-              p_rejection_reason:
-                null
-            }
-          );
-
-
-        if (error) {
-          throw error;
-        }
-
-      }
-
-
-      if (currentAction === "payment_reject") {
-
-        const {
-          error
-        } =
-          await supabaseClient.rpc(
-            "review_registration_payment",
-            {
-              p_registration_id:
-                currentRegistration,
-
-              p_new_status:
-                "rejected",
-
-              p_rejection_reason:
-                reason || null
-            }
-          );
-
-
-        if (error) {
-          throw error;
-        }
-
-      }
-
-
-      closeModal();
-
-      await loadRegistrations();
-
-    } catch (error) {
-
-      showError(
-        "Action failed: " +
-        error.message
-      );
-
-    } finally {
-
-      confirmButton.disabled = false;
-      confirmButton.textContent = "Confirm";
+      return wrapper;
 
     }
+
+
+    filtered.forEach(r => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "registration-row";
+
+
+      const person =
+        r.participation_type === "team"
+          ? (
+              r.team_name ||
+              "Unnamed Team"
+            )
+          : (
+              r.participant_name ||
+              "Unnamed Participant"
+            );
+
+
+      const extra =
+        r.participation_type === "team"
+          ? (
+              r.participant_name ||
+              "Team registration"
+            )
+          : (
+              r.institution ||
+              "No institution"
+            );
+
+
+      row.innerHTML = `
+
+        <div class="registration-main">
+
+          <div class="registration-number">
+            ${escapeHtml(
+              r.registration_number
+            )}
+          </div>
+
+          <div class="registration-name">
+            ${escapeHtml(person)}
+          </div>
+
+          <div class="registration-details">
+            ${escapeHtml(extra)}
+            ·
+            ${escapeHtml(
+              r.class_group_code || "—"
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="registration-status
+          ${escapeHtml(
+            r.registration_status
+          )}">
+          ${escapeHtml(
+            formatStatus(
+              r.registration_status
+            )
+          )}
+        </div>
+
+      `;
+
+
+      wrapper.appendChild(row);
+
+    });
+
+
+    return wrapper;
 
   }
 
 
-  /* -------------------------------------------------------
-     BADGES
-  ------------------------------------------------------- */
+  /* =====================================================
+     SEARCH
+     ===================================================== */
 
-  function getPaymentBadge(status) {
+  function registrationMatches(
+    r,
+    search
+  ) {
 
-    if (status === "verified") {
-
-      return '<span class="badge badge-approved">Verified</span>';
-
+    if (!search) {
+      return true;
     }
 
-    if (status === "rejected") {
 
-      return '<span class="badge badge-rejected">Rejected</span>';
+    const fields = [
 
-    }
+      r.registration_number,
+      r.participant_name,
+      r.phone,
+      r.email,
+      r.institution,
+      r.team_name,
+      r.project_name,
+      r.event_name,
+      r.subsegment_name,
+      r.class_group_name,
+      r.transaction_id
 
-    if (status === "pending") {
+    ];
 
-      return '<span class="badge badge-pending">Pending</span>';
 
-    }
-
-    return '<span class="badge badge-free">Not Required</span>';
+    return fields.some(
+      value =>
+        value &&
+        String(value)
+          .toLowerCase()
+          .includes(search)
+    );
 
   }
 
 
-  function getRegistrationBadge(status) {
-
-    if (status === "approved") {
-
-      return '<span class="badge badge-approved">Approved</span>';
-
-    }
-
-    if (status === "rejected") {
-
-      return '<span class="badge badge-rejected">Rejected</span>';
-
-    }
-
-    if (status === "cancelled") {
-
-      return '<span class="badge badge-rejected">Cancelled</span>';
-
-    }
-
-    return '<span class="badge badge-pending">Pending</span>';
-
-  }
+  document.getElementById(
+    "searchInput"
+  )
+  .addEventListener(
+    "input",
+    renderDirectory
+  );
 
 
-  function getConfirmationBadge(status) {
+  /* =====================================================
+     STATS
+     ===================================================== */
 
-    if (status === "confirmed") {
+  function updateStats() {
 
-      return '<span class="badge badge-approved">Confirmed</span>';
+    document.getElementById(
+      "eventCount"
+    ).textContent =
+      events.length;
 
-    }
 
-    if (status === "cancelled") {
+    document.getElementById(
+      "registrationCount"
+    ).textContent =
+      registrations.length;
 
-      return '<span class="badge badge-rejected">Cancelled</span>';
 
-    }
-
-    return '<span class="badge badge-pending">Pending</span>';
+    document.getElementById(
+      "pendingCount"
+    ).textContent =
+      registrations.filter(
+        r =>
+          r.registration_status ===
+          "pending"
+      ).length;
 
   }
 
 
-  function formatParticipationType(type) {
-
-    if (type === "team") {
-      return "Team";
-    }
-
-    return "Individual";
-
-  }
-
+  /* =====================================================
+     HELPERS
+     ===================================================== */
 
   function formatRole(role) {
 
-    if (!role) {
-      return "Unknown";
-    }
-
     return role
       .split("_")
-      .map(word =>
-        word.charAt(0).toUpperCase() +
-        word.slice(1)
+      .map(
+        word =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1)
       )
       .join(" ");
 
   }
 
 
-  /* -------------------------------------------------------
-     STATS
-  ------------------------------------------------------- */
+  function formatStatus(status) {
 
-  async function updateStats(totalCount) {
-
-    document.getElementById("totalCount")
-      .textContent = totalCount;
-
-
-    const {
-      count: pendingCount
-    } =
-      await supabaseClient
-        .from("registration_management_directory")
-        .select("id", {
-          count: "exact",
-          head: true
-        })
-        .eq(
-          "registration_status",
-          "pending"
-        );
-
-
-    document.getElementById("pendingCount")
-      .textContent =
-      pendingCount || 0;
-
-
-    const {
-      count: paymentPendingCount
-    } =
-      await supabaseClient
-        .from("registration_management_directory")
-        .select("id", {
-          count: "exact",
-          head: true
-        })
-        .eq(
-          "payment_status",
-          "pending"
-        );
-
-
-    document.getElementById("paymentPendingCount")
-      .textContent =
-      paymentPendingCount || 0;
-
-
-    const {
-      count: confirmedCount
-    } =
-      await supabaseClient
-        .from("registration_management_directory")
-        .select("id", {
-          count: "exact",
-          head: true
-        })
-        .eq(
-          "confirmation_status",
-          "confirmed"
-        );
-
-
-    document.getElementById("confirmedCount")
-      .textContent =
-      confirmedCount || 0;
+    return status
+      .charAt(0)
+      .toUpperCase() +
+      status.slice(1);
 
   }
 
-
-  /* -------------------------------------------------------
-     PAGINATION
-  ------------------------------------------------------- */
-
-  function updatePagination(total) {
-
-    const totalPages =
-      Math.max(
-        1,
-        Math.ceil(total / PAGE_SIZE)
-      );
-
-
-    document.getElementById("pageInfo")
-      .textContent =
-      "Page " +
-      (currentPage + 1) +
-      " of " +
-      totalPages;
-
-
-    document.getElementById("previousButton")
-      .disabled =
-      currentPage === 0;
-
-
-    document.getElementById("nextButton")
-      .disabled =
-      currentPage >= totalPages - 1;
-
-  }
-
-
-  /* -------------------------------------------------------
-     HELPERS
-  ------------------------------------------------------- */
 
   function escapeHtml(value) {
 
-    if (value === null || value === undefined) {
+    if (
+      value === null ||
+      value === undefined
+    ) {
+
       return "";
+
     }
+
 
     return String(value)
       .replace(/&/g, "&amp;")
@@ -1951,201 +1601,77 @@
   }
 
 
+  function showLoading() {
+
+    document.getElementById(
+      "loading"
+    ).style.display = "block";
+
+    document.getElementById(
+      "directory"
+    ).style.display = "none";
+
+  }
+
+
   function showError(message) {
 
     const box =
-      document.getElementById("errorBox");
+      document.getElementById(
+        "errorBox"
+      );
 
     box.textContent = message;
+
     box.style.display = "block";
 
-  }
-
-
-  function hideError() {
-
-    document.getElementById("errorBox")
-      .style.display = "none";
+    document.getElementById(
+      "loading"
+    ).style.display = "none";
 
   }
 
 
-  function closeModal() {
+  /* =====================================================
+     LOGOUT
+     ===================================================== */
 
-    document.getElementById("modalOverlay")
-      .style.display = "none";
+  document.getElementById(
+    "logoutButton"
+  )
+  .addEventListener(
+    "click",
+    async () => {
 
-    currentAction = null;
-    currentRegistration = null;
+      await supabaseClient.auth.signOut();
 
-  }
+      location.href = "login.html";
 
-
-  /* -------------------------------------------------------
-     EVENTS
-  ------------------------------------------------------- */
-
-  document.getElementById("refreshButton")
-    .addEventListener(
-      "click",
-      () => {
-        currentPage = 0;
-        loadRegistrations();
-      }
-    );
+    }
+  );
 
 
-  document.getElementById("eventFilter")
-    .addEventListener(
-      "change",
-      () => {
-        currentPage = 0;
-        loadRegistrations();
-      }
-    );
-
-
-  document.getElementById("statusFilter")
-    .addEventListener(
-      "change",
-      () => {
-        currentPage = 0;
-        loadRegistrations();
-      }
-    );
-
-
-  document.getElementById("paymentFilter")
-    .addEventListener(
-      "change",
-      () => {
-        currentPage = 0;
-        loadRegistrations();
-      }
-    );
-
-
-  let searchTimer;
-
-
-  document.getElementById("searchInput")
-    .addEventListener(
-      "input",
-      () => {
-
-        clearTimeout(searchTimer);
-
-        searchTimer =
-          setTimeout(() => {
-
-            currentPage = 0;
-            loadRegistrations();
-
-          }, 400);
-
-      }
-    );
-
-
-  document.getElementById("previousButton")
-    .addEventListener(
-      "click",
-      () => {
-
-        if (currentPage > 0) {
-
-          currentPage--;
-
-          loadRegistrations();
-
-        }
-
-      }
-    );
-
-
-  document.getElementById("nextButton")
-    .addEventListener(
-      "click",
-      () => {
-
-        currentPage++;
-
-        loadRegistrations();
-
-      }
-    );
-
-
-  document.getElementById("cancelModalButton")
-    .addEventListener(
-      "click",
-      closeModal
-    );
-
-
-  document.getElementById("confirmModalButton")
-    .addEventListener(
-      "click",
-      performAction
-    );
-
-
-  document.getElementById("modalOverlay")
-    .addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target ===
-          document.getElementById("modalOverlay")
-        ) {
-
-          closeModal();
-
-        }
-
-      }
-    );
-
-
-  document.getElementById("logoutButton")
-    .addEventListener(
-      "click",
-      async () => {
-
-        await supabaseClient.auth.signOut();
-
-        window.location.href =
-          "login.html";
-
-      }
-    );
-
-
-  /* -------------------------------------------------------
+  /* =====================================================
      START
-  ------------------------------------------------------- */
+     ===================================================== */
 
-  async function startPage() {
+  async function start() {
 
-    const allowed =
+    const ok =
       await loadProfile();
 
 
-    if (!allowed) {
+    if (!ok) {
       return;
     }
 
 
-    await loadAccessibleEvents();
-
-    await loadRegistrations();
+    await loadData();
 
   }
 
 
-  startPage();
+  start();
 
 </script>
 
