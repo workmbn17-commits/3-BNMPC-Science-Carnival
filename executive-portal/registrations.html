@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Registrations — 3ʳᵈ BNMPC National Science Carnival</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 260px;
+      background: #111827;
+      color: white;
+      padding: 24px 16px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      overflow-y: auto;
+    }
+
+    .brand {
+      padding: 4px 12px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 22px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .brand-subtitle {
+      margin-top: 7px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .nav-section {
+      margin: 20px 12px 8px;
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #d1d5db;
+      text-align: left;
+      padding: 12px;
+      border-radius: 9px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .nav-button:hover {
+      background: #1f2937;
+      color: white;
+    }
+
+    .nav-button.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 20px;
+    }
+
+    .logout-button {
+      width: 100%;
+      border: 1px solid #374151;
+      background: transparent;
+      color: #d1d5db;
+      padding: 11px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .logout-button:hover {
+      background: #1f2937;
+      color: white;
+    }
+
+    /* MAIN */
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .content {
+      padding: 32px;
+    }
+
+    .page-heading {
+      margin-bottom: 24px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-heading p {
+      margin: 7px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* STATS */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 750;
+    }
+
+    /* FILTERS */
+
+    .filter-panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1.4fr 1.4fr 1.2fr auto;
+      gap: 10px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: white;
+      font-size: 13px;
+      color: #172033;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .button {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 15px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .button-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .button-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    /* TABLE */
+
+    .table-panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .table-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-title {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .table-subtitle {
+      color: #6b7280;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }
+
+    th {
+      text-align: left;
+      padding: 13px 16px;
+      background: #f8fafc;
+      color: #6b7280;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #eef2f7;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: #fafcff;
+    }
+
+    .registration-number {
+      font-weight: 700;
+      color: #2563eb;
+    }
+
+    .event-name {
+      font-weight: 700;
+    }
+
+    .subsegment {
+      margin-top: 3px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .person-name {
+      font-weight: 700;
+    }
+
+    .secondary {
+      margin-top: 3px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    /* BADGES */
+
+    .badge {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-pending {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .badge-approved {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .badge-rejected {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .badge-payment {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .badge-free {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    /* ACTIONS */
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .action-button {
+      border: 0;
+      border-radius: 7px;
+      padding: 7px 9px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .approve {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .reject {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .verify {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .action-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* EMPTY / LOADING */
+
+    .loading,
+    .empty {
+      padding: 50px 20px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    /* PAGINATION */
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .page-info {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .page-buttons {
+      display: flex;
+      gap: 7px;
+    }
+
+    /* MODAL */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal {
+      width: min(500px, 100%);
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(15,23,42,0.25);
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .modal p {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .modal textarea {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      padding: 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 750px) {
+      .sidebar {
+        width: 210px;
+      }
+
+      .main {
+        margin-left: 210px;
+        width: calc(100% - 210px);
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .topbar {
+        padding: 0 20px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-title">
+        3ʳᵈ BNMPC<br>
+        National Science Carnival
+      </div>
+
+      <div class="brand-subtitle">
+        Executive Management Portal
+      </div>
+    </div>
+
+    <div class="nav-section">Overview</div>
+
+    <button class="nav-button"
+      onclick="window.location.href='dashboard.html'">
+      Dashboard
+    </button>
+
+    <div class="nav-section">Management</div>
+
+    <button class="nav-button"
+      onclick="window.location.href='events.html'">
+      Events
+    </button>
+
+    <button class="nav-button active">
+      Registrations
+    </button>
+
+    <button class="nav-button">
+      Payments
+    </button>
+
+    <div class="nav-section">People</div>
+
+    <button class="nav-button"
+      onclick="window.location.href='staff.html'">
+      Staff & Executives
+    </button>
+
+    <button class="nav-button"
+      onclick="window.location.href='assignments.html'">
+      Event Assignments
+    </button>
+
+    <div class="nav-section">System</div>
+
+    <button class="nav-button">
+      Reports
+    </button>
+
+    <button class="nav-button">
+      Settings
+    </button>
+
+    <div class="sidebar-bottom">
+      <button class="logout-button" id="logoutButton">
+        Log Out
+      </button>
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div class="page-title">
+        Registrations
+      </div>
+
+      <div class="user-area">
+
+        <div class="user-info">
+          <div class="user-name" id="topUserName">
+            Loading...
+          </div>
+
+          <div class="user-role" id="topUserRole">
+            Loading...
+          </div>
+        </div>
+
+        <div class="user-avatar" id="userAvatar">
+          ?
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <section class="content">
+
+      <div class="page-heading">
+        <h1>Registration Management</h1>
+
+        <p id="pageDescription">
+          Review participant and team registrations.
+        </p>
+      </div>
+
+
+      <div id="errorBox" class="error"></div>
+
+
+      <!-- STATS -->
+
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <div class="stat-label">
+            Total Registrations
+          </div>
+
+          <div class="stat-value" id="totalCount">
+            —
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            Pending Approval
+          </div>
+
+          <div class="stat-value" id="pendingCount">
+            —
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            Payment Pending
+          </div>
+
+          <div class="stat-value" id="paymentPendingCount">
+            —
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            Confirmed
+          </div>
+
+          <div class="stat-value" id="confirmedCount">
+            —
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- FILTERS -->
+
+      <div class="filter-panel">
+
+        <div class="filters">
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search registration, name, phone, institution..."
+          >
+
+          <select id="eventFilter">
+            <option value="">All accessible events</option>
+          </select>
+
+          <select id="statusFilter">
+            <option value="">All registration statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+
+          <select id="paymentFilter">
+            <option value="">All payment statuses</option>
+            <option value="pending">Payment Pending</option>
+            <option value="verified">Payment Verified</option>
+            <option value="rejected">Payment Rejected</option>
+            <option value="not_required">No Payment Required</option>
+          </select>
+
+          <button
+            class="button button-primary"
+            id="refreshButton">
+            Refresh
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- TABLE -->
+
+      <div class="table-panel">
+
+        <div class="table-header">
+
+          <div>
+            <div class="table-title">
+              Registrations
+            </div>
+
+            <div class="table-subtitle" id="tableSubtitle">
+              Loading registrations...
+            </div>
+          </div>
+
+        </div>
+
+
+        <div id="tableLoading" class="loading">
+          Loading registrations...
+        </div>
+
+
+        <div id="emptyState" class="empty" style="display:none;">
+          No registrations found.
+        </div>
+
+
+        <div id="tableWrap" class="table-wrap" style="display:none;">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Registration</th>
+                <th>Event</th>
+                <th>Participant / Team</th>
+                <th>Class</th>
+                <th>Institution</th>
+                <th>Payment</th>
+                <th>Registration</th>
+                <th>Confirmation</th>
+                <th>Actions</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="registrationTableBody"></tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="pagination">
+
+          <div class="page-info" id="pageInfo">
+            —
+          </div>
+
+          <div class="page-buttons">
+
+            <button
+              class="button button-secondary"
+              id="previousButton">
+              Previous
+            </button>
+
+            <button
+              class="button button-secondary"
+              id="nextButton">
+              Next
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- ACTION MODAL -->
+
+<div class="modal-overlay" id="modalOverlay">
+
+  <div class="modal">
+
+    <h2 id="modalTitle">
+      Review Registration
+    </h2>
+
+    <p id="modalDescription">
+      Confirm this action.
+    </p>
+
+    <textarea
+      id="reasonInput"
+      placeholder="Optional reason..."
+    ></textarea>
+
+    <div class="modal-actions">
+
+      <button
+        class="button button-secondary"
+        id="cancelModalButton">
+        Cancel
+      </button>
+
+      <button
+        class="button button-primary"
+        id="confirmModalButton">
+        Confirm
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="supabase-config.js"></script>
+
+<script>
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+
+  let currentProfile = null;
+  let currentPage = 0;
+  const PAGE_SIZE = 25;
+
+  let currentAction = null;
+  let currentRegistration = null;
+
+
+  /* -------------------------------------------------------
+     AUTH / PROFILE
+  ------------------------------------------------------- */
+
+  async function loadProfile() {
+
+    const {
+      data: {
+        session
+      }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      window.location.href = "login.html";
+      return false;
+    }
+
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc("get_my_staff_profile");
+
+
+    if (error) {
+
+      showError(
+        "Unable to load your staff profile: " +
+        error.message
+      );
+
+      return false;
+    }
+
+
+    if (!data || data.length === 0) {
+
+      showError(
+        "No staff profile was found for this account."
+      );
+
+      return false;
+    }
+
+
+    currentProfile = data[0];
+
+
+    document.getElementById("topUserName").textContent =
+      currentProfile.full_name;
+
+    document.getElementById("topUserRole").textContent =
+      formatRole(currentProfile.role);
+
+
+    const firstLetter =
+      currentProfile.full_name
+        ? currentProfile.full_name.trim().charAt(0).toUpperCase()
+        : "?";
+
+    document.getElementById("userAvatar").textContent =
+      firstLetter;
+
+
+    if (currentProfile.account_status !== "active") {
+
+      showError(
+        "Your staff account is not active."
+      );
+
+      return false;
+    }
+
+
+    const allowedRoles = [
+      "supreme_executive",
+      "higher_executive",
+      "segment_executive"
+    ];
+
+
+    if (!allowedRoles.includes(currentProfile.role)) {
+
+      showError(
+        "Registration management is not available for your role."
+      );
+
+      return false;
+    }
+
+
+    if (currentProfile.role === "segment_executive") {
+
+      document.getElementById("pageDescription").textContent =
+        "Review registrations for your assigned events and their sub-segments.";
+
+    } else {
+
+      document.getElementById("pageDescription").textContent =
+        "Review registrations across the science carnival.";
+
+    }
+
+
+    return true;
+  }
+
+
+  /* -------------------------------------------------------
+     EVENTS
+  ------------------------------------------------------- */
+
+  async function loadAccessibleEvents() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("events")
+      .select("id,name,slug")
+      .order("name");
+
+
+    if (error) {
+
+      showError(
+        "Unable to load accessible events: " +
+        error.message
+      );
+
+      return;
+    }
+
+
+    const select =
+      document.getElementById("eventFilter");
+
+
+    select.innerHTML =
+      '<option value="">All accessible events</option>';
+
+
+    (data || []).forEach(event => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = event.id;
+      option.textContent = event.name;
+
+      select.appendChild(option);
+
+    });
+
+  }
+
+
+  /* -------------------------------------------------------
+     REGISTRATIONS
+  ------------------------------------------------------- */
+
+  async function loadRegistrations() {
+
+    hideError();
+
+
+    document.getElementById("tableLoading")
+      .style.display = "block";
+
+    document.getElementById("tableWrap")
+      .style.display = "none";
+
+    document.getElementById("emptyState")
+      .style.display = "none";
+
+
+    const search =
+      document.getElementById("searchInput")
+        .value.trim();
+
+    const eventId =
+      document.getElementById("eventFilter")
+        .value;
+
+    const registrationStatus =
+      document.getElementById("statusFilter")
+        .value;
+
+    const paymentStatus =
+      document.getElementById("paymentFilter")
+        .value;
+
+
+    let query =
+      supabaseClient
+        .from("registration_management_directory")
+        .select("*", {
+          count: "exact"
+        });
+
+
+    if (eventId) {
+
+      query =
+        query.eq("event_id", eventId);
+
+    }
+
+
+    if (registrationStatus) {
+
+      query =
+        query.eq(
+          "registration_status",
+          registrationStatus
+        );
+
+    }
+
+
+    if (paymentStatus) {
+
+      query =
+        query.eq(
+          "payment_status",
+          paymentStatus
+        );
+
+    }
+
+
+    if (search) {
+
+      const safeSearch =
+        search.replace(/,/g, " ");
+
+
+      query =
+        query.or(
+          "registration_number.ilike.%" +
+          safeSearch +
+          "%," +
+          "participant_name.ilike.%" +
+          safeSearch +
+          "%," +
+          "phone.ilike.%" +
+          safeSearch +
+          "%," +
+          "institution.ilike.%" +
+          safeSearch +
+          "%," +
+          "team_name.ilike.%" +
+          safeSearch +
+          "%"
+        );
+
+    }
+
+
+    const from =
+      currentPage * PAGE_SIZE;
+
+    const to =
+      from + PAGE_SIZE - 1;
+
+
+    const {
+      data,
+      error,
+      count
+    } =
+      await query
+        .order("created_at", {
+          ascending: false
+        })
+        .range(from, to);
+
+
+    if (error) {
+
+      document.getElementById("tableLoading")
+        .style.display = "none";
+
+      showError(
+        "Unable to load registrations: " +
+        error.message
+      );
+
+      return;
+    }
+
+
+    document.getElementById("tableLoading")
+      .style.display = "none";
+
+
+    const registrations =
+      data || [];
+
+
+    updateStats(count || 0);
+
+
+    if (registrations.length === 0) {
+
+      document.getElementById("emptyState")
+        .style.display = "block";
+
+      document.getElementById("tableSubtitle")
+        .textContent =
+        "No registrations match the current filters.";
+
+      updatePagination(count || 0);
+
+      return;
+    }
+
+
+    document.getElementById("tableWrap")
+      .style.display = "block";
+
+
+    renderRegistrations(registrations);
+
+
+    document.getElementById("tableSubtitle")
+      .textContent =
+      (count || 0) +
+      " accessible registration(s)";
+
+
+    updatePagination(count || 0);
+
+  }
+
+
+  /* -------------------------------------------------------
+     RENDER
+  ------------------------------------------------------- */
+
+  function renderRegistrations(registrations) {
+
+    const tbody =
+      document.getElementById(
+        "registrationTableBody"
+      );
+
+
+    tbody.innerHTML = "";
+
+
+    registrations.forEach(registration => {
+
+      const row =
+        document.createElement("tr");
+
+
+      const participant =
+        registration.participation_type === "team"
+          ? (
+              registration.team_name ||
+              "Unnamed Team"
+            )
+          : (
+              registration.participant_name ||
+              "Unnamed Participant"
+            );
+
+
+      const secondary =
+        registration.participation_type === "team"
+          ? (
+              registration.participant_name ||
+              "Team registration"
+            )
+          : (
+              registration.phone ||
+              ""
+            );
+
+
+      const paymentBadge =
+        getPaymentBadge(
+          registration.payment_status
+        );
+
+
+      const registrationBadge =
+        getRegistrationBadge(
+          registration.registration_status
+        );
+
+
+      const confirmationBadge =
+        getConfirmationBadge(
+          registration.confirmation_status
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+
+          <div class="registration-number">
+            ${escapeHtml(
+              registration.registration_number
+            )}
+          </div>
+
+          <div class="secondary">
+            ${formatParticipationType(
+              registration.participation_type
+            )}
+          </div>
+
+        </td>
+
+
+        <td>
+
+          <div class="event-name">
+            ${escapeHtml(
+              registration.event_name
+            )}
+          </div>
+
+          ${
+            registration.subsegment_name
+              ? `
+                <div class="subsegment">
+                  ${escapeHtml(
+                    registration.subsegment_name
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+        </td>
+
+
+        <td>
+
+          <div class="person-name">
+            ${escapeHtml(participant)}
+          </div>
+
+          <div class="secondary">
+            ${escapeHtml(secondary)}
+          </div>
+
+        </td>
+
+
+        <td>
+          ${escapeHtml(
+            registration.class_group_name ||
+            registration.class_group_code ||
+            "—"
+          )}
+        </td>
+
+
+        <td>
+          ${escapeHtml(
+            registration.institution || "—"
+          )}
+        </td>
+
+
+        <td>
+
+          ${paymentBadge}
+
+          ${
+            registration.transaction_id
+              ? `
+                <div class="secondary">
+                  TXN:
+                  ${escapeHtml(
+                    registration.transaction_id
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+        </td>
+
+
+        <td>
+          ${registrationBadge}
+        </td>
+
+
+        <td>
+          ${confirmationBadge}
+        </td>
+
+
+        <td>
+
+          <div class="actions">
+
+            ${
+              registration.payment_required &&
+              registration.payment_status === "pending"
+                ? `
+                  <button
+                    class="action-button verify"
+                    onclick="openAction(
+                      'payment_verify',
+                      '${registration.id}'
+                    )">
+                    Verify Payment
+                  </button>
+
+                  <button
+                    class="action-button reject"
+                    onclick="openAction(
+                      'payment_reject',
+                      '${registration.id}'
+                    )">
+                    Reject Payment
+                  </button>
+                `
+                : ""
+            }
+
+
+            ${
+              registration.registration_status === "pending" &&
+              (
+                !registration.payment_required ||
+                registration.payment_status === "verified"
+              )
+                ? `
+                  <button
+                    class="action-button approve"
+                    onclick="openAction(
+                      'approve',
+                      '${registration.id}'
+                    )">
+                    Approve
+                  </button>
+                `
+                : ""
+            }
+
+
+            ${
+              registration.registration_status === "pending"
+                ? `
+                  <button
+                    class="action-button reject"
+                    onclick="openAction(
+                      'reject',
+                      '${registration.id}'
+                    )">
+                    Reject
+                  </button>
+                `
+                : ""
+            }
+
+          </div>
+
+        </td>
+
+      `;
+
+
+      tbody.appendChild(row);
+
+    });
+
+  }
+
+
+  /* -------------------------------------------------------
+     ACTIONS
+  ------------------------------------------------------- */
+
+  function openAction(action, registrationId) {
+
+    currentAction = action;
+    currentRegistration = registrationId;
+
+
+    const title =
+      document.getElementById("modalTitle");
+
+    const description =
+      document.getElementById("modalDescription");
+
+    const reason =
+      document.getElementById("reasonInput");
+
+
+    reason.value = "";
+
+
+    if (action === "approve") {
+
+      title.textContent =
+        "Approve Registration";
+
+      description.textContent =
+        "This will approve the registration. Continue?";
+
+    }
+
+
+    if (action === "reject") {
+
+      title.textContent =
+        "Reject Registration";
+
+      description.textContent =
+        "This will reject the registration. You may provide a reason.";
+
+    }
+
+
+    if (action === "payment_verify") {
+
+      title.textContent =
+        "Verify Payment";
+
+      description.textContent =
+        "This will mark the submitted payment as verified.";
+
+    }
+
+
+    if (action === "payment_reject") {
+
+      title.textContent =
+        "Reject Payment";
+
+      description.textContent =
+        "This will reject the submitted payment. You may provide a reason.";
+
+    }
+
+
+    document.getElementById("modalOverlay")
+      .style.display = "flex";
+
+  }
+
+
+  async function performAction() {
+
+    if (!currentAction || !currentRegistration) {
+      return;
+    }
+
+
+    const reason =
+      document.getElementById("reasonInput")
+        .value.trim();
+
+
+    const confirmButton =
+      document.getElementById(
+        "confirmModalButton"
+      );
+
+
+    confirmButton.disabled = true;
+    confirmButton.textContent = "Processing...";
+
+
+    try {
+
+      if (currentAction === "approve") {
+
+        const {
+          error
+        } =
+          await supabaseClient.rpc(
+            "review_registration",
+            {
+              p_registration_id:
+                currentRegistration,
+
+              p_new_status:
+                "approved",
+
+              p_rejection_reason:
+                null
+            }
+          );
+
+
+        if (error) {
+          throw error;
+        }
+
+      }
+
+
+      if (currentAction === "reject") {
+
+        const {
+          error
+        } =
+          await supabaseClient.rpc(
+            "review_registration",
+            {
+              p_registration_id:
+                currentRegistration,
+
+              p_new_status:
+                "rejected",
+
+              p_rejection_reason:
+                reason || null
+            }
+          );
+
+
+        if (error) {
+          throw error;
+        }
+
+      }
+
+
+      if (currentAction === "payment_verify") {
+
+        const {
+          error
+        } =
+          await supabaseClient.rpc(
+            "review_registration_payment",
+            {
+              p_registration_id:
+                currentRegistration,
+
+              p_new_status:
+                "verified",
+
+              p_rejection_reason:
+                null
+            }
+          );
+
+
+        if (error) {
+          throw error;
+        }
+
+      }
+
+
+      if (currentAction === "payment_reject") {
+
+        const {
+          error
+        } =
+          await supabaseClient.rpc(
+            "review_registration_payment",
+            {
+              p_registration_id:
+                currentRegistration,
+
+              p_new_status:
+                "rejected",
+
+              p_rejection_reason:
+                reason || null
+            }
+          );
+
+
+        if (error) {
+          throw error;
+        }
+
+      }
+
+
+      closeModal();
+
+      await loadRegistrations();
+
+    } catch (error) {
+
+      showError(
+        "Action failed: " +
+        error.message
+      );
+
+    } finally {
+
+      confirmButton.disabled = false;
+      confirmButton.textContent = "Confirm";
+
+    }
+
+  }
+
+
+  /* -------------------------------------------------------
+     BADGES
+  ------------------------------------------------------- */
+
+  function getPaymentBadge(status) {
+
+    if (status === "verified") {
+
+      return '<span class="badge badge-approved">Verified</span>';
+
+    }
+
+    if (status === "rejected") {
+
+      return '<span class="badge badge-rejected">Rejected</span>';
+
+    }
+
+    if (status === "pending") {
+
+      return '<span class="badge badge-pending">Pending</span>';
+
+    }
+
+    return '<span class="badge badge-free">Not Required</span>';
+
+  }
+
+
+  function getRegistrationBadge(status) {
+
+    if (status === "approved") {
+
+      return '<span class="badge badge-approved">Approved</span>';
+
+    }
+
+    if (status === "rejected") {
+
+      return '<span class="badge badge-rejected">Rejected</span>';
+
+    }
+
+    if (status === "cancelled") {
+
+      return '<span class="badge badge-rejected">Cancelled</span>';
+
+    }
+
+    return '<span class="badge badge-pending">Pending</span>';
+
+  }
+
+
+  function getConfirmationBadge(status) {
+
+    if (status === "confirmed") {
+
+      return '<span class="badge badge-approved">Confirmed</span>';
+
+    }
+
+    if (status === "cancelled") {
+
+      return '<span class="badge badge-rejected">Cancelled</span>';
+
+    }
+
+    return '<span class="badge badge-pending">Pending</span>';
+
+  }
+
+
+  function formatParticipationType(type) {
+
+    if (type === "team") {
+      return "Team";
+    }
+
+    return "Individual";
+
+  }
+
+
+  function formatRole(role) {
+
+    if (!role) {
+      return "Unknown";
+    }
+
+    return role
+      .split("_")
+      .map(word =>
+        word.charAt(0).toUpperCase() +
+        word.slice(1)
+      )
+      .join(" ");
+
+  }
+
+
+  /* -------------------------------------------------------
+     STATS
+  ------------------------------------------------------- */
+
+  async function updateStats(totalCount) {
+
+    document.getElementById("totalCount")
+      .textContent = totalCount;
+
+
+    const {
+      count: pendingCount
+    } =
+      await supabaseClient
+        .from("registration_management_directory")
+        .select("id", {
+          count: "exact",
+          head: true
+        })
+        .eq(
+          "registration_status",
+          "pending"
+        );
+
+
+    document.getElementById("pendingCount")
+      .textContent =
+      pendingCount || 0;
+
+
+    const {
+      count: paymentPendingCount
+    } =
+      await supabaseClient
+        .from("registration_management_directory")
+        .select("id", {
+          count: "exact",
+          head: true
+        })
+        .eq(
+          "payment_status",
+          "pending"
+        );
+
+
+    document.getElementById("paymentPendingCount")
+      .textContent =
+      paymentPendingCount || 0;
+
+
+    const {
+      count: confirmedCount
+    } =
+      await supabaseClient
+        .from("registration_management_directory")
+        .select("id", {
+          count: "exact",
+          head: true
+        })
+        .eq(
+          "confirmation_status",
+          "confirmed"
+        );
+
+
+    document.getElementById("confirmedCount")
+      .textContent =
+      confirmedCount || 0;
+
+  }
+
+
+  /* -------------------------------------------------------
+     PAGINATION
+  ------------------------------------------------------- */
+
+  function updatePagination(total) {
+
+    const totalPages =
+      Math.max(
+        1,
+        Math.ceil(total / PAGE_SIZE)
+      );
+
+
+    document.getElementById("pageInfo")
+      .textContent =
+      "Page " +
+      (currentPage + 1) +
+      " of " +
+      totalPages;
+
+
+    document.getElementById("previousButton")
+      .disabled =
+      currentPage === 0;
+
+
+    document.getElementById("nextButton")
+      .disabled =
+      currentPage >= totalPages - 1;
+
+  }
+
+
+  /* -------------------------------------------------------
+     HELPERS
+  ------------------------------------------------------- */
+
+  function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function showError(message) {
+
+    const box =
+      document.getElementById("errorBox");
+
+    box.textContent = message;
+    box.style.display = "block";
+
+  }
+
+
+  function hideError() {
+
+    document.getElementById("errorBox")
+      .style.display = "none";
+
+  }
+
+
+  function closeModal() {
+
+    document.getElementById("modalOverlay")
+      .style.display = "none";
+
+    currentAction = null;
+    currentRegistration = null;
+
+  }
+
+
+  /* -------------------------------------------------------
+     EVENTS
+  ------------------------------------------------------- */
+
+  document.getElementById("refreshButton")
+    .addEventListener(
+      "click",
+      () => {
+        currentPage = 0;
+        loadRegistrations();
+      }
+    );
+
+
+  document.getElementById("eventFilter")
+    .addEventListener(
+      "change",
+      () => {
+        currentPage = 0;
+        loadRegistrations();
+      }
+    );
+
+
+  document.getElementById("statusFilter")
+    .addEventListener(
+      "change",
+      () => {
+        currentPage = 0;
+        loadRegistrations();
+      }
+    );
+
+
+  document.getElementById("paymentFilter")
+    .addEventListener(
+      "change",
+      () => {
+        currentPage = 0;
+        loadRegistrations();
+      }
+    );
+
+
+  let searchTimer;
+
+
+  document.getElementById("searchInput")
+    .addEventListener(
+      "input",
+      () => {
+
+        clearTimeout(searchTimer);
+
+        searchTimer =
+          setTimeout(() => {
+
+            currentPage = 0;
+            loadRegistrations();
+
+          }, 400);
+
+      }
+    );
+
+
+  document.getElementById("previousButton")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (currentPage > 0) {
+
+          currentPage--;
+
+          loadRegistrations();
+
+        }
+
+      }
+    );
+
+
+  document.getElementById("nextButton")
+    .addEventListener(
+      "click",
+      () => {
+
+        currentPage++;
+
+        loadRegistrations();
+
+      }
+    );
+
+
+  document.getElementById("cancelModalButton")
+    .addEventListener(
+      "click",
+      closeModal
+    );
+
+
+  document.getElementById("confirmModalButton")
+    .addEventListener(
+      "click",
+      performAction
+    );
+
+
+  document.getElementById("modalOverlay")
+    .addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          document.getElementById("modalOverlay")
+        ) {
+
+          closeModal();
+
+        }
+
+      }
+    );
+
+
+  document.getElementById("logoutButton")
+    .addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+  /* -------------------------------------------------------
+     START
+  ------------------------------------------------------- */
+
+  async function startPage() {
+
+    const allowed =
+      await loadProfile();
+
+
+    if (!allowed) {
+      return;
+    }
+
+
+    await loadAccessibleEvents();
+
+    await loadRegistrations();
+
+  }
+
+
+  startPage();
+
+</script>
+
+</body>
+</html>
