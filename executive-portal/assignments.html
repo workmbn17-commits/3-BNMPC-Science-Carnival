@@ -356,15 +356,93 @@
       font-size: 11px;
     }
 
-    .event-name {
+    /* ========================= */
+    /* ASSIGNED EVENTS */
+    /* ========================= */
+
+    .event-summary-button {
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 7px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
       font-weight: 700;
-      color: #111827;
     }
 
-    .event-slug {
-      margin-top: 3px;
+    .event-summary-button:hover {
+      background: #dbeafe;
+    }
+
+    .event-summary-button .arrow {
+      display: inline-block;
+      margin-left: 5px;
+      transition: transform 0.15s ease;
+    }
+
+    .event-summary-button.expanded .arrow {
+      transform: rotate(180deg);
+    }
+
+    .assignment-details-row {
+      display: none;
+      background: #f8fafc;
+    }
+
+    .assignment-details-row.show {
+      display: table-row;
+    }
+
+    .assignment-details-cell {
+      padding: 0 !important;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .assignment-details {
+      padding: 16px 22px 18px 72px;
+    }
+
+    .assignment-details-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #6b7280;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .assignment-event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .assignment-event-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .assignment-event-info {
+      min-width: 0;
+    }
+
+    .assignment-event-name {
+      font-weight: 700;
+      color: #111827;
+      font-size: 13px;
+    }
+
+    .assignment-event-slug {
       color: #6b7280;
       font-size: 11px;
+      margin-top: 2px;
     }
 
     /* ========================= */
@@ -413,10 +491,85 @@
       cursor: pointer;
       font-size: 11px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .remove-button:hover {
       background: #fef2f2;
+    }
+
+    /* ========================= */
+    /* MULTI EVENT SELECTOR */
+    /* ========================= */
+
+    .event-selector {
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: #fafafa;
+      padding: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .event-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .event-option:hover {
+      background: #f3f4f6;
+    }
+
+    .event-option input {
+      margin-top: 3px;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .event-option.disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: #f3f4f6;
+    }
+
+    .event-option.disabled input {
+      cursor: not-allowed;
+    }
+
+    .event-option-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .event-option-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .event-option-slug {
+      margin-top: 2px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .already-assigned {
+      display: inline-block;
+      margin-left: 7px;
+      font-size: 10px;
+      color: #047857;
+      font-weight: 700;
+    }
+
+    .selection-count {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #6b7280;
     }
 
     /* ========================= */
@@ -439,7 +592,7 @@
     }
 
     .modal {
-      width: min(520px, 100%);
+      width: min(560px, 100%);
       background: white;
       border-radius: 14px;
       box-shadow: 0 25px 70px rgba(0,0,0,0.2);
@@ -463,6 +616,7 @@
       margin-top: 5px;
       color: #6b7280;
       font-size: 12px;
+      line-height: 1.5;
     }
 
     .close-button {
@@ -617,6 +771,15 @@
         min-width: 0;
         width: 100%;
       }
+
+      .assignment-details {
+        padding-left: 20px;
+      }
+
+      .assignment-event-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -646,35 +809,58 @@
       Management
     </div>
 
-    <button class="nav-button" onclick="window.location.href='dashboard.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='dashboard.html'"
+    >
       Dashboard
     </button>
 
-    <button class="nav-button" onclick="window.location.href='events.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='events.html'"
+    >
       Events
     </button>
 
-    <button class="nav-button" onclick="window.location.href='registrations.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='registrations.html'"
+    >
       Registrations
     </button>
 
-    <button class="nav-button" onclick="window.location.href='payments.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='payments.html'"
+    >
       Payments
     </button>
 
-    <button class="nav-button" onclick="window.location.href='staff.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='staff.html'"
+    >
       Staff & Executives
     </button>
 
-    <button class="nav-button active">
+    <button
+      class="nav-button active"
+    >
       Event Assignments
     </button>
 
-    <button class="nav-button" onclick="window.location.href='reports.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='reports.html'"
+    >
       Reports
     </button>
 
-    <button class="nav-button" onclick="window.location.href='settings.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='settings.html'"
+    >
       Settings
     </button>
 
@@ -705,6 +891,7 @@
       <div class="user-area">
 
         <div class="user-info">
+
           <div
             class="user-name"
             id="topUserName"
@@ -718,6 +905,7 @@
           >
             Loading...
           </div>
+
         </div>
 
         <div
@@ -745,13 +933,15 @@
       <div class="page-heading">
 
         <div>
+
           <h1>
             Event Assignments
           </h1>
 
           <p>
-            Assign Segment Executives and Members to the events they are responsible for.
+            Assign Segment Executives and Members to one or multiple events.
           </p>
+
         </div>
 
         <button
@@ -777,44 +967,50 @@
       <div class="summary-grid">
 
         <div class="summary-card">
+
           <span class="summary-label">
-            Total Assignments
+            Assigned Staff
           </span>
 
           <span
             class="summary-value"
-            id="totalAssignments"
+            id="totalAssignedStaff"
           >
             0
           </span>
+
         </div>
 
 
         <div class="summary-card">
+
           <span class="summary-label">
             Segment Executives
           </span>
 
           <span
             class="summary-value"
-            id="segmentAssignments"
+            id="segmentAssignedStaff"
           >
             0
           </span>
+
         </div>
 
 
         <div class="summary-card">
+
           <span class="summary-label">
             Members
           </span>
 
           <span
             class="summary-value"
-            id="memberAssignments"
+            id="memberAssignedStaff"
           >
             0
           </span>
+
         </div>
 
       </div>
@@ -829,13 +1025,15 @@
         <div class="table-header">
 
           <div>
+
             <div class="table-title">
               Current Assignments
             </div>
 
             <div class="table-subtitle">
-              Live assignment data from the Supabase database
+              One row per staff member. Expand a staff member to see all assigned events.
             </div>
+
           </div>
 
           <button
@@ -861,6 +1059,7 @@
             class="filter-select"
             id="roleFilter"
           >
+
             <option value="">
               All Staff Types
             </option>
@@ -872,6 +1071,7 @@
             <option value="member">
               Member
             </option>
+
           </select>
 
         </div>
@@ -882,6 +1082,7 @@
           <table>
 
             <thead>
+
               <tr>
 
                 <th>
@@ -893,18 +1094,15 @@
                 </th>
 
                 <th>
-                  Event
+                  Assigned Events
                 </th>
 
                 <th>
                   Account
                 </th>
 
-                <th>
-                  Action
-                </th>
-
               </tr>
+
             </thead>
 
             <tbody id="assignmentsTableBody">
@@ -947,11 +1145,11 @@
       <div>
 
         <div class="modal-title">
-          Assign Staff to Event
+          Assign Staff to Events
         </div>
 
         <div class="modal-subtitle">
-          Select an active Segment Executive or Member and an event.
+          Select an active Segment Executive or Member, then choose one or multiple events.
         </div>
 
       </div>
@@ -974,6 +1172,8 @@
         id="modalMessage"
       ></div>
 
+
+      <!-- STAFF -->
 
       <div class="form-group">
 
@@ -1002,25 +1202,33 @@
       </div>
 
 
+      <!-- EVENTS -->
+
       <div class="form-group">
 
-        <label
-          class="form-label"
-          for="eventSelect"
-        >
-          Event
+        <label class="form-label">
+          Events
         </label>
 
-        <select
-          class="form-select"
-          id="eventSelect"
+        <div
+          class="event-selector"
+          id="eventSelector"
         >
+          <div class="form-help">
+            Select a staff member first.
+          </div>
+        </div>
 
-          <option value="">
-            Select event
-          </option>
+        <div
+          class="selection-count"
+          id="selectionCount"
+        >
+          0 new events selected
+        </div>
 
-        </select>
+        <div class="form-help">
+          Events already assigned to this staff member are shown as already assigned and cannot be duplicated.
+        </div>
 
       </div>
 
@@ -1042,7 +1250,7 @@
         id="assignButton"
         type="button"
       >
-        Assign Staff
+        Assign Selected Events
       </button>
 
     </div>
@@ -1064,9 +1272,16 @@
 
 
   let currentProfile = null;
+
   let assignments = [];
+
   let staffMembers = [];
+
+  let activeStaffMembers = [];
+
   let events = [];
+
+  let expandedStaffIds = new Set();
 
 
   /* ========================================= */
@@ -1095,9 +1310,38 @@
   }
 
 
+  function formatAccountStatus(status) {
+
+    if (status === "active") {
+      return "Active";
+    }
+
+    if (status === "deactivated") {
+      return "Deactivated";
+    }
+
+    if (status === "suspended") {
+      return "Suspended";
+    }
+
+    if (status === "pending") {
+      return "Pending";
+    }
+
+    if (status === "rejected") {
+      return "Rejected";
+    }
+
+    return status || "Unknown";
+  }
+
+
   function escapeHtml(value) {
 
-    if (value === null || value === undefined) {
+    if (
+      value === null ||
+      value === undefined
+    ) {
       return "";
     }
 
@@ -1110,12 +1354,18 @@
   }
 
 
-  function showPageMessage(message, type) {
+  function showPageMessage(
+    message,
+    type
+  ) {
 
     const element =
-      document.getElementById("pageMessage");
+      document.getElementById(
+        "pageMessage"
+      );
 
-    element.textContent = message;
+    element.textContent =
+      message;
 
     element.className =
       "message show " + type;
@@ -1125,21 +1375,30 @@
   function clearPageMessage() {
 
     const element =
-      document.getElementById("pageMessage");
+      document.getElementById(
+        "pageMessage"
+      );
 
-    element.textContent = "";
+    element.textContent =
+      "";
 
     element.className =
       "message";
   }
 
 
-  function showModalMessage(message, type) {
+  function showModalMessage(
+    message,
+    type
+  ) {
 
     const element =
-      document.getElementById("modalMessage");
+      document.getElementById(
+        "modalMessage"
+      );
 
-    element.textContent = message;
+    element.textContent =
+      message;
 
     element.className =
       "message show " + type;
@@ -1149,9 +1408,12 @@
   function clearModalMessage() {
 
     const element =
-      document.getElementById("modalMessage");
+      document.getElementById(
+        "modalMessage"
+      );
 
-    element.textContent = "";
+    element.textContent =
+      "";
 
     element.className =
       "message";
@@ -1168,7 +1430,8 @@
       data: {
         session
       }
-    } = await supabaseClient.auth.getSession();
+    } =
+      await supabaseClient.auth.getSession();
 
 
     if (!session) {
@@ -1183,9 +1446,10 @@
     const {
       data,
       error
-    } = await supabaseClient.rpc(
-      "get_my_staff_profile"
-    );
+    } =
+      await supabaseClient.rpc(
+        "get_my_staff_profile"
+      );
 
 
     if (error) {
@@ -1193,7 +1457,10 @@
     }
 
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
       throw new Error(
         "No staff profile was found for this account."
@@ -1202,7 +1469,8 @@
     }
 
 
-    const profile = data[0];
+    const profile =
+      data[0];
 
 
     document.getElementById(
@@ -1221,15 +1489,20 @@
       "userAvatar"
     ).textContent =
       profile.full_name
-        ? profile.full_name.trim().charAt(0).toUpperCase()
+        ? profile.full_name
+            .trim()
+            .charAt(0)
+            .toUpperCase()
         : "?";
 
 
     if (
       profile.account_status !== "active" ||
       (
-        profile.role !== "supreme_executive" &&
-        profile.role !== "higher_executive"
+        profile.role !==
+          "supreme_executive" &&
+        profile.role !==
+          "higher_executive"
       )
     ) {
 
@@ -1240,7 +1513,9 @@
     }
 
 
-    currentProfile = profile;
+    currentProfile =
+      profile;
+
 
     return profile;
   }
@@ -1255,29 +1530,28 @@
     const {
       data,
       error
-    } = await supabaseClient
-      .from("staff_management_directory")
-      .select(`
-        id,
-        full_name,
-        phone,
-        role,
-        account_status
-      `)
-      .in(
-        "role",
-        [
-          "segment_executive",
-          "member"
-        ]
-      )
-      .eq(
-        "account_status",
-        "active"
-      )
-      .order(
-        "full_name"
-      );
+    } =
+      await supabaseClient
+        .from(
+          "staff_management_directory"
+        )
+        .select(`
+          id,
+          full_name,
+          phone,
+          role,
+          account_status
+        `)
+        .in(
+          "role",
+          [
+            "segment_executive",
+            "member"
+          ]
+        )
+        .order(
+          "full_name"
+        );
 
 
     if (error) {
@@ -1287,6 +1561,14 @@
 
     staffMembers =
       data || [];
+
+
+    activeStaffMembers =
+      staffMembers.filter(
+        staff =>
+          staff.account_status ===
+          "active"
+      );
 
 
     populateStaffSelect();
@@ -1308,11 +1590,13 @@
     `;
 
 
-    staffMembers.forEach(
+    activeStaffMembers.forEach(
       staff => {
 
         const option =
-          document.createElement("option");
+          document.createElement(
+            "option"
+          );
 
         option.value =
           staff.id;
@@ -1320,10 +1604,13 @@
         option.textContent =
           `${staff.full_name} — ${formatRole(staff.role)}`;
 
-        select.appendChild(option);
+        select.appendChild(
+          option
+        );
 
       }
     );
+
   }
 
 
@@ -1336,16 +1623,17 @@
     const {
       data,
       error
-    } = await supabaseClient
-      .from("events")
-      .select(`
-        id,
-        name,
-        slug
-      `)
-      .order(
-        "name"
-      );
+    } =
+      await supabaseClient
+        .from("events")
+        .select(`
+          id,
+          name,
+          slug
+        `)
+        .order(
+          "name"
+        );
 
 
     if (error) {
@@ -1356,42 +1644,6 @@
     events =
       data || [];
 
-
-    populateEventSelect();
-  }
-
-
-  function populateEventSelect() {
-
-    const select =
-      document.getElementById(
-        "eventSelect"
-      );
-
-
-    select.innerHTML = `
-      <option value="">
-        Select event
-      </option>
-    `;
-
-
-    events.forEach(
-      event => {
-
-        const option =
-          document.createElement("option");
-
-        option.value =
-          event.id;
-
-        option.textContent =
-          event.name;
-
-        select.appendChild(option);
-
-      }
-    );
   }
 
 
@@ -1404,20 +1656,21 @@
     const {
       data,
       error
-    } = await supabaseClient
-      .from("event_assignments")
-      .select(`
-        id,
-        staff_id,
-        event_id,
-        created_at
-      `)
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+    } =
+      await supabaseClient
+        .from("event_assignments")
+        .select(`
+          id,
+          staff_id,
+          event_id,
+          created_at
+        `)
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
 
 
     if (error) {
@@ -1452,18 +1705,89 @@
 
 
     assignments =
-      rows.map(
-        row => ({
-          ...row,
-          staff: staffMap.get(row.staff_id) || null,
-          event: eventMap.get(row.event_id) || null
-        })
-      );
+      rows
+        .map(
+          row => ({
+            ...row,
+
+            staff:
+              staffMap.get(
+                row.staff_id
+              ) || null,
+
+            event:
+              eventMap.get(
+                row.event_id
+              ) || null
+          })
+        )
+        .filter(
+          row =>
+            row.staff &&
+            row.event
+        );
 
 
     renderAssignments(
       assignments
     );
+
+  }
+
+
+  /* ========================================= */
+  /* GROUP ASSIGNMENTS BY STAFF */
+  /* ========================================= */
+
+  function groupAssignments(rows) {
+
+    const map =
+      new Map();
+
+
+    rows.forEach(
+      row => {
+
+        if (
+          !row.staff ||
+          !row.event
+        ) {
+          return;
+        }
+
+
+        if (
+          !map.has(
+            row.staff_id
+          )
+        ) {
+
+          map.set(
+            row.staff_id,
+            {
+              staff:
+                row.staff,
+
+              assignments: []
+            }
+          );
+
+        }
+
+
+        map
+          .get(row.staff_id)
+          .assignments
+          .push(row);
+
+      }
+    );
+
+
+    return Array.from(
+      map.values()
+    );
+
   }
 
 
@@ -1471,7 +1795,9 @@
   /* RENDER */
   /* ========================================= */
 
-  function renderAssignments(rows) {
+  function renderAssignments(
+    rows
+  ) {
 
     const body =
       document.getElementById(
@@ -1479,7 +1805,8 @@
       );
 
 
-    body.innerHTML = "";
+    body.innerHTML =
+      "";
 
 
     const search =
@@ -1496,47 +1823,72 @@
       ).value;
 
 
-    const filtered =
-      rows.filter(
-        row => {
+    const grouped =
+      groupAssignments(
+        rows
+      );
+
+
+    const filteredGroups =
+      grouped.filter(
+        group => {
 
           const staff =
-            row.staff;
-
-          const event =
-            row.event;
+            group.staff;
 
 
-          if (!staff || !event) {
+          if (
+            roleFilter &&
+            staff.role !==
+              roleFilter
+          ) {
             return false;
           }
 
 
-          const searchText =
+          const staffText =
             [
               staff.full_name,
               staff.phone,
-              event.name,
-              event.slug
+              formatRole(
+                staff.role
+              ),
+              formatAccountStatus(
+                staff.account_status
+              )
             ]
               .filter(Boolean)
               .join(" ")
               .toLowerCase();
 
 
-          const matchesSearch =
-            !search ||
-            searchText.includes(search);
+          const eventText =
+            group.assignments
+              .map(
+                assignment =>
+                  [
+                    assignment.event.name,
+                    assignment.event.slug
+                  ]
+                    .filter(Boolean)
+                    .join(" ")
+              )
+              .join(" ")
+              .toLowerCase();
 
 
-          const matchesRole =
-            !roleFilter ||
-            staff.role === roleFilter;
+          if (!search) {
+            return true;
+          }
 
 
           return (
-            matchesSearch &&
-            matchesRole
+            staffText.includes(
+              search
+            ) ||
+            eventText.includes(
+              search
+            )
           );
 
         }
@@ -1544,15 +1896,17 @@
 
 
     updateSummary(
-      assignments
+      grouped
     );
 
 
-    if (filtered.length === 0) {
+    if (
+      filteredGroups.length === 0
+    ) {
 
       body.innerHTML = `
         <tr>
-          <td colspan="5">
+          <td colspan="4">
             <div class="empty-state">
               No event assignments found.
             </div>
@@ -1564,30 +1918,47 @@
     }
 
 
-    filtered.forEach(
-      row => {
+    filteredGroups.forEach(
+      group => {
 
         const staff =
-          row.staff;
+          group.staff;
 
-        const event =
-          row.event;
+
+        const groupAssignmentsList =
+          group.assignments;
+
+
+        const staffId =
+          staff.id;
+
+
+        const isExpanded =
+          expandedStaffIds.has(
+            staffId
+          );
 
 
         const roleBadge =
-          staff.role === "segment_executive"
+          staff.role ===
+          "segment_executive"
             ? "badge-segment"
             : "badge-member";
 
 
         const accountBadge =
-          staff.account_status === "active"
+          staff.account_status ===
+          "active"
             ? "badge-active"
             : "badge-inactive";
 
 
+        /* MAIN ROW */
+
         const tr =
-          document.createElement("tr");
+          document.createElement(
+            "tr"
+          );
 
 
         tr.innerHTML = `
@@ -1595,11 +1966,16 @@
           <td>
 
             <div class="staff-name">
-              ${escapeHtml(staff.full_name)}
+              ${escapeHtml(
+                staff.full_name
+              )}
             </div>
 
             <div class="staff-phone">
-              ${escapeHtml(staff.phone || "No phone")}
+              ${escapeHtml(
+                staff.phone ||
+                "No phone"
+              )}
             </div>
 
           </td>
@@ -1608,29 +1984,11 @@
           <td>
 
             <span class="badge ${roleBadge}">
-              ${escapeHtml(formatRole(staff.role))}
-            </span>
-
-          </td>
-
-
-          <td>
-
-            <div class="event-name">
-              ${escapeHtml(event.name)}
-            </div>
-
-            <div class="event-slug">
-              ${escapeHtml(event.slug)}
-            </div>
-
-          </td>
-
-
-          <td>
-
-            <span class="badge ${accountBadge}">
-              ${escapeHtml(formatRole(staff.account_status))}
+              ${escapeHtml(
+                formatRole(
+                  staff.role
+                )
+              )}
             </span>
 
           </td>
@@ -1639,26 +1997,242 @@
           <td>
 
             <button
-              class="remove-button"
-              data-assignment-id="${row.id}"
-              data-staff-id="${row.staff_id}"
-              data-event-id="${row.event_id}"
+              type="button"
+              class="event-summary-button ${
+                isExpanded
+                  ? "expanded"
+                  : ""
+              }"
+              data-staff-id="${escapeHtml(
+                staffId
+              )}"
             >
-              Remove
+              ${groupAssignmentsList.length}
+              ${
+                groupAssignmentsList.length === 1
+                  ? "event"
+                  : "events"
+              }
+
+              <span class="arrow">
+                ▼
+              </span>
+
             </button>
+
+          </td>
+
+
+          <td>
+
+            <span class="badge ${accountBadge}">
+              ${escapeHtml(
+                formatAccountStatus(
+                  staff.account_status
+                )
+              )}
+            </span>
 
           </td>
 
         `;
 
 
-        body.appendChild(tr);
+        body.appendChild(
+          tr
+        );
+
+
+        /* DETAILS ROW */
+
+        const detailsRow =
+          document.createElement(
+            "tr"
+          );
+
+
+        detailsRow.className =
+          "assignment-details-row" +
+          (
+            isExpanded
+              ? " show"
+              : ""
+          );
+
+
+        const detailsCell =
+          document.createElement(
+            "td"
+          );
+
+
+        detailsCell.colSpan =
+          4;
+
+
+        detailsCell.className =
+          "assignment-details-cell";
+
+
+        const details =
+          document.createElement(
+            "div"
+          );
+
+
+        details.className =
+          "assignment-details";
+
+
+        details.innerHTML = `
+
+          <div class="assignment-details-title">
+            Assigned Events
+          </div>
+
+          <div class="assignment-event-list">
+          </div>
+
+        `;
+
+
+        const eventList =
+          details.querySelector(
+            ".assignment-event-list"
+          );
+
+
+        groupAssignmentsList
+          .sort(
+            (a, b) =>
+              a.event.name.localeCompare(
+                b.event.name
+              )
+          )
+          .forEach(
+            assignment => {
+
+              const item =
+                document.createElement(
+                  "div"
+                );
+
+
+              item.className =
+                "assignment-event-item";
+
+
+              item.innerHTML = `
+
+                <div class="assignment-event-info">
+
+                  <div class="assignment-event-name">
+                    ${escapeHtml(
+                      assignment.event.name
+                    )}
+                  </div>
+
+                  <div class="assignment-event-slug">
+                    ${escapeHtml(
+                      assignment.event.slug
+                    )}
+                  </div>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  class="remove-button"
+                  data-staff-id="${escapeHtml(
+                    assignment.staff_id
+                  )}"
+                  data-event-id="${escapeHtml(
+                    assignment.event_id
+                  )}"
+                >
+                  Remove
+                </button>
+
+              `;
+
+
+              eventList.appendChild(
+                item
+              );
+
+            }
+          );
+
+
+        detailsCell.appendChild(
+          details
+        );
+
+
+        detailsRow.appendChild(
+          detailsCell
+        );
+
+
+        body.appendChild(
+          detailsRow
+        );
 
       }
     );
 
 
-    document
+    /* EXPAND BUTTONS */
+
+    body
+      .querySelectorAll(
+        ".event-summary-button"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const staffId =
+                button.dataset.staffId;
+
+
+              if (
+                expandedStaffIds.has(
+                  staffId
+                )
+              ) {
+
+                expandedStaffIds.delete(
+                  staffId
+                );
+
+              } else {
+
+                expandedStaffIds.add(
+                  staffId
+                );
+
+              }
+
+
+              renderAssignments(
+                assignments
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /* REMOVE BUTTONS */
+
+    body
       .querySelectorAll(
         ".remove-button"
       )
@@ -1670,7 +2244,6 @@
             () => {
 
               removeAssignment(
-                button.dataset.assignmentId,
                 button.dataset.staffId,
                 button.dataset.eventId
               );
@@ -1680,54 +2253,262 @@
 
         }
       );
+
   }
 
 
-  function updateSummary(rows) {
+  /* ========================================= */
+  /* SUMMARY */
+  /* ========================================= */
+
+  function updateSummary(
+    grouped
+  ) {
 
     const total =
-      rows.length;
+      grouped.length;
 
 
     const segment =
-      rows.filter(
-        row =>
-          row.staff &&
-          row.staff.role ===
+      grouped.filter(
+        group =>
+          group.staff &&
+          group.staff.role ===
             "segment_executive"
       ).length;
 
 
     const members =
-      rows.filter(
-        row =>
-          row.staff &&
-          row.staff.role ===
+      grouped.filter(
+        group =>
+          group.staff &&
+          group.staff.role ===
             "member"
       ).length;
 
 
     document.getElementById(
-      "totalAssignments"
+      "totalAssignedStaff"
     ).textContent =
       total;
 
 
     document.getElementById(
-      "segmentAssignments"
+      "segmentAssignedStaff"
     ).textContent =
       segment;
 
 
     document.getElementById(
-      "memberAssignments"
+      "memberAssignedStaff"
     ).textContent =
       members;
+
   }
 
 
   /* ========================================= */
-  /* ASSIGN */
+  /* EVENT CHECKBOXES */
+  /* ========================================= */
+
+  function renderEventSelector() {
+
+    const selector =
+      document.getElementById(
+        "eventSelector"
+      );
+
+
+    const staffId =
+      document.getElementById(
+        "staffSelect"
+      ).value;
+
+
+    selector.innerHTML =
+      "";
+
+
+    if (!staffId) {
+
+      selector.innerHTML = `
+        <div class="form-help">
+          Select a staff member first.
+        </div>
+      `;
+
+      updateSelectionCount();
+
+      return;
+    }
+
+
+    const assignedEventIds =
+      new Set(
+        assignments
+          .filter(
+            assignment =>
+              assignment.staff_id ===
+              staffId
+          )
+          .map(
+            assignment =>
+              assignment.event_id
+          )
+      );
+
+
+    if (
+      events.length === 0
+    ) {
+
+      selector.innerHTML = `
+        <div class="form-help">
+          No events are available.
+        </div>
+      `;
+
+      updateSelectionCount();
+
+      return;
+    }
+
+
+    events.forEach(
+      event => {
+
+        const label =
+          document.createElement(
+            "label"
+          );
+
+
+        const alreadyAssigned =
+          assignedEventIds.has(
+            event.id
+          );
+
+
+        label.className =
+          "event-option" +
+          (
+            alreadyAssigned
+              ? " disabled"
+              : ""
+          );
+
+
+        const checkbox =
+          document.createElement(
+            "input"
+          );
+
+
+        checkbox.type =
+          "checkbox";
+
+        checkbox.value =
+          event.id;
+
+        checkbox.disabled =
+          alreadyAssigned;
+
+
+        checkbox.addEventListener(
+          "change",
+          updateSelectionCount
+        );
+
+
+        const content =
+          document.createElement(
+            "div"
+          );
+
+
+        content.className =
+          "event-option-content";
+
+
+        content.innerHTML = `
+
+          <div class="event-option-name">
+
+            ${escapeHtml(
+              event.name
+            )}
+
+            ${
+              alreadyAssigned
+                ? `
+                  <span class="already-assigned">
+                    Already assigned
+                  </span>
+                `
+                : ""
+            }
+
+          </div>
+
+          <div class="event-option-slug">
+            ${escapeHtml(
+              event.slug
+            )}
+          </div>
+
+        `;
+
+
+        label.appendChild(
+          checkbox
+        );
+
+        label.appendChild(
+          content
+        );
+
+
+        selector.appendChild(
+          label
+        );
+
+      }
+    );
+
+
+    updateSelectionCount();
+
+  }
+
+
+  function updateSelectionCount() {
+
+    const selector =
+      document.getElementById(
+        "eventSelector"
+      );
+
+
+    const checked =
+      selector.querySelectorAll(
+        'input[type="checkbox"]:checked:not(:disabled)'
+      ).length;
+
+
+    document.getElementById(
+      "selectionCount"
+    ).textContent =
+      `${checked} new ${
+        checked === 1
+          ? "event"
+          : "events"
+      } selected`;
+
+  }
+
+
+  /* ========================================= */
+  /* ASSIGN STAFF TO MULTIPLE EVENTS */
   /* ========================================= */
 
   async function assignStaff() {
@@ -1738,12 +2519,6 @@
     const staffId =
       document.getElementById(
         "staffSelect"
-      ).value;
-
-
-    const eventId =
-      document.getElementById(
-        "eventSelect"
       ).value;
 
 
@@ -1758,10 +2533,23 @@
     }
 
 
-    if (!eventId) {
+    const selectedEventIds =
+      Array.from(
+        document.querySelectorAll(
+          '#eventSelector input[type="checkbox"]:checked:not(:disabled)'
+        )
+      ).map(
+        checkbox =>
+          checkbox.value
+      );
+
+
+    if (
+      selectedEventIds.length === 0
+    ) {
 
       showModalMessage(
-        "Please select an event.",
+        "Please select at least one new event.",
         "error"
       );
 
@@ -1771,13 +2559,17 @@
 
     const {
       error
-    } = await supabaseClient.rpc(
-      "assign_staff_to_event",
-      {
-        p_staff_id: staffId,
-        p_event_id: eventId
-      }
-    );
+    } =
+      await supabaseClient.rpc(
+        "assign_staff_to_events",
+        {
+          p_staff_id:
+            staffId,
+
+          p_event_ids:
+            selectedEventIds
+        }
+      );
 
 
     if (error) {
@@ -1794,35 +2586,57 @@
     closeAssignModal();
 
 
+    const staff =
+      activeStaffMembers.find(
+        item =>
+          item.id ===
+          staffId
+      );
+
+
     showPageMessage(
-      "Staff member assigned to the event successfully.",
+      `${
+        selectedEventIds.length
+      } ${
+        selectedEventIds.length === 1
+          ? "event"
+          : "events"
+      } assigned to ${
+        staff
+          ? staff.full_name
+          : "the staff member"
+      } successfully.`,
       "success"
     );
 
 
     await loadAssignments();
+
   }
 
 
   /* ========================================= */
-  /* REMOVE */
+  /* REMOVE ONE EVENT ASSIGNMENT */
   /* ========================================= */
 
   async function removeAssignment(
-    assignmentId,
     staffId,
     eventId
   ) {
 
     const staff =
       staffMembers.find(
-        item => item.id === staffId
+        item =>
+          item.id ===
+          staffId
       );
 
 
     const event =
       events.find(
-        item => item.id === eventId
+        item =>
+          item.id ===
+          eventId
       );
 
 
@@ -1850,13 +2664,17 @@
 
     const {
       error
-    } = await supabaseClient.rpc(
-      "remove_staff_from_event",
-      {
-        p_staff_id: staffId,
-        p_event_id: eventId
-      }
-    );
+    } =
+      await supabaseClient.rpc(
+        "remove_staff_from_event",
+        {
+          p_staff_id:
+            staffId,
+
+          p_event_id:
+            eventId
+        }
+      );
 
 
     if (error) {
@@ -1877,6 +2695,7 @@
 
 
     await loadAssignments();
+
   }
 
 
@@ -1888,18 +2707,34 @@
 
     clearModalMessage();
 
-    document.getElementById(
-      "staffSelect"
-    ).value = "";
 
     document.getElementById(
-      "eventSelect"
-    ).value = "";
+      "staffSelect"
+    ).value =
+      "";
+
+
+    document.getElementById(
+      "eventSelector"
+    ).innerHTML = `
+      <div class="form-help">
+        Select a staff member first.
+      </div>
+    `;
+
+
+    document.getElementById(
+      "selectionCount"
+    ).textContent =
+      "0 new events selected";
 
 
     document.getElementById(
       "assignModal"
-    ).classList.add("show");
+    ).classList.add(
+      "show"
+    );
+
   }
 
 
@@ -1907,9 +2742,13 @@
 
     document.getElementById(
       "assignModal"
-    ).classList.remove("show");
+    ).classList.remove(
+      "show"
+    );
+
 
     clearModalMessage();
+
   }
 
 
@@ -1930,9 +2769,13 @@
 
       await loadAssignments();
 
+
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        error
+      );
+
 
       showPageMessage(
         error.message ||
@@ -1955,6 +2798,7 @@
 
     window.location.href =
       "login.html";
+
   }
 
 
@@ -1989,7 +2833,10 @@
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        error
+      );
+
 
       document.getElementById(
         "loading"
@@ -2058,11 +2905,27 @@
 
   document
     .getElementById(
+      "staffSelect"
+    )
+    .addEventListener(
+      "change",
+      renderEventSelector
+    );
+
+
+  document
+    .getElementById(
       "searchInput"
     )
     .addEventListener(
       "input",
-      () => renderAssignments(assignments)
+      () => {
+
+        renderAssignments(
+          assignments
+        );
+
+      }
     );
 
 
@@ -2072,7 +2935,13 @@
     )
     .addEventListener(
       "change",
-      () => renderAssignments(assignments)
+      () => {
+
+        renderAssignments(
+          assignments
+        );
+
+      }
     );
 
 
@@ -2098,7 +2967,9 @@
           event.target.id ===
           "assignModal"
         ) {
+
           closeAssignModal();
+
         }
 
       }
