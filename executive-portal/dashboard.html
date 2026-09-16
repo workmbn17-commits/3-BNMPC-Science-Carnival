@@ -75,6 +75,7 @@
       margin-bottom: 4px;
       cursor: pointer;
       font-size: 14px;
+      transition: 0.2s ease;
     }
 
     .nav-button:hover {
@@ -102,6 +103,7 @@
       padding: 11px;
       border-radius: 9px;
       cursor: pointer;
+      transition: 0.2s ease;
     }
 
     .logout-button:hover {
@@ -260,11 +262,13 @@
       cursor: pointer;
       background: white;
       text-align: left;
+      transition: 0.2s ease;
     }
 
     .action-card:hover {
       border-color: #2563eb;
       background: #f8fbff;
+      transform: translateY(-1px);
     }
 
     .action-title {
@@ -386,13 +390,13 @@
 
     <div class="nav-section">Overview</div>
 
-    <button class="nav-button active">
+    <button class="nav-button active" id="dashboardNav">
       Dashboard
     </button>
 
     <div class="nav-section">Management</div>
 
-    <button class="nav-button">
+    <button class="nav-button" id="eventsNav">
       Events
     </button>
 
@@ -576,7 +580,7 @@
 
           <div class="quick-actions">
 
-            <button class="action-card">
+            <button class="action-card" id="manageEventsButton">
 
               <div class="action-title">
                 Manage Events
@@ -883,6 +887,30 @@
       data ? data.length : 0;
 
   }
+
+
+  document.getElementById("eventsNav")
+    .addEventListener("click", () => {
+
+      window.location.href = "events.html";
+
+    });
+
+
+  document.getElementById("manageEventsButton")
+    .addEventListener("click", () => {
+
+      window.location.href = "events.html";
+
+    });
+
+
+  document.getElementById("dashboardNav")
+    .addEventListener("click", () => {
+
+      window.location.href = "dashboard.html";
+
+    });
 
 
   document.getElementById("logoutButton")
