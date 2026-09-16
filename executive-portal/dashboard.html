@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard — 3ʳᵈ BNMPC Science Carnival</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <h1>Executive Dashboard</h1>
+  <p>3ʳᵈ BNMPC Science Carnival</p>
+
+  <div id="loading">Loading account...</div>
+
+  <div id="dashboard" style="display:none;">
+
+    <h2 id="welcome"></h2>
+
+    <p>
+      Role:
+      <strong id="role"></strong>
+    </p>
+
+    <p>
+      Account status:
+      <strong id="status"></strong>
+    </p>
+
+    <button id="logoutButton">Log Out</button>
+
+  </div>
+
+  <script src="supabase-config.js"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    async function loadDashboard() {
+
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      if (!session) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const { data, error } =
+        await supabaseClient.rpc("get_my_staff_profile");
+
+      if (error) {
+        document.getElementById("loading").textContent =
+          "Unable to load your staff profile.";
+        console.error(error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        document.getElementById("loading").textContent =
+          "No staff profile was found for this account.";
+        return;
+      }
+
+      const profile = data[0];
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+
+      document.getElementById("welcome").textContent =
+        "Welcome, " + profile.full_name;
+
+      document.getElementById("role").textContent =
+        profile.role;
+
+      document.getElementById("status").textContent =
+        profile.account_status;
+
+      if (profile.account_status !== "active") {
+        document.getElementById("dashboard").innerHTML +=
+          "<p>Your account is not currently active.</p>";
+      }
+    }
+
+    document.getElementById("logoutButton").addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href = "login.html";
+      }
+    );
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>
