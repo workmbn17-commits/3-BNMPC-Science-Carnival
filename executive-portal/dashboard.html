@@ -25,8 +25,6 @@
       min-height: 100vh;
     }
 
-    /* SIDEBAR */
-
     .sidebar {
       width: 260px;
       background: #111827;
@@ -111,8 +109,6 @@
       color: white;
     }
 
-    /* MAIN */
-
     .main {
       margin-left: 260px;
       width: calc(100% - 260px);
@@ -185,8 +181,6 @@
       color: #6b7280;
       font-size: 14px;
     }
-
-    /* CARDS */
 
     .stats-grid {
       display: grid;
@@ -330,8 +324,6 @@
       border-radius: 12px;
     }
 
-    /* RESPONSIVE */
-
     @media (max-width: 1100px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -378,8 +370,6 @@
 <body>
 
 <div class="app">
-
-  <!-- SIDEBAR -->
 
   <aside class="sidebar">
 
@@ -443,8 +433,6 @@
   </aside>
 
 
-  <!-- MAIN CONTENT -->
-
   <main class="main">
 
     <header class="topbar">
@@ -493,8 +481,6 @@
 
       </div>
 
-
-      <!-- STATISTICS -->
 
       <div class="stats-grid">
 
@@ -571,8 +557,6 @@
       <div class="section-grid">
 
 
-        <!-- QUICK ACTIONS -->
-
         <div class="panel">
 
           <div class="panel-header">
@@ -647,8 +631,6 @@
 
         </div>
 
-
-        <!-- SYSTEM STATUS -->
 
         <div class="panel">
 
@@ -876,19 +858,26 @@
   async function loadEventCount() {
 
     const {
-      data,
+      count,
       error
     } = await supabaseClient
       .from("events")
       .select("id", { count: "exact", head: true });
 
 
-    if (!error) {
+    if (error) {
 
-      document.getElementById("eventCount").textContent =
-        data === null ? "—" : "20";
+      console.error(
+        "Unable to load event count:",
+        error
+      );
 
+      return;
     }
+
+
+    document.getElementById("eventCount").textContent =
+      count ?? 0;
 
   }
 
