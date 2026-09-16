@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Event Assignments — 3ʳᵈ BNMPC National Science Carnival</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ========================= */
+    /* SIDEBAR */
+    /* ========================= */
+
+    .sidebar {
+      width: 260px;
+      background: #111827;
+      color: white;
+      padding: 24px 16px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .brand {
+      padding: 4px 12px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 22px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .brand-subtitle {
+      margin-top: 7px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .nav-section {
+      margin: 20px 12px 8px;
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #d1d5db;
+      text-align: left;
+      padding: 12px;
+      border-radius: 9px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .nav-button:hover {
+      background: #1f2937;
+      color: white;
+    }
+
+    .nav-button.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 20px;
+    }
+
+    .logout-button {
+      width: 100%;
+      border: 1px solid #374151;
+      background: transparent;
+      color: #d1d5db;
+      padding: 11px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .logout-button:hover {
+      background: #1f2937;
+      color: white;
+    }
+
+    /* ========================= */
+    /* MAIN */
+    /* ========================= */
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* ========================= */
+    /* CONTENT */
+    /* ========================= */
+
+    .content {
+      padding: 32px;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 26px;
+      gap: 20px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-heading p {
+      margin: 8px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .primary-button {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .primary-button:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary-button {
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      padding: 10px 15px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .secondary-button:hover {
+      background: #f9fafb;
+    }
+
+    /* ========================= */
+    /* SUMMARY */
+    /* ========================= */
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .summary-label {
+      display: block;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 9px;
+    }
+
+    .summary-value {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    /* ========================= */
+    /* TABLE */
+    /* ========================= */
+
+    .table-panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .table-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .table-subtitle {
+      margin-top: 5px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      padding: 16px 22px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fafafa;
+    }
+
+    .filter-input,
+    .filter-select {
+      border: 1px solid #d1d5db;
+      background: white;
+      border-radius: 8px;
+      padding: 10px 11px;
+      font-size: 13px;
+      color: #172033;
+    }
+
+    .filter-input {
+      min-width: 240px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #6b7280;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      padding: 13px 18px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 15px 18px;
+      border-bottom: 1px solid #eef0f3;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .staff-name {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .staff-phone {
+      margin-top: 3px;
+      color: #6b7280;
+      font-size: 11px;
+    }
+
+    .event-name {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .event-slug {
+      margin-top: 3px;
+      color: #6b7280;
+      font-size: 11px;
+    }
+
+    /* ========================= */
+    /* BADGES */
+    /* ========================= */
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-member {
+      background: #eef2ff;
+      color: #4338ca;
+    }
+
+    .badge-segment {
+      background: #ecfeff;
+      color: #0f766e;
+    }
+
+    .badge-active {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .badge-inactive {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    /* ========================= */
+    /* ACTION */
+    /* ========================= */
+
+    .remove-button {
+      border: 1px solid #fecaca;
+      background: #fff;
+      color: #b91c1c;
+      padding: 7px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .remove-button:hover {
+      background: #fef2f2;
+    }
+
+    /* ========================= */
+    /* MODAL */
+    /* ========================= */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .modal-subtitle {
+      margin-top: 5px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .close-button {
+      border: 0;
+      background: transparent;
+      font-size: 25px;
+      color: #6b7280;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #374151;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 13px;
+      background: white;
+    }
+
+    .form-help {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .modal-footer {
+      padding: 16px 22px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ========================= */
+    /* MESSAGES */
+    /* ========================= */
+
+    .message {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .loading {
+      padding: 60px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      padding: 45px 20px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    /* ========================= */
+    /* RESPONSIVE */
+    /* ========================= */
+
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 220px;
+      }
+
+      .main {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        min-height: auto;
+      }
+
+      .app {
+        display: block;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .sidebar-bottom {
+        position: static;
+        margin-top: 20px;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .page-heading {
+        flex-direction: column;
+      }
+
+      .filter-row {
+        flex-direction: column;
+      }
+
+      .filter-input {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ========================= -->
+  <!-- SIDEBAR -->
+  <!-- ========================= -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-title">
+        3ʳᵈ BNMPC<br>
+        National Science Carnival
+      </div>
+
+      <div class="brand-subtitle">
+        Executive Management Portal
+      </div>
+    </div>
+
+    <div class="nav-section">
+      Management
+    </div>
+
+    <button class="nav-button" onclick="window.location.href='dashboard.html'">
+      Dashboard
+    </button>
+
+    <button class="nav-button" onclick="window.location.href='events.html'">
+      Events
+    </button>
+
+    <button class="nav-button" onclick="window.location.href='registrations.html'">
+      Registrations
+    </button>
+
+    <button class="nav-button" onclick="window.location.href='payments.html'">
+      Payments
+    </button>
+
+    <button class="nav-button" onclick="window.location.href='staff.html'">
+      Staff & Executives
+    </button>
+
+    <button class="nav-button active">
+      Event Assignments
+    </button>
+
+    <button class="nav-button" onclick="window.location.href='reports.html'">
+      Reports
+    </button>
+
+    <button class="nav-button" onclick="window.location.href='settings.html'">
+      Settings
+    </button>
+
+    <div class="sidebar-bottom">
+      <button
+        class="logout-button"
+        id="logoutButton"
+      >
+        Log Out
+      </button>
+    </div>
+
+  </aside>
+
+
+  <!-- ========================= -->
+  <!-- MAIN -->
+  <!-- ========================= -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div class="page-title">
+        Event Assignments
+      </div>
+
+      <div class="user-area">
+
+        <div class="user-info">
+          <div
+            class="user-name"
+            id="topUserName"
+          >
+            Loading...
+          </div>
+
+          <div
+            class="user-role"
+            id="topUserRole"
+          >
+            Loading...
+          </div>
+        </div>
+
+        <div
+          class="user-avatar"
+          id="userAvatar"
+        >
+          ?
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- ========================= -->
+    <!-- CONTENT -->
+    <!-- ========================= -->
+
+    <section
+      class="content"
+      id="assignmentsContent"
+      style="display:none;"
+    >
+
+      <div class="page-heading">
+
+        <div>
+          <h1>
+            Event Assignments
+          </h1>
+
+          <p>
+            Assign Segment Executives and Members to the events they are responsible for.
+          </p>
+        </div>
+
+        <button
+          class="primary-button"
+          id="openAssignModalButton"
+        >
+          + Assign Staff
+        </button>
+
+      </div>
+
+
+      <div
+        class="message"
+        id="pageMessage"
+      ></div>
+
+
+      <!-- ========================= -->
+      <!-- SUMMARY -->
+      <!-- ========================= -->
+
+      <div class="summary-grid">
+
+        <div class="summary-card">
+          <span class="summary-label">
+            Total Assignments
+          </span>
+
+          <span
+            class="summary-value"
+            id="totalAssignments"
+          >
+            0
+          </span>
+        </div>
+
+
+        <div class="summary-card">
+          <span class="summary-label">
+            Segment Executives
+          </span>
+
+          <span
+            class="summary-value"
+            id="segmentAssignments"
+          >
+            0
+          </span>
+        </div>
+
+
+        <div class="summary-card">
+          <span class="summary-label">
+            Members
+          </span>
+
+          <span
+            class="summary-value"
+            id="memberAssignments"
+          >
+            0
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- ASSIGNMENT TABLE -->
+      <!-- ========================= -->
+
+      <div class="table-panel">
+
+        <div class="table-header">
+
+          <div>
+            <div class="table-title">
+              Current Assignments
+            </div>
+
+            <div class="table-subtitle">
+              Live assignment data from the Supabase database
+            </div>
+          </div>
+
+          <button
+            class="secondary-button"
+            id="refreshButton"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+
+        <div class="filter-row">
+
+          <input
+            type="text"
+            class="filter-input"
+            id="searchInput"
+            placeholder="Search staff or event..."
+          >
+
+          <select
+            class="filter-select"
+            id="roleFilter"
+          >
+            <option value="">
+              All Staff Types
+            </option>
+
+            <option value="segment_executive">
+              Segment Executive
+            </option>
+
+            <option value="member">
+              Member
+            </option>
+          </select>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+
+                <th>
+                  Staff
+                </th>
+
+                <th>
+                  Role
+                </th>
+
+                <th>
+                  Event
+                </th>
+
+                <th>
+                  Account
+                </th>
+
+                <th>
+                  Action
+                </th>
+
+              </tr>
+            </thead>
+
+            <tbody id="assignmentsTableBody">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <div
+      class="loading"
+      id="loading"
+    >
+      Loading event assignments...
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- ASSIGN MODAL -->
+<!-- ========================= -->
+
+<div
+  class="modal-overlay"
+  id="assignModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div>
+
+        <div class="modal-title">
+          Assign Staff to Event
+        </div>
+
+        <div class="modal-subtitle">
+          Select an active Segment Executive or Member and an event.
+        </div>
+
+      </div>
+
+      <button
+        class="close-button"
+        id="closeAssignModalButton"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div
+        class="message"
+        id="modalMessage"
+      ></div>
+
+
+      <div class="form-group">
+
+        <label
+          class="form-label"
+          for="staffSelect"
+        >
+          Staff Member
+        </label>
+
+        <select
+          class="form-select"
+          id="staffSelect"
+        >
+
+          <option value="">
+            Select staff member
+          </option>
+
+        </select>
+
+        <div class="form-help">
+          Only active Segment Executives and Members are available for assignment.
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label
+          class="form-label"
+          for="eventSelect"
+        >
+          Event
+        </label>
+
+        <select
+          class="form-select"
+          id="eventSelect"
+        >
+
+          <option value="">
+            Select event
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="secondary-button"
+        id="cancelAssignButton"
+        type="button"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="primary-button"
+        id="assignButton"
+        type="button"
+      >
+        Assign Staff
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="supabase-config.js"></script>
+
+<script>
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  let currentProfile = null;
+  let assignments = [];
+  let staffMembers = [];
+  let events = [];
+
+
+  /* ========================================= */
+  /* HELPERS */
+  /* ========================================= */
+
+  function formatRole(role) {
+
+    if (role === "supreme_executive") {
+      return "Supreme Executive";
+    }
+
+    if (role === "higher_executive") {
+      return "Higher Executive";
+    }
+
+    if (role === "segment_executive") {
+      return "Segment Executive";
+    }
+
+    if (role === "member") {
+      return "Member";
+    }
+
+    return role || "Unknown";
+  }
+
+
+  function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  function showPageMessage(message, type) {
+
+    const element =
+      document.getElementById("pageMessage");
+
+    element.textContent = message;
+
+    element.className =
+      "message show " + type;
+  }
+
+
+  function clearPageMessage() {
+
+    const element =
+      document.getElementById("pageMessage");
+
+    element.textContent = "";
+
+    element.className =
+      "message";
+  }
+
+
+  function showModalMessage(message, type) {
+
+    const element =
+      document.getElementById("modalMessage");
+
+    element.textContent = message;
+
+    element.className =
+      "message show " + type;
+  }
+
+
+  function clearModalMessage() {
+
+    const element =
+      document.getElementById("modalMessage");
+
+    element.textContent = "";
+
+    element.className =
+      "message";
+  }
+
+
+  /* ========================================= */
+  /* PROFILE */
+  /* ========================================= */
+
+  async function loadProfile() {
+
+    const {
+      data: {
+        session
+      }
+    } = await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+      window.location.href =
+        "login.html";
+
+      return null;
+    }
+
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_my_staff_profile"
+    );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (!data || data.length === 0) {
+
+      throw new Error(
+        "No staff profile was found for this account."
+      );
+
+    }
+
+
+    const profile = data[0];
+
+
+    document.getElementById(
+      "topUserName"
+    ).textContent =
+      profile.full_name;
+
+
+    document.getElementById(
+      "topUserRole"
+    ).textContent =
+      formatRole(profile.role);
+
+
+    document.getElementById(
+      "userAvatar"
+    ).textContent =
+      profile.full_name
+        ? profile.full_name.trim().charAt(0).toUpperCase()
+        : "?";
+
+
+    if (
+      profile.account_status !== "active" ||
+      (
+        profile.role !== "supreme_executive" &&
+        profile.role !== "higher_executive"
+      )
+    ) {
+
+      throw new Error(
+        "Supreme or Higher Executive access is required."
+      );
+
+    }
+
+
+    currentProfile = profile;
+
+    return profile;
+  }
+
+
+  /* ========================================= */
+  /* LOAD STAFF */
+  /* ========================================= */
+
+  async function loadStaffMembers() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("staff_management_directory")
+      .select(`
+        id,
+        full_name,
+        phone,
+        role,
+        account_status
+      `)
+      .in(
+        "role",
+        [
+          "segment_executive",
+          "member"
+        ]
+      )
+      .eq(
+        "account_status",
+        "active"
+      )
+      .order(
+        "full_name"
+      );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    staffMembers =
+      data || [];
+
+
+    populateStaffSelect();
+  }
+
+
+  function populateStaffSelect() {
+
+    const select =
+      document.getElementById(
+        "staffSelect"
+      );
+
+
+    select.innerHTML = `
+      <option value="">
+        Select staff member
+      </option>
+    `;
+
+
+    staffMembers.forEach(
+      staff => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          staff.id;
+
+        option.textContent =
+          `${staff.full_name} — ${formatRole(staff.role)}`;
+
+        select.appendChild(option);
+
+      }
+    );
+  }
+
+
+  /* ========================================= */
+  /* LOAD EVENTS */
+  /* ========================================= */
+
+  async function loadEvents() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("events")
+      .select(`
+        id,
+        name,
+        slug
+      `)
+      .order(
+        "name"
+      );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    events =
+      data || [];
+
+
+    populateEventSelect();
+  }
+
+
+  function populateEventSelect() {
+
+    const select =
+      document.getElementById(
+        "eventSelect"
+      );
+
+
+    select.innerHTML = `
+      <option value="">
+        Select event
+      </option>
+    `;
+
+
+    events.forEach(
+      event => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          event.id;
+
+        option.textContent =
+          event.name;
+
+        select.appendChild(option);
+
+      }
+    );
+  }
+
+
+  /* ========================================= */
+  /* LOAD ASSIGNMENTS */
+  /* ========================================= */
+
+  async function loadAssignments() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("event_assignments")
+      .select(`
+        id,
+        staff_id,
+        event_id,
+        created_at
+      `)
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const rows =
+      data || [];
+
+
+    const staffMap =
+      new Map(
+        staffMembers.map(
+          staff => [
+            staff.id,
+            staff
+          ]
+        )
+      );
+
+
+    const eventMap =
+      new Map(
+        events.map(
+          event => [
+            event.id,
+            event
+          ]
+        )
+      );
+
+
+    assignments =
+      rows.map(
+        row => ({
+          ...row,
+          staff: staffMap.get(row.staff_id) || null,
+          event: eventMap.get(row.event_id) || null
+        })
+      );
+
+
+    renderAssignments(
+      assignments
+    );
+  }
+
+
+  /* ========================================= */
+  /* RENDER */
+  /* ========================================= */
+
+  function renderAssignments(rows) {
+
+    const body =
+      document.getElementById(
+        "assignmentsTableBody"
+      );
+
+
+    body.innerHTML = "";
+
+
+    const search =
+      document.getElementById(
+        "searchInput"
+      ).value
+        .trim()
+        .toLowerCase();
+
+
+    const roleFilter =
+      document.getElementById(
+        "roleFilter"
+      ).value;
+
+
+    const filtered =
+      rows.filter(
+        row => {
+
+          const staff =
+            row.staff;
+
+          const event =
+            row.event;
+
+
+          if (!staff || !event) {
+            return false;
+          }
+
+
+          const searchText =
+            [
+              staff.full_name,
+              staff.phone,
+              event.name,
+              event.slug
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+
+
+          const matchesSearch =
+            !search ||
+            searchText.includes(search);
+
+
+          const matchesRole =
+            !roleFilter ||
+            staff.role === roleFilter;
+
+
+          return (
+            matchesSearch &&
+            matchesRole
+          );
+
+        }
+      );
+
+
+    updateSummary(
+      assignments
+    );
+
+
+    if (filtered.length === 0) {
+
+      body.innerHTML = `
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              No event assignments found.
+            </div>
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    filtered.forEach(
+      row => {
+
+        const staff =
+          row.staff;
+
+        const event =
+          row.event;
+
+
+        const roleBadge =
+          staff.role === "segment_executive"
+            ? "badge-segment"
+            : "badge-member";
+
+
+        const accountBadge =
+          staff.account_status === "active"
+            ? "badge-active"
+            : "badge-inactive";
+
+
+        const tr =
+          document.createElement("tr");
+
+
+        tr.innerHTML = `
+
+          <td>
+
+            <div class="staff-name">
+              ${escapeHtml(staff.full_name)}
+            </div>
+
+            <div class="staff-phone">
+              ${escapeHtml(staff.phone || "No phone")}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <span class="badge ${roleBadge}">
+              ${escapeHtml(formatRole(staff.role))}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <div class="event-name">
+              ${escapeHtml(event.name)}
+            </div>
+
+            <div class="event-slug">
+              ${escapeHtml(event.slug)}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <span class="badge ${accountBadge}">
+              ${escapeHtml(formatRole(staff.account_status))}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <button
+              class="remove-button"
+              data-assignment-id="${row.id}"
+              data-staff-id="${row.staff_id}"
+              data-event-id="${row.event_id}"
+            >
+              Remove
+            </button>
+
+          </td>
+
+        `;
+
+
+        body.appendChild(tr);
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(
+        ".remove-button"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              removeAssignment(
+                button.dataset.assignmentId,
+                button.dataset.staffId,
+                button.dataset.eventId
+              );
+
+            }
+          );
+
+        }
+      );
+  }
+
+
+  function updateSummary(rows) {
+
+    const total =
+      rows.length;
+
+
+    const segment =
+      rows.filter(
+        row =>
+          row.staff &&
+          row.staff.role ===
+            "segment_executive"
+      ).length;
+
+
+    const members =
+      rows.filter(
+        row =>
+          row.staff &&
+          row.staff.role ===
+            "member"
+      ).length;
+
+
+    document.getElementById(
+      "totalAssignments"
+    ).textContent =
+      total;
+
+
+    document.getElementById(
+      "segmentAssignments"
+    ).textContent =
+      segment;
+
+
+    document.getElementById(
+      "memberAssignments"
+    ).textContent =
+      members;
+  }
+
+
+  /* ========================================= */
+  /* ASSIGN */
+  /* ========================================= */
+
+  async function assignStaff() {
+
+    clearModalMessage();
+
+
+    const staffId =
+      document.getElementById(
+        "staffSelect"
+      ).value;
+
+
+    const eventId =
+      document.getElementById(
+        "eventSelect"
+      ).value;
+
+
+    if (!staffId) {
+
+      showModalMessage(
+        "Please select a staff member.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    if (!eventId) {
+
+      showModalMessage(
+        "Please select an event.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    const {
+      error
+    } = await supabaseClient.rpc(
+      "assign_staff_to_event",
+      {
+        p_staff_id: staffId,
+        p_event_id: eventId
+      }
+    );
+
+
+    if (error) {
+
+      showModalMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    closeAssignModal();
+
+
+    showPageMessage(
+      "Staff member assigned to the event successfully.",
+      "success"
+    );
+
+
+    await loadAssignments();
+  }
+
+
+  /* ========================================= */
+  /* REMOVE */
+  /* ========================================= */
+
+  async function removeAssignment(
+    assignmentId,
+    staffId,
+    eventId
+  ) {
+
+    const staff =
+      staffMembers.find(
+        item => item.id === staffId
+      );
+
+
+    const event =
+      events.find(
+        item => item.id === eventId
+      );
+
+
+    const confirmed =
+      window.confirm(
+        `Remove ${
+          staff
+            ? staff.full_name
+            : "this staff member"
+        } from ${
+          event
+            ? event.name
+            : "this event"
+        }?`
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    clearPageMessage();
+
+
+    const {
+      error
+    } = await supabaseClient.rpc(
+      "remove_staff_from_event",
+      {
+        p_staff_id: staffId,
+        p_event_id: eventId
+      }
+    );
+
+
+    if (error) {
+
+      showPageMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    showPageMessage(
+      "Event assignment removed successfully.",
+      "success"
+    );
+
+
+    await loadAssignments();
+  }
+
+
+  /* ========================================= */
+  /* MODAL */
+  /* ========================================= */
+
+  function openAssignModal() {
+
+    clearModalMessage();
+
+    document.getElementById(
+      "staffSelect"
+    ).value = "";
+
+    document.getElementById(
+      "eventSelect"
+    ).value = "";
+
+
+    document.getElementById(
+      "assignModal"
+    ).classList.add("show");
+  }
+
+
+  function closeAssignModal() {
+
+    document.getElementById(
+      "assignModal"
+    ).classList.remove("show");
+
+    clearModalMessage();
+  }
+
+
+  /* ========================================= */
+  /* REFRESH */
+  /* ========================================= */
+
+  async function refreshPage() {
+
+    clearPageMessage();
+
+
+    try {
+
+      await loadStaffMembers();
+
+      await loadEvents();
+
+      await loadAssignments();
+
+    } catch (error) {
+
+      console.error(error);
+
+      showPageMessage(
+        error.message ||
+        "Unable to refresh event assignments.",
+        "error"
+      );
+
+    }
+
+  }
+
+
+  /* ========================================= */
+  /* LOGOUT */
+  /* ========================================= */
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+      "login.html";
+  }
+
+
+  /* ========================================= */
+  /* START */
+  /* ========================================= */
+
+  async function init() {
+
+    try {
+
+      await loadProfile();
+
+      await loadStaffMembers();
+
+      await loadEvents();
+
+      await loadAssignments();
+
+
+      document.getElementById(
+        "loading"
+      ).style.display =
+        "none";
+
+
+      document.getElementById(
+        "assignmentsContent"
+      ).style.display =
+        "block";
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      document.getElementById(
+        "loading"
+      ).textContent =
+        error.message ||
+        "Unable to load event assignments.";
+
+    }
+
+  }
+
+
+  /* ========================================= */
+  /* EVENTS */
+  /* ========================================= */
+
+  document
+    .getElementById(
+      "openAssignModalButton"
+    )
+    .addEventListener(
+      "click",
+      openAssignModal
+    );
+
+
+  document
+    .getElementById(
+      "closeAssignModalButton"
+    )
+    .addEventListener(
+      "click",
+      closeAssignModal
+    );
+
+
+  document
+    .getElementById(
+      "cancelAssignButton"
+    )
+    .addEventListener(
+      "click",
+      closeAssignModal
+    );
+
+
+  document
+    .getElementById(
+      "assignButton"
+    )
+    .addEventListener(
+      "click",
+      assignStaff
+    );
+
+
+  document
+    .getElementById(
+      "refreshButton"
+    )
+    .addEventListener(
+      "click",
+      refreshPage
+    );
+
+
+  document
+    .getElementById(
+      "searchInput"
+    )
+    .addEventListener(
+      "input",
+      () => renderAssignments(assignments)
+    );
+
+
+  document
+    .getElementById(
+      "roleFilter"
+    )
+    .addEventListener(
+      "change",
+      () => renderAssignments(assignments)
+    );
+
+
+  document
+    .getElementById(
+      "logoutButton"
+    )
+    .addEventListener(
+      "click",
+      logout
+    );
+
+
+  document
+    .getElementById(
+      "assignModal"
+    )
+    .addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.id ===
+          "assignModal"
+        ) {
+          closeAssignModal();
+        }
+
+      }
+    );
+
+
+  init();
+
+</script>
+
+</body>
+</html>
