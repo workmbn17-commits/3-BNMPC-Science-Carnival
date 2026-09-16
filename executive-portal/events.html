@@ -1395,7 +1395,27 @@
       </div>
 
 
-      <div class="form-row">
+            <div
+        class="form-row team-size-fields"
+        id="mainEventTeamSizeFields"
+      >
+
+        <div class="form-group">
+          <label class="form-label" for="minTeamSize">Minimum Team Size</label>
+          <input class="form-input" type="number" id="minTeamSize" min="1" step="1" value="1">
+          <div class="form-help">Choose the minimum number of members allowed in a team.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="maxTeamSize">Maximum Team Size</label>
+          <input class="form-input" type="number" id="maxTeamSize" min="1" step="1" value="1">
+          <div class="form-help">Choose the maximum number of members allowed in a team.</div>
+        </div>
+
+      </div>
+
+
+<div class="form-row">
 
         <div class="form-group">
 
@@ -2233,7 +2253,9 @@
         participation_type,
         warning_capacity,
         hard_capacity,
-        has_subsegments
+        has_subsegments,
+        min_team_size,
+        max_team_size
       `)
       .order("name");
 
@@ -2574,6 +2596,20 @@
     ).checked =
       Boolean(event.has_subsegments);
 
+    document.getElementById(
+      "minTeamSize"
+    ).value =
+      event.min_team_size != null
+        ? Number(event.min_team_size)
+        : 1;
+
+    document.getElementById(
+      "maxTeamSize"
+    ).value =
+      event.max_team_size != null
+        ? Number(event.max_team_size)
+        : 1;
+
 
     updatePaymentNote();
 
@@ -2598,6 +2634,27 @@
     document.getElementById(
       "editModal"
     ).classList.remove("show");
+
+  }
+
+
+  function updateMainEventTeamFields() {
+
+    const type =
+      document.getElementById(
+        "participationType"
+      ).value;
+
+    const usesTeams =
+      type === "team" ||
+      type === "both";
+
+    document.getElementById(
+      "mainEventTeamSizeFields"
+    ).classList.toggle(
+      "show",
+      usesTeams
+    );
 
   }
 
@@ -2681,6 +2738,49 @@
       document.getElementById(
         "hasSubsegments"
       ).checked;
+    let minTeamSize = null;
+    let maxTeamSize = null;
+
+    if (
+      participationType === "team" ||
+      participationType === "both"
+    ) {
+
+      minTeamSize = Number(
+        document.getElementById(
+          "minTeamSize"
+        ).value
+      );
+
+      maxTeamSize = Number(
+        document.getElementById(
+          "maxTeamSize"
+        ).value
+      );
+
+      if (
+        !Number.isInteger(minTeamSize) ||
+        minTeamSize < 1
+      ) {
+        alert("Minimum team size must be a whole number of at least 1.");
+        return;
+      }
+
+      if (
+        !Number.isInteger(maxTeamSize) ||
+        maxTeamSize < 1
+      ) {
+        alert("Maximum team size must be a whole number of at least 1.");
+        return;
+      }
+
+      if (maxTeamSize < minTeamSize) {
+        alert("Maximum team size cannot be smaller than minimum team size.");
+        return;
+      }
+
+    }
+
 
 
     if (!Number.isFinite(fee) || fee < 0) {
@@ -2788,7 +2888,13 @@
             hardCapacity,
 
           p_has_subsegments:
-            hasSubsegments
+            hasSubsegments,
+
+          p_min_team_size:
+            minTeamSize,
+
+          p_max_team_size:
+            maxTeamSize
         }
       );
 
@@ -4628,6 +4734,14 @@
   ).addEventListener(
     "click",
     saveSubsegment
+  );
+
+
+  document.getElementById(
+    "participationType"
+  ).addEventListener(
+    "change",
+    updateMainEventTeamFields
   );
 
 
