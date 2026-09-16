@@ -897,11 +897,37 @@
 
 
   async function loadEventCount() {
+    const { data, error } = await supabaseClient.rpc("get_dashboard_stats");
 
-    const {
-      data,
-      error
-    } = await supabaseClient
+    if (error) {
+        console.error("Dashboard stats error:", error);
+        document.getElementById("eventCount").textContent = "—";
+        document.getElementById("registrationCount").textContent = "—";
+        document.getElementById("pendingCount").textContent = "—";
+        document.getElementById("staffCount").textContent = "—";
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        console.error("No dashboard statistics returned.");
+        return;
+    }
+
+    const stats = data[0];
+
+    document.getElementById("eventCount").textContent =
+        stats.total_events ?? 0;
+
+    document.getElementById("registrationCount").textContent =
+        stats.total_registrations ?? 0;
+
+    document.getElementById("pendingCount").textContent =
+        stats.pending_reviews ?? 0;
+
+    document.getElementById("staffCount").textContent =
+        stats.staff_accounts ?? 0;
+  }
+  = await supabaseClient
       .from("events")
       .select("id");
 
