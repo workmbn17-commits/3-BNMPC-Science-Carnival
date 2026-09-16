@@ -258,7 +258,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1100px;
+      min-width: 1200px;
     }
 
     th {
@@ -380,17 +380,11 @@
     }
 
     .subsegment-button {
-      background: #7c3aed;
+      background: #111827;
     }
 
     .subsegment-button:hover {
-      background: #6d28d9;
-    }
-
-    .subsegment-button:disabled {
-      background: #d1d5db;
-      color: #6b7280;
-      cursor: not-allowed;
+      background: #1f2937;
     }
 
     .loading {
@@ -431,7 +425,7 @@
 
     .modal {
       width: 100%;
-      max-width: 700px;
+      max-width: 650px;
       max-height: 90vh;
       overflow-y: auto;
       background: white;
@@ -439,7 +433,7 @@
       box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
     }
 
-    .modal.large {
+    .modal-large {
       max-width: 900px;
     }
 
@@ -472,6 +466,7 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 18px;
+      flex-shrink: 0;
     }
 
     .close-button:hover {
@@ -522,6 +517,12 @@
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 16px;
     }
 
@@ -657,7 +658,6 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 700;
-      font-size: 12px;
     }
 
     .danger-button:hover {
@@ -697,10 +697,11 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 16px;
+      margin-bottom: 12px;
     }
 
     .subsegment-card-title {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
     }
 
@@ -710,39 +711,10 @@
       font-size: 11px;
     }
 
-    .subsegment-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 12px;
-    }
-
-    .subsegment-details {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .detail-label {
-      color: #9ca3af;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .detail-value {
-      margin-top: 4px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
     .subsegment-actions {
       display: flex;
       gap: 7px;
-      flex-wrap: wrap;
+      flex-shrink: 0;
     }
 
     .small-button {
@@ -760,17 +732,53 @@
       background: #f3f4f6;
     }
 
-    .small-danger {
-      border-color: #fecaca;
-      color: #b91c1c;
+    .small-danger-button {
+      border: 1px solid #fecaca;
       background: #fff;
+      color: #b91c1c;
+      padding: 7px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
     }
 
-    .small-danger:hover {
+    .small-danger-button:hover {
       background: #fef2f2;
     }
 
-    .class-group-options {
+    .subsegment-meta {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .subsegment-details {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .detail-box {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .detail-label {
+      color: #9ca3af;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .class-group-selector {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
@@ -788,40 +796,80 @@
 
     .class-group-label {
       display: block;
-      padding: 12px;
       border: 1px solid #d1d5db;
       border-radius: 9px;
-      background: white;
-      cursor: pointer;
+      padding: 12px 8px;
       text-align: center;
+      cursor: pointer;
+      background: white;
       font-size: 12px;
       font-weight: 700;
       transition: 0.15s;
     }
 
-    .class-group-option input:checked + .class-group-label {
+    .class-group-label:hover {
       border-color: #2563eb;
+    }
+
+    .class-group-option input:checked + .class-group-label {
       background: #eff6ff;
+      border-color: #2563eb;
       color: #1d4ed8;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.08);
     }
 
     .empty-subsegments {
-      padding: 35px;
+      padding: 35px 20px;
       text-align: center;
-      color: #6b7280;
       border: 1px dashed #d1d5db;
-      border-radius: 10px;
+      border-radius: 12px;
+      color: #6b7280;
+      background: #f8fafc;
     }
 
-    .modal-top-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    .empty-subsegments-title {
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 5px;
     }
 
-    @media (max-width: 900px) {
+    .top-action {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .top-action:hover {
+      background: #1d4ed8;
+    }
+
+    .info-box {
+      padding: 12px 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 9px;
+      color: #1e40af;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .team-size-fields {
+      display: none;
+    }
+
+    .team-size-fields.show {
+      display: grid;
+    }
+
+    @media (max-width: 1000px) {
       .subsegment-details {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
@@ -851,12 +899,17 @@
         flex-wrap: wrap;
       }
 
-      .form-row {
+      .form-row,
+      .form-row-3 {
         grid-template-columns: 1fr;
       }
 
-      .class-group-options {
+      .class-group-selector {
         grid-template-columns: 1fr;
+      }
+
+      .subsegment-card-header {
+        flex-direction: column;
       }
     }
   </style>
@@ -1172,7 +1225,7 @@
 
 
 <!-- ========================= -->
-<!-- EDIT MAIN EVENT MODAL -->
+<!-- MAIN EVENT EDIT MODAL -->
 <!-- ========================= -->
 
 <div
@@ -1462,7 +1515,7 @@
 
 
 <!-- ========================= -->
-<!-- SUB-SEGMENT LIST MODAL -->
+<!-- SUB-SEGMENT MANAGEMENT MODAL -->
 <!-- ========================= -->
 
 <div
@@ -1470,7 +1523,7 @@
   id="subsegmentsModal"
 >
 
-  <div class="modal large">
+  <div class="modal modal-large">
 
     <div class="modal-header">
 
@@ -1487,42 +1540,28 @@
           class="modal-subtitle"
           id="subsegmentsModalSubtitle"
         >
-          Manage registration categories
+          Manage event categories
         </div>
 
       </div>
 
 
-      <div class="modal-top-actions">
-
-        <button
-          class="save-button"
-          id="addSubsegmentButton"
-          type="button"
-        >
-          + Add Sub-segment
-        </button>
-
-        <button
-          class="close-button"
-          id="closeSubsegmentsModalButton"
-          type="button"
-        >
-          ×
-        </button>
-
-      </div>
+      <button
+        class="close-button"
+        id="closeSubsegmentsModalButton"
+        type="button"
+      >
+        ×
+      </button>
 
     </div>
 
 
     <div class="modal-body">
 
-      <div
-        class="success-message"
-        id="subsegmentsSuccessMessage"
-      >
-        Sub-segment saved successfully.
+      <div class="info-box">
+        Each sub-segment can have its own participation type, registration status,
+        payment requirement, fee, capacity, team size and allowed class groups.
       </div>
 
 
@@ -1535,11 +1574,33 @@
 
 
       <div
-        id="subsegmentsList"
+        id="subsegmentsContainer"
         class="subsegment-list"
         style="display:none;"
       >
       </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="cancel-button"
+        id="closeSubsegmentsFooterButton"
+        type="button"
+      >
+        Close
+      </button>
+
+
+      <button
+        class="top-action"
+        id="addSubsegmentButton"
+        type="button"
+      >
+        + Add Sub-segment
+      </button>
 
     </div>
 
@@ -1549,12 +1610,12 @@
 
 
 <!-- ========================= -->
-<!-- ADD / EDIT SUB-SEGMENT -->
+<!-- ADD / EDIT SUB-SEGMENT MODAL -->
 <!-- ========================= -->
 
 <div
   class="modal-overlay"
-  id="subsegmentEditModal"
+  id="subsegmentFormModal"
 >
 
   <div class="modal">
@@ -1565,16 +1626,16 @@
 
         <div
           class="modal-title"
-          id="subsegmentEditTitle"
+          id="subsegmentFormTitle"
         >
           Add Sub-segment
         </div>
 
         <div
           class="modal-subtitle"
-          id="subsegmentEditSubtitle"
+          id="subsegmentFormSubtitle"
         >
-          Configure the registration category
+          Event sub-segment configuration
         </div>
 
       </div>
@@ -1582,7 +1643,7 @@
 
       <button
         class="close-button"
-        id="closeSubsegmentEditButton"
+        id="closeSubsegmentFormButton"
         type="button"
       >
         ×
@@ -1595,7 +1656,7 @@
 
       <div
         class="success-message"
-        id="subsegmentEditSuccess"
+        id="subsegmentSuccessMessage"
       >
         Sub-segment saved successfully.
       </div>
@@ -1663,6 +1724,10 @@
 
           <option value="team">
             Team
+          </option>
+
+          <option value="both">
+            Both
           </option>
 
         </select>
@@ -1750,58 +1815,6 @@
       </div>
 
 
-      <div
-        id="teamSizeSection"
-      >
-
-        <div class="form-row">
-
-          <div class="form-group">
-
-            <label
-              class="form-label"
-              for="subsegmentMinTeamSize"
-            >
-              Minimum Team Size
-            </label>
-
-            <input
-              class="form-input"
-              type="number"
-              id="subsegmentMinTeamSize"
-              min="1"
-              step="1"
-              value="1"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label
-              class="form-label"
-              for="subsegmentMaxTeamSize"
-            >
-              Maximum Team Size
-            </label>
-
-            <input
-              class="form-input"
-              type="number"
-              id="subsegmentMaxTeamSize"
-              min="1"
-              step="1"
-              value="1"
-            >
-
-          </div>
-
-        </div>
-
-      </div>
-
-
       <div class="form-row">
 
         <div class="form-group">
@@ -1852,13 +1865,62 @@
       </div>
 
 
+      <div
+        class="form-row team-size-fields"
+        id="teamSizeFields"
+      >
+
+        <div class="form-group">
+
+          <label
+            class="form-label"
+            for="subsegmentMinTeamSize"
+          >
+            Minimum Team Size
+          </label>
+
+          <input
+            class="form-input"
+            type="number"
+            id="subsegmentMinTeamSize"
+            min="1"
+            step="1"
+            value="1"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label
+            class="form-label"
+            for="subsegmentMaxTeamSize"
+          >
+            Maximum Team Size
+          </label>
+
+          <input
+            class="form-input"
+            type="number"
+            id="subsegmentMaxTeamSize"
+            min="1"
+            step="1"
+            value="1"
+          >
+
+        </div>
+
+      </div>
+
+
       <div class="form-group">
 
         <label class="form-label">
           Allowed Class Groups
         </label>
 
-        <div class="class-group-options">
+        <div class="class-group-selector">
 
           <div class="class-group-option">
 
@@ -1972,6 +2034,15 @@
 
       </div>
 
+
+      <div
+        class="payment-note"
+        id="subsegmentPaymentNote"
+      >
+        This sub-segment is marked as paid. The participant registration system
+        will require a configured payment method and transaction ID.
+      </div>
+
     </div>
 
 
@@ -1979,7 +2050,7 @@
 
       <button
         class="cancel-button"
-        id="cancelSubsegmentEditButton"
+        id="cancelSubsegmentFormButton"
         type="button"
       >
         Cancel
@@ -2018,8 +2089,16 @@
 
   let currentSubsegmentEvent = null;
 
+  let currentSubsegments = [];
+
   let currentEditingSubsegment = null;
 
+  let classGroups = [];
+
+
+  /* ========================================= */
+  /* PROFILE */
+  /* ========================================= */
 
   async function loadProfile() {
 
@@ -2105,6 +2184,37 @@
 
   }
 
+
+  /* ========================================= */
+  /* CLASS GROUPS */
+  /* ========================================= */
+
+  async function loadClassGroups() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("class_groups")
+      .select("id, code, name")
+      .order("code");
+
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+    classGroups = data || [];
+
+  }
+
+
+  /* ========================================= */
+  /* EVENTS */
+  /* ========================================= */
 
   async function loadEvents() {
 
@@ -2350,13 +2460,18 @@
               Edit
             </button>
 
-            <button
-              class="subsegment-button"
-              type="button"
-              ${event.has_subsegments ? "" : "disabled"}
-            >
-              Sub-segments
-            </button>
+            ${
+              event.has_subsegments
+                ? `
+                  <button
+                    class="subsegment-button"
+                    type="button"
+                  >
+                    Sub-segments
+                  </button>
+                `
+                : ""
+            }
 
           </div>
 
@@ -2378,7 +2493,7 @@
         row.querySelector(".subsegment-button");
 
 
-      if (event.has_subsegments) {
+      if (subsegmentButton) {
 
         subsegmentButton.addEventListener(
           "click",
@@ -2394,6 +2509,10 @@
 
   }
 
+
+  /* ========================================= */
+  /* MAIN EVENT EDIT MODAL */
+  /* ========================================= */
 
   function openEditModal(event) {
 
@@ -2730,6 +2849,10 @@
   }
 
 
+  /* ========================================= */
+  /* SUB-SEGMENT MANAGEMENT */
+  /* ========================================= */
+
   async function openSubsegmentsModal(event) {
 
     currentSubsegmentEvent = event;
@@ -2738,13 +2861,13 @@
     document.getElementById(
       "subsegmentsModalTitle"
     ).textContent =
-      `${event.name} — Sub-segments`;
+      "Sub-segments — " + event.name;
 
 
     document.getElementById(
       "subsegmentsModalSubtitle"
     ).textContent =
-      "Manage registration categories for this event";
+      event.slug || "Manage event sub-segments";
 
 
     document.getElementById(
@@ -2760,6 +2883,8 @@
   function closeSubsegmentsModal() {
 
     currentSubsegmentEvent = null;
+
+    currentSubsegments = [];
 
 
     document.getElementById(
@@ -2784,9 +2909,9 @@
       );
 
 
-    const list =
+    const container =
       document.getElementById(
-        "subsegmentsList"
+        "subsegmentsContainer"
       );
 
 
@@ -2794,12 +2919,8 @@
       "block";
 
 
-    list.style.display =
+    container.style.display =
       "none";
-
-
-    list.innerHTML =
-      "";
 
 
     try {
@@ -2823,7 +2944,9 @@
           min_team_size,
           max_team_size,
           open_at,
-          close_at
+          close_at,
+          created_at,
+          updated_at
         `)
         .eq(
           "event_id",
@@ -2839,45 +2962,13 @@
       }
 
 
-      if (!data || data.length === 0) {
-
-        list.innerHTML =
-          `
-          <div class="empty-subsegments">
-            <strong>
-              No sub-segments yet.
-            </strong>
-
-            <br><br>
-
-            Click <strong>+ Add Sub-segment</strong> to create the first one.
-          </div>
-          `;
-
-      }
-
-      else {
-
-        for (const subsegment of data) {
-
-          const card =
-            await buildSubsegmentCard(
-              subsegment
-            );
-
-          list.appendChild(card);
-
-        }
-
-      }
+      currentSubsegments =
+        data || [];
 
 
-      loading.style.display =
-        "none";
-
-
-      list.style.display =
-        "flex";
+      await renderSubsegments(
+        currentSubsegments
+      );
 
     }
 
@@ -2886,430 +2977,686 @@
       console.error(error);
 
 
-      loading.innerHTML =
+      container.innerHTML =
         `
         <div class="error">
-          Unable to load sub-segments.
-          <br><br>
+          Unable to load sub-segments.<br><br>
           ${escapeHtml(error.message)}
         </div>
         `;
 
+      container.style.display =
+        "block";
+
+    }
+
+    finally {
+
+      loading.style.display =
+        "none";
+
     }
 
   }
 
 
-  async function buildSubsegmentCard(subsegment) {
+  async function renderSubsegments(
+    subsegments
+  ) {
 
-    const card =
-      document.createElement("div");
-
-
-    card.className =
-      "subsegment-card";
-
-
-    let classGroups =
-      [];
+    const container =
+      document.getElementById(
+        "subsegmentsContainer"
+      );
 
 
-    try {
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("subsegment_class_groups")
-        .select(`
-          class_group_id,
-          class_groups (
-            code,
-            name
-          )
-        `)
-        .eq(
-          "subsegment_id",
-          subsegment.id
-        );
+    container.innerHTML = "";
 
 
-      if (!error && data) {
+    if (
+      !subsegments ||
+      subsegments.length === 0
+    ) {
 
-        classGroups =
-          data
+      container.innerHTML =
+        `
+        <div class="empty-subsegments">
+
+          <div class="empty-subsegments-title">
+            No sub-segments yet
+          </div>
+
+          <div>
+            Add the first registration category for this event.
+          </div>
+
+        </div>
+        `;
+
+
+      container.style.display =
+        "block";
+
+
+      return;
+
+    }
+
+
+    const {
+      data: mappings,
+      error: mappingError
+    } = await supabaseClient
+      .from("subsegment_class_groups")
+      .select(
+        "subsegment_id, class_group_id"
+      );
+
+
+    if (mappingError) {
+
+      throw mappingError;
+
+    }
+
+
+    subsegments.forEach(
+      subsegment => {
+
+        const subsegmentMappings =
+          (mappings || []).filter(
+            item =>
+              item.subsegment_id ===
+              subsegment.id
+          );
+
+
+        const allowedGroupCodes =
+          subsegmentMappings
             .map(
-              item =>
-                item.class_groups
-                  ? item.class_groups.code
-                  : null
+              item => {
+
+                const group =
+                  classGroups.find(
+                    classGroup =>
+                      classGroup.id ===
+                      item.class_group_id
+                  );
+
+                return group
+                  ? group.code
+                  : null;
+
+              }
             )
             .filter(Boolean);
 
+
+        const registrationBadge =
+          subsegment.registration_enabled
+            ? `<span class="badge badge-open">Open</span>`
+            : `<span class="badge badge-closed">Closed</span>`;
+
+
+        const paymentBadge =
+          subsegment.payment_required
+            ? `<span class="badge badge-paid">Paid</span>`
+            : `<span class="badge badge-free">Free</span>`;
+
+
+        let typeBadge;
+
+
+        if (
+          subsegment.participation_type === "team"
+        ) {
+
+          typeBadge =
+            `<span class="badge badge-team">Team</span>`;
+
+        }
+
+        else if (
+          subsegment.participation_type === "both"
+        ) {
+
+          typeBadge =
+            `<span class="badge badge-both">Both</span>`;
+
+        }
+
+        else {
+
+          typeBadge =
+            `<span class="badge badge-individual">Individual</span>`;
+
+        }
+
+
+        const feeText =
+          subsegment.payment_required
+            ? `৳${Number(subsegment.fee || 0).toFixed(2)}`
+            : "Free";
+
+
+        const capacityText =
+          Number(subsegment.hard_capacity || 0) > 0
+            ? `${Number(subsegment.warning_capacity || 0)} / ${Number(subsegment.hard_capacity || 0)}`
+            : `${Number(subsegment.warning_capacity || 0)} / Unlimited`;
+
+
+        const teamSizeText =
+          (
+            subsegment.participation_type === "team" ||
+            subsegment.participation_type === "both"
+          )
+            ? `${subsegment.min_team_size}–${subsegment.max_team_size}`
+            : "N/A";
+
+
+        const classGroupText =
+          allowedGroupCodes.length > 0
+            ? allowedGroupCodes.join(", ")
+            : "Not configured";
+
+
+        const card =
+          document.createElement("div");
+
+
+        card.className =
+          "subsegment-card";
+
+
+        card.innerHTML =
+          `
+          <div class="subsegment-card-header">
+
+            <div>
+
+              <div class="subsegment-card-title">
+                ${escapeHtml(subsegment.name)}
+              </div>
+
+              <div class="subsegment-card-slug">
+                ${escapeHtml(subsegment.slug || "")}
+              </div>
+
+            </div>
+
+
+            <div class="subsegment-actions">
+
+              <button
+                class="small-button edit-subsegment-button"
+                type="button"
+              >
+                Edit
+              </button>
+
+              <button
+                class="small-danger-button delete-subsegment-button"
+                type="button"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="subsegment-meta">
+
+            ${registrationBadge}
+
+            ${typeBadge}
+
+            ${paymentBadge}
+
+          </div>
+
+
+          <div class="subsegment-details">
+
+            <div class="detail-box">
+
+              <div class="detail-label">
+                Fee
+              </div>
+
+              <div class="detail-value">
+                ${feeText}
+              </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+              <div class="detail-label">
+                Capacity
+              </div>
+
+              <div class="detail-value">
+                ${capacityText}
+              </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+              <div class="detail-label">
+                Team Size
+              </div>
+
+              <div class="detail-value">
+                ${teamSizeText}
+              </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+              <div class="detail-label">
+                Class Groups
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(classGroupText)}
+              </div>
+
+            </div>
+
+          </div>
+
+          `;
+
+
+        card
+          .querySelector(
+            ".edit-subsegment-button"
+          )
+          .addEventListener(
+            "click",
+            () =>
+              openSubsegmentForm(
+                subsegment
+              )
+          );
+
+
+        card
+          .querySelector(
+            ".delete-subsegment-button"
+          )
+          .addEventListener(
+            "click",
+            () =>
+              deleteSubsegment(
+                subsegment
+              )
+          );
+
+
+        container.appendChild(card);
+
       }
+    );
 
-    }
 
-    catch (error) {
-
-      console.error(
-        "Unable to load class groups:",
-        error
-      );
-
-    }
-
-
-    const registrationBadge =
-      subsegment.registration_enabled
-        ? `<span class="badge badge-open">Open</span>`
-        : `<span class="badge badge-closed">Closed</span>`;
-
-
-    const paymentBadge =
-      subsegment.payment_required
-        ? `<span class="badge badge-paid">Paid</span>`
-        : `<span class="badge badge-free">Free</span>`;
-
-
-    const typeBadge =
-      subsegment.participation_type === "team"
-        ? `<span class="badge badge-team">Team</span>`
-        : `<span class="badge badge-individual">Individual</span>`;
-
-
-    const classText =
-      classGroups.length > 0
-        ? classGroups.join(", ")
-        : "Not configured";
-
-
-    const capacityText =
-      subsegment.hard_capacity > 0
-        ? `${subsegment.warning_capacity} / ${subsegment.hard_capacity}`
-        : `${subsegment.warning_capacity} / Unlimited`;
-
-
-    const teamSizeText =
-      subsegment.participation_type === "team"
-        ? `${subsegment.min_team_size}–${subsegment.max_team_size}`
-        : "—";
-
-
-    const feeText =
-      subsegment.payment_required
-        ? `৳${Number(subsegment.fee || 0).toFixed(2)}`
-        : "Free";
-
-
-    card.innerHTML =
-      `
-      <div class="subsegment-card-header">
-
-        <div>
-
-          <div class="subsegment-card-title">
-            ${escapeHtml(subsegment.name)}
-          </div>
-
-          <div class="subsegment-card-slug">
-            ${escapeHtml(subsegment.slug || "")}
-          </div>
-
-        </div>
-
-
-        <div class="subsegment-actions">
-
-          <button
-            class="small-button edit-subsegment"
-            type="button"
-          >
-            Edit
-          </button>
-
-          <button
-            class="small-button small-danger delete-subsegment"
-            type="button"
-          >
-            Remove
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <div class="subsegment-meta">
-
-        ${registrationBadge}
-
-        ${paymentBadge}
-
-        ${typeBadge}
-
-      </div>
-
-
-      <div class="subsegment-details">
-
-        <div>
-
-          <div class="detail-label">
-            Fee
-          </div>
-
-          <div class="detail-value">
-            ${feeText}
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="detail-label">
-            Capacity
-          </div>
-
-          <div class="detail-value">
-            ${capacityText}
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="detail-label">
-            Team Size
-          </div>
-
-          <div class="detail-value">
-            ${teamSizeText}
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="detail-label">
-            Classes
-          </div>
-
-          <div class="detail-value">
-            ${escapeHtml(classText)}
-          </div>
-
-        </div>
-
-      </div>
-      `;
-
-
-    card
-      .querySelector(".edit-subsegment")
-      .addEventListener(
-        "click",
-        () => openSubsegmentEditModal(
-          subsegment,
-          classGroups
-        )
-      );
-
-
-    card
-      .querySelector(".delete-subsegment")
-      .addEventListener(
-        "click",
-        () => deleteSubsegment(
-          subsegment
-        )
-      );
-
-
-    return card;
+    container.style.display =
+      "flex";
 
   }
 
 
-  function openSubsegmentEditModal(
-    subsegment = null,
-    classGroups = []
+  /* ========================================= */
+  /* ADD / EDIT SUB-SEGMENT FORM */
+  /* ========================================= */
+
+  function openSubsegmentForm(
+    subsegment = null
   ) {
+
+    if (!currentSubsegmentEvent) {
+
+      return;
+
+    }
+
 
     currentEditingSubsegment =
       subsegment;
 
 
-    const isEditing =
-      Boolean(subsegment);
-
-
     document.getElementById(
-      "subsegmentEditTitle"
+      "subsegmentFormTitle"
     ).textContent =
-      isEditing
+      subsegment
         ? "Edit Sub-segment"
         : "Add Sub-segment";
 
 
     document.getElementById(
-      "subsegmentEditSubtitle"
+      "subsegmentFormSubtitle"
     ).textContent =
-      currentSubsegmentEvent
-        ? currentSubsegmentEvent.name
-        : "Configure the registration category";
+      currentSubsegmentEvent.name;
+
+
+    if (subsegment) {
+
+      document.getElementById(
+        "subsegmentName"
+      ).value =
+        subsegment.name || "";
+
+
+      document.getElementById(
+        "subsegmentSlug"
+      ).value =
+        subsegment.slug || "";
+
+
+      document.getElementById(
+        "subsegmentParticipationType"
+      ).value =
+        subsegment.participation_type ||
+        "individual";
+
+
+      document.getElementById(
+        "subsegmentRegistrationEnabled"
+      ).checked =
+        Boolean(
+          subsegment.registration_enabled
+        );
+
+
+      document.getElementById(
+        "subsegmentPaymentRequired"
+      ).checked =
+        Boolean(
+          subsegment.payment_required
+        );
+
+
+      document.getElementById(
+        "subsegmentFee"
+      ).value =
+        Number(
+          subsegment.fee || 0
+        );
+
+
+      document.getElementById(
+        "subsegmentWarningCapacity"
+      ).value =
+        Number(
+          subsegment.warning_capacity || 0
+        );
+
+
+      document.getElementById(
+        "subsegmentHardCapacity"
+      ).value =
+        Number(
+          subsegment.hard_capacity || 0
+        );
+
+
+      document.getElementById(
+        "subsegmentMinTeamSize"
+      ).value =
+        Number(
+          subsegment.min_team_size || 1
+        );
+
+
+      document.getElementById(
+        "subsegmentMaxTeamSize"
+      ).value =
+        Number(
+          subsegment.max_team_size || 1
+        );
+
+
+      document.getElementById(
+        "subsegmentOpenAt"
+      ).value =
+        toLocalDateTimeInput(
+          subsegment.open_at
+        );
+
+
+      document.getElementById(
+        "subsegmentCloseAt"
+      ).value =
+        toLocalDateTimeInput(
+          subsegment.close_at
+        );
+
+    }
+
+    else {
+
+      document.getElementById(
+        "subsegmentName"
+      ).value = "";
+
+
+      document.getElementById(
+        "subsegmentSlug"
+      ).value = "";
+
+
+      document.getElementById(
+        "subsegmentParticipationType"
+      ).value =
+        "individual";
+
+
+      document.getElementById(
+        "subsegmentRegistrationEnabled"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "subsegmentPaymentRequired"
+      ).checked =
+        false;
+
+
+      document.getElementById(
+        "subsegmentFee"
+      ).value =
+        0;
+
+
+      document.getElementById(
+        "subsegmentWarningCapacity"
+      ).value =
+        0;
+
+
+      document.getElementById(
+        "subsegmentHardCapacity"
+      ).value =
+        0;
+
+
+      document.getElementById(
+        "subsegmentMinTeamSize"
+      ).value =
+        1;
+
+
+      document.getElementById(
+        "subsegmentMaxTeamSize"
+      ).value =
+        1;
+
+
+      document.getElementById(
+        "subsegmentOpenAt"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "subsegmentCloseAt"
+      ).value =
+        "";
+
+    }
+
+
+    clearClassGroupSelections();
 
 
     document.getElementById(
-      "subsegmentName"
-    ).value =
-      subsegment
-        ? subsegment.name || ""
-        : "";
-
-
-    document.getElementById(
-      "subsegmentSlug"
-    ).value =
-      subsegment
-        ? subsegment.slug || ""
-        : "";
-
-
-    document.getElementById(
-      "subsegmentParticipationType"
-    ).value =
-      subsegment
-        ? subsegment.participation_type || "individual"
-        : "individual";
-
-
-    document.getElementById(
-      "subsegmentRegistrationEnabled"
-    ).checked =
-      subsegment
-        ? Boolean(subsegment.registration_enabled)
-        : true;
-
-
-    document.getElementById(
-      "subsegmentPaymentRequired"
-    ).checked =
-      subsegment
-        ? Boolean(subsegment.payment_required)
-        : false;
-
-
-    document.getElementById(
-      "subsegmentFee"
-    ).value =
-      subsegment
-        ? Number(subsegment.fee || 0)
-        : 0;
-
-
-    document.getElementById(
-      "subsegmentMinTeamSize"
-    ).value =
-      subsegment
-        ? Number(subsegment.min_team_size || 1)
-        : 1;
-
-
-    document.getElementById(
-      "subsegmentMaxTeamSize"
-    ).value =
-      subsegment
-        ? Number(subsegment.max_team_size || 1)
-        : 1;
-
-
-    document.getElementById(
-      "subsegmentWarningCapacity"
-    ).value =
-      subsegment
-        ? Number(subsegment.warning_capacity || 0)
-        : 0;
-
-
-    document.getElementById(
-      "subsegmentHardCapacity"
-    ).value =
-      subsegment
-        ? Number(subsegment.hard_capacity || 0)
-        : 0;
-
-
-    document.getElementById(
-      "classGroupA"
-    ).checked =
-      classGroups.includes("A");
-
-
-    document.getElementById(
-      "classGroupB"
-    ).checked =
-      classGroups.includes("B");
-
-
-    document.getElementById(
-      "classGroupC"
-    ).checked =
-      classGroups.includes("C");
-
-
-    document.getElementById(
-      "subsegmentOpenAt"
-    ).value =
-      toDateTimeLocal(
-        subsegment
-          ? subsegment.open_at
-          : null
-      );
-
-
-    document.getElementById(
-      "subsegmentCloseAt"
-    ).value =
-      toDateTimeLocal(
-        subsegment
-          ? subsegment.close_at
-          : null
-      );
-
-
-    updateTeamSizeVisibility();
-
-
-    document.getElementById(
-      "subsegmentEditSuccess"
+      "subsegmentSuccessMessage"
     ).classList.remove("show");
 
 
+    updateSubsegmentTeamFields();
+
+    updateSubsegmentPaymentNote();
+
+
     document.getElementById(
-      "subsegmentEditModal"
+      "subsegmentFormModal"
     ).classList.add("show");
+
+
+    if (subsegment) {
+
+      loadSelectedClassGroups(
+        subsegment.id
+      );
+
+    }
 
   }
 
 
-  function closeSubsegmentEditModal() {
+  function closeSubsegmentForm() {
 
     currentEditingSubsegment =
       null;
 
 
     document.getElementById(
-      "subsegmentEditModal"
+      "subsegmentFormModal"
     ).classList.remove("show");
 
   }
 
 
-  function updateTeamSizeVisibility() {
+  function clearClassGroupSelections() {
+
+    document.getElementById(
+      "classGroupA"
+    ).checked =
+      false;
+
+
+    document.getElementById(
+      "classGroupB"
+    ).checked =
+      false;
+
+
+    document.getElementById(
+      "classGroupC"
+    ).checked =
+      false;
+
+  }
+
+
+  async function loadSelectedClassGroups(
+    subsegmentId
+  ) {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("subsegment_class_groups")
+      .select(
+        "class_group_id"
+      )
+      .eq(
+        "subsegment_id",
+        subsegmentId
+      );
+
+
+    if (error) {
+
+      console.error(error);
+
+      return;
+
+    }
+
+
+    (data || []).forEach(
+      mapping => {
+
+        const group =
+          classGroups.find(
+            classGroup =>
+              classGroup.id ===
+              mapping.class_group_id
+          );
+
+
+        if (!group) {
+
+          return;
+
+        }
+
+
+        if (group.code === "A") {
+
+          document.getElementById(
+            "classGroupA"
+          ).checked =
+            true;
+
+        }
+
+        else if (group.code === "B") {
+
+          document.getElementById(
+            "classGroupB"
+          ).checked =
+            true;
+
+        }
+
+        else if (group.code === "C") {
+
+          document.getElementById(
+            "classGroupC"
+          ).checked =
+            true;
+
+        }
+
+      }
+    );
+
+  }
+
+
+  function updateSubsegmentTeamFields() {
 
     const type =
       document.getElementById(
@@ -3317,27 +3664,39 @@
       ).value;
 
 
-    const section =
+    const teamFields =
       document.getElementById(
-        "teamSizeSection"
+        "teamSizeFields"
       );
 
 
-    section.style.display =
-      type === "team"
-        ? "block"
-        : "none";
+    const usesTeams =
+      type === "team" ||
+      type === "both";
+
+
+    teamFields.classList.toggle(
+      "show",
+      usesTeams
+    );
 
   }
 
 
-  function makeSlug(value) {
+  function updateSubsegmentPaymentNote() {
 
-    return String(value || "")
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const paid =
+      document.getElementById(
+        "subsegmentPaymentRequired"
+      ).checked;
+
+
+    document.getElementById(
+      "subsegmentPaymentNote"
+    ).classList.toggle(
+      "show",
+      paid
+    );
 
   }
 
@@ -3345,10 +3704,6 @@
   async function saveSubsegment() {
 
     if (!currentSubsegmentEvent) {
-
-      alert(
-        "No parent event is selected."
-      );
 
       return;
 
@@ -3367,15 +3722,11 @@
       ).value.trim();
 
 
-    const slugInput =
+    const slug =
       document.getElementById(
         "subsegmentSlug"
-      ).value.trim();
-
-
-    const slug =
-      slugInput ||
-      makeSlug(name);
+      ).value.trim()
+      .toLowerCase();
 
 
     const participationType =
@@ -3404,22 +3755,6 @@
       );
 
 
-    const minTeamSize =
-      Number(
-        document.getElementById(
-          "subsegmentMinTeamSize"
-        ).value
-      );
-
-
-    const maxTeamSize =
-      Number(
-        document.getElementById(
-          "subsegmentMaxTeamSize"
-        ).value
-      );
-
-
     const warningCapacity =
       Number(
         document.getElementById(
@@ -3436,41 +3771,20 @@
       );
 
 
-    const selectedClassGroups =
-      [];
+    let minTeamSize =
+      Number(
+        document.getElementById(
+          "subsegmentMinTeamSize"
+        ).value
+      );
 
 
-    if (
-      document.getElementById(
-        "classGroupA"
-      ).checked
-    ) {
-
-      selectedClassGroups.push("A");
-
-    }
-
-
-    if (
-      document.getElementById(
-        "classGroupB"
-      ).checked
-    ) {
-
-      selectedClassGroups.push("B");
-
-    }
-
-
-    if (
-      document.getElementById(
-        "classGroupC"
-      ).checked
-    ) {
-
-      selectedClassGroups.push("C");
-
-    }
+    let maxTeamSize =
+      Number(
+        document.getElementById(
+          "subsegmentMaxTeamSize"
+        ).value
+      );
 
 
     const openAt =
@@ -3508,7 +3822,7 @@
 
 
     if (
-      !/^[a-z0-9-]+$/.test(slug)
+      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
     ) {
 
       alert(
@@ -3521,9 +3835,23 @@
 
 
     if (
-      !Number.isFinite(fee) ||
-      fee < 0
+      ![
+        "individual",
+        "team",
+        "both"
+      ].includes(participationType)
     ) {
+
+      alert(
+        "Please select a valid participation type."
+      );
+
+      return;
+
+    }
+
+
+    if (!Number.isFinite(fee) || fee < 0) {
 
       alert(
         "Fee must be 0 or greater."
@@ -3576,9 +3904,20 @@
     }
 
 
-    if (
-      participationType === "team"
-    ) {
+    const usesTeams =
+      participationType === "team" ||
+      participationType === "both";
+
+
+    if (!usesTeams) {
+
+      minTeamSize = 1;
+
+      maxTeamSize = 1;
+
+    }
+
+    else {
 
       if (
         !Number.isInteger(minTeamSize) ||
@@ -3586,7 +3925,7 @@
       ) {
 
         alert(
-          "Minimum team size must be at least 1."
+          "Minimum team size must be a whole number of at least 1."
         );
 
         return;
@@ -3611,26 +3950,13 @@
 
 
     if (
-      selectedClassGroups.length === 0
-    ) {
-
-      alert(
-        "Select at least one class group."
-      );
-
-      return;
-
-    }
-
-
-    if (
       openAt &&
       closeAt &&
       new Date(openAt) >= new Date(closeAt)
     ) {
 
       alert(
-        "Closing time must be later than opening time."
+        "The opening time must be earlier than the closing time."
       );
 
       return;
@@ -3638,7 +3964,24 @@
     }
 
 
-    saveButton.disabled = true;
+    const classGroupCodes =
+      getSelectedClassGroupCodes();
+
+
+    if (classGroupCodes.length === 0) {
+
+      alert(
+        "Please select at least one allowed class group."
+      );
+
+      return;
+
+    }
+
+
+    saveButton.disabled =
+      true;
+
 
     saveButton.textContent =
       "Saving...";
@@ -3685,14 +4028,10 @@
             hardCapacity,
 
           p_min_team_size:
-            participationType === "team"
-              ? minTeamSize
-              : 1,
+            minTeamSize,
 
           p_max_team_size:
-            participationType === "team"
-              ? maxTeamSize
-              : 1,
+            maxTeamSize,
 
           p_open_at:
             openAt
@@ -3714,14 +4053,16 @@
       }
 
 
-      const subsegmentId =
-        data;
+      const savedSubsegmentId =
+        extractSubsegmentId(
+          data
+        );
 
 
-      if (!subsegmentId) {
+      if (!savedSubsegmentId) {
 
         throw new Error(
-          "The database did not return the sub-segment ID."
+          "The sub-segment was saved, but its ID could not be determined."
         );
 
       }
@@ -3733,10 +4074,10 @@
         "set_subsegment_class_groups",
         {
           p_subsegment_id:
-            subsegmentId,
+            savedSubsegmentId,
 
           p_class_group_codes:
-            selectedClassGroups
+            classGroupCodes
         }
       );
 
@@ -3749,28 +4090,25 @@
 
 
       document.getElementById(
-        "subsegmentEditSuccess"
+        "subsegmentSuccessMessage"
       ).textContent =
         currentEditingSubsegment
           ? "Sub-segment updated successfully."
-          : "Sub-segment created successfully.";
+          : "Sub-segment added successfully.";
 
 
       document.getElementById(
-        "subsegmentEditSuccess"
+        "subsegmentSuccessMessage"
       ).classList.add("show");
 
 
       await loadSubsegments();
 
 
-      await loadEvents();
-
-
       setTimeout(
         () => {
 
-          closeSubsegmentEditModal();
+          closeSubsegmentForm();
 
         },
         700
@@ -3792,7 +4130,9 @@
 
     finally {
 
-      saveButton.disabled = false;
+      saveButton.disabled =
+        false;
+
 
       saveButton.textContent =
         "Save Sub-segment";
@@ -3802,15 +4142,120 @@
   }
 
 
+  function extractSubsegmentId(
+    data
+  ) {
+
+    if (!data) {
+
+      return null;
+
+    }
+
+
+    if (
+      typeof data === "string"
+    ) {
+
+      return data;
+
+    }
+
+
+    if (
+      Array.isArray(data)
+    ) {
+
+      if (data.length === 0) {
+
+        return null;
+
+      }
+
+
+      return extractSubsegmentId(
+        data[0]
+      );
+
+    }
+
+
+    if (
+      typeof data === "object"
+    ) {
+
+      return (
+        data.id ||
+        data.subsegment_id ||
+        null
+      );
+
+    }
+
+
+    return null;
+
+  }
+
+
+  function getSelectedClassGroupCodes() {
+
+    const codes = [];
+
+
+    if (
+      document.getElementById(
+        "classGroupA"
+      ).checked
+    ) {
+
+      codes.push("A");
+
+    }
+
+
+    if (
+      document.getElementById(
+        "classGroupB"
+      ).checked
+    ) {
+
+      codes.push("B");
+
+    }
+
+
+    if (
+      document.getElementById(
+        "classGroupC"
+      ).checked
+    ) {
+
+      codes.push("C");
+
+    }
+
+
+    return codes;
+
+  }
+
+
   async function deleteSubsegment(
     subsegment
   ) {
 
+    if (!subsegment) {
+
+      return;
+
+    }
+
+
     const confirmed =
       window.confirm(
         `Remove "${subsegment.name}"?\n\n` +
-        `This will permanently remove the sub-segment if it has no registrations.\n\n` +
-        `If registrations already exist, the database will protect the data and refuse the deletion.`
+        `This action will be blocked by the database if the sub-segment already has registrations.`
       );
 
 
@@ -3858,7 +4303,7 @@
 
 
       alert(
-        "Unable to remove this sub-segment.\n\n" +
+        "Unable to remove sub-segment.\n\n" +
         error.message
       );
 
@@ -3867,7 +4312,11 @@
   }
 
 
-  function toDateTimeLocal(
+  /* ========================================= */
+  /* DATE HELPERS */
+  /* ========================================= */
+
+  function toLocalDateTimeInput(
     value
   ) {
 
@@ -3882,26 +4331,56 @@
       new Date(value);
 
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
 
       return "";
 
     }
 
 
-    const local =
-      new Date(
-        date.getTime() -
-        date.getTimezoneOffset() * 60000
-      );
+    const year =
+      date.getFullYear();
 
 
-    return local
-      .toISOString()
-      .slice(0, 16);
+    const month =
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0");
+
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(2, "0");
+
+
+    const hours =
+      String(
+        date.getHours()
+      ).padStart(2, "0");
+
+
+    const minutes =
+      String(
+        date.getMinutes()
+      ).padStart(2, "0");
+
+
+    return (
+      `${year}-${month}-${day}` +
+      `T${hours}:${minutes}`
+    );
 
   }
 
+
+  /* ========================================= */
+  /* GENERAL HELPERS */
+  /* ========================================= */
 
   function escapeHtml(value) {
 
@@ -3936,11 +4415,17 @@
   }
 
 
+  /* ========================================= */
+  /* INITIALIZATION */
+  /* ========================================= */
+
   async function initializePage() {
 
     try {
 
       await loadProfile();
+
+      await loadClassGroups();
 
       await loadEvents();
 
@@ -3985,6 +4470,10 @@
   }
 
 
+  /* ========================================= */
+  /* EVENT LISTENERS */
+  /* ========================================= */
+
   document.getElementById(
     "refreshButton"
   ).addEventListener(
@@ -4012,8 +4501,7 @@
         console.error(error);
 
         alert(
-          "Unable to refresh events.\n\n" +
-          error.message
+          "Unable to refresh events."
         );
 
       }
@@ -4085,13 +4573,30 @@
 
 
   document.getElementById(
+    "closeSubsegmentsFooterButton"
+  ).addEventListener(
+    "click",
+    closeSubsegmentsModal
+  );
+
+
+  document.getElementById(
+    "addSubsegmentButton"
+  ).addEventListener(
+    "click",
+    () => openSubsegmentForm()
+  );
+
+
+  document.getElementById(
     "subsegmentsModal"
   ).addEventListener(
     "click",
     event => {
 
       if (
-        event.target.id === "subsegmentsModal"
+        event.target.id ===
+        "subsegmentsModal"
       ) {
 
         closeSubsegmentsModal();
@@ -4103,30 +4608,18 @@
 
 
   document.getElementById(
-    "addSubsegmentButton"
+    "closeSubsegmentFormButton"
   ).addEventListener(
     "click",
-    () => {
-
-      openSubsegmentEditModal();
-
-    }
+    closeSubsegmentForm
   );
 
 
   document.getElementById(
-    "closeSubsegmentEditButton"
+    "cancelSubsegmentFormButton"
   ).addEventListener(
     "click",
-    closeSubsegmentEditModal
-  );
-
-
-  document.getElementById(
-    "cancelSubsegmentEditButton"
-  ).addEventListener(
-    "click",
-    closeSubsegmentEditModal
+    closeSubsegmentForm
   );
 
 
@@ -4139,51 +4632,33 @@
 
 
   document.getElementById(
-    "subsegmentEditModal"
+    "subsegmentParticipationType"
+  ).addEventListener(
+    "change",
+    updateSubsegmentTeamFields
+  );
+
+
+  document.getElementById(
+    "subsegmentPaymentRequired"
+  ).addEventListener(
+    "change",
+    updateSubsegmentPaymentNote
+  );
+
+
+  document.getElementById(
+    "subsegmentFormModal"
   ).addEventListener(
     "click",
     event => {
 
       if (
-        event.target.id === "subsegmentEditModal"
+        event.target.id ===
+        "subsegmentFormModal"
       ) {
 
-        closeSubsegmentEditModal();
-
-      }
-
-    }
-  );
-
-
-  document.getElementById(
-    "subsegmentParticipationType"
-  ).addEventListener(
-    "change",
-    updateTeamSizeVisibility
-  );
-
-
-  document.getElementById(
-    "subsegmentName"
-  ).addEventListener(
-    "blur",
-    () => {
-
-      const slug =
-        document.getElementById(
-          "subsegmentSlug"
-        );
-
-
-      if (!slug.value.trim()) {
-
-        slug.value =
-          makeSlug(
-            document.getElementById(
-              "subsegmentName"
-            ).value
-          );
+        closeSubsegmentForm();
 
       }
 
