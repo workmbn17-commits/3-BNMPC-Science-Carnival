@@ -858,11 +858,11 @@
   async function loadEventCount() {
 
     const {
-      count,
+      data,
       error
     } = await supabaseClient
       .from("events")
-      .select("id", { count: "exact", head: true });
+      .select("id");
 
 
     if (error) {
@@ -872,12 +872,15 @@
         error
       );
 
+      document.getElementById("eventCount").textContent =
+        "—";
+
       return;
     }
 
 
     document.getElementById("eventCount").textContent =
-      count ?? 0;
+      data ? data.length : 0;
 
   }
 
