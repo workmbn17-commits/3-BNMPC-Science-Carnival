@@ -258,7 +258,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1000px;
+      min-width: 1100px;
     }
 
     th {
@@ -349,6 +349,21 @@
       margin-top: 3px;
     }
 
+    .edit-button {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .edit-button:hover {
+      background: #1d4ed8;
+    }
+
     .loading {
       padding: 50px;
       text-align: center;
@@ -368,6 +383,254 @@
       padding: 50px;
       text-align: center;
       color: #6b7280;
+    }
+
+    /* Modal */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+    }
+
+    .modal-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .modal-title {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .modal-subtitle {
+      margin-top: 5px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .close-button {
+      border: 0;
+      background: #f3f4f6;
+      color: #374151;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .close-button:hover {
+      background: #e5e7eb;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 7px;
+    }
+
+    .form-help {
+      margin-top: 5px;
+      color: #9ca3af;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      background: white;
+      color: #172033;
+      outline: none;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #f8fafc;
+      margin-bottom: 14px;
+    }
+
+    .switch-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .switch-description {
+      margin-top: 4px;
+      color: #6b7280;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background: #d1d5db;
+      border-radius: 999px;
+      transition: 0.2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .switch input:checked + .slider {
+      background: #2563eb;
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    .payment-note {
+      padding: 12px 14px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 9px;
+      color: #92400e;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .payment-note.show {
+      display: block;
+    }
+
+    .modal-footer {
+      padding: 18px 24px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .cancel-button {
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .cancel-button:hover {
+      background: #f9fafb;
+    }
+
+    .save-button {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .save-button:hover {
+      background: #1d4ed8;
+    }
+
+    .save-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .success-message {
+      display: none;
+      padding: 11px 14px;
+      border-radius: 8px;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .success-message.show {
+      display: block;
     }
 
     @media (max-width: 800px) {
@@ -395,6 +658,10 @@
       .event-summary {
         flex-wrap: wrap;
       }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -406,7 +673,6 @@
   <aside class="sidebar">
 
     <div class="brand">
-
       <div class="brand-title">
         3ʳᵈ BNMPC<br>
         Science Carnival
@@ -415,18 +681,18 @@
       <div class="brand-subtitle">
         Executive Management Portal
       </div>
-
     </div>
-
 
     <div class="nav-section">
       Overview
     </div>
 
-    <button class="nav-button" onclick="window.location.href='dashboard.html'">
+    <button
+      class="nav-button"
+      onclick="window.location.href='dashboard.html'"
+    >
       Dashboard
     </button>
-
 
     <div class="nav-section">
       Management
@@ -444,7 +710,6 @@
       Payments
     </button>
 
-
     <div class="nav-section">
       People
     </div>
@@ -456,7 +721,6 @@
     <button class="nav-button">
       Event Assignments
     </button>
-
 
     <div class="nav-section">
       System
@@ -470,10 +734,12 @@
       Settings
     </button>
 
-
     <div class="sidebar-bottom">
 
-      <button class="logout-button" id="logoutButton">
+      <button
+        class="logout-button"
+        id="logoutButton"
+      >
         Log Out
       </button>
 
@@ -490,23 +756,30 @@
         Events Management
       </div>
 
-
       <div class="user-area">
 
         <div class="user-info">
 
-          <div class="user-name" id="topUserName">
+          <div
+            class="user-name"
+            id="topUserName"
+          >
             Loading...
           </div>
 
-          <div class="user-role" id="topUserRole">
+          <div
+            class="user-role"
+            id="topUserRole"
+          >
             Loading...
           </div>
 
         </div>
 
-
-        <div class="user-avatar" id="userAvatar">
+        <div
+          class="user-avatar"
+          id="userAvatar"
+        >
           ?
         </div>
 
@@ -515,12 +788,19 @@
     </header>
 
 
-    <div id="loading" class="loading">
+    <div
+      id="loading"
+      class="loading"
+    >
       Loading events...
     </div>
 
 
-    <section id="eventsContent" class="content" style="display:none;">
+    <section
+      id="eventsContent"
+      class="content"
+      style="display:none;"
+    >
 
       <div class="page-heading">
 
@@ -547,7 +827,10 @@
             Total Events
           </span>
 
-          <span class="summary-value" id="totalEvents">
+          <span
+            class="summary-value"
+            id="totalEvents"
+          >
             0
           </span>
 
@@ -560,7 +843,10 @@
             Registration Open
           </span>
 
-          <span class="summary-value" id="openEvents">
+          <span
+            class="summary-value"
+            id="openEvents"
+          >
             0
           </span>
 
@@ -573,7 +859,10 @@
             Paid Events
           </span>
 
-          <span class="summary-value" id="paidEvents">
+          <span
+            class="summary-value"
+            id="paidEvents"
+          >
             0
           </span>
 
@@ -586,7 +875,10 @@
             With Sub-segments
           </span>
 
-          <span class="summary-value" id="subsegmentEvents">
+          <span
+            class="summary-value"
+            id="subsegmentEvents"
+          >
             0
           </span>
 
@@ -658,13 +950,16 @@
                   Sub-segments
                 </th>
 
+                <th>
+                  Action
+                </th>
+
               </tr>
 
             </thead>
 
 
             <tbody id="eventsTableBody">
-
             </tbody>
 
           </table>
@@ -680,6 +975,286 @@
 </div>
 
 
+<!-- EDIT EVENT MODAL -->
+
+<div
+  class="modal-overlay"
+  id="editModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div>
+
+        <div
+          class="modal-title"
+          id="modalEventName"
+        >
+          Edit Event
+        </div>
+
+        <div
+          class="modal-subtitle"
+          id="modalEventSlug"
+        >
+          Event configuration
+        </div>
+
+      </div>
+
+
+      <button
+        class="close-button"
+        id="closeModalButton"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div
+        class="success-message"
+        id="successMessage"
+      >
+        Event settings saved successfully.
+      </div>
+
+
+      <div class="switch-row">
+
+        <div>
+
+          <div class="switch-title">
+            Registration
+          </div>
+
+          <div class="switch-description">
+            Turn participant registration on or off for this event.
+          </div>
+
+        </div>
+
+
+        <label class="switch">
+
+          <input
+            type="checkbox"
+            id="registrationEnabled"
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div class="switch-row">
+
+        <div>
+
+          <div class="switch-title">
+            Paid Event
+          </div>
+
+          <div class="switch-description">
+            Enable this when participants must pay a registration fee.
+          </div>
+
+        </div>
+
+
+        <label class="switch">
+
+          <input
+            type="checkbox"
+            id="paymentRequired"
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label
+          class="form-label"
+          for="fee"
+        >
+          Registration Fee (৳)
+        </label>
+
+        <input
+          class="form-input"
+          type="number"
+          id="fee"
+          min="0"
+          step="0.01"
+          value="0"
+        >
+
+        <div class="form-help">
+          Keep this at 0 until the official fee is decided.
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label
+          class="form-label"
+          for="participationType"
+        >
+          Participation Type
+        </label>
+
+        <select
+          class="form-select"
+          id="participationType"
+        >
+
+          <option value="individual">
+            Individual
+          </option>
+
+          <option value="team">
+            Team
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label
+            class="form-label"
+            for="warningCapacity"
+          >
+            Warning / Target Capacity
+          </label>
+
+          <input
+            class="form-input"
+            type="number"
+            id="warningCapacity"
+            min="0"
+            step="1"
+          >
+
+          <div class="form-help">
+            Executives are alerted when registrations reach this number.
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label
+            class="form-label"
+            for="hardCapacity"
+          >
+            Hard Maximum Capacity
+          </label>
+
+          <input
+            class="form-input"
+            type="number"
+            id="hardCapacity"
+            min="0"
+            step="1"
+          >
+
+          <div class="form-help">
+            0 means unlimited. Otherwise registration stops at this number.
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="switch-row">
+
+        <div>
+
+          <div class="switch-title">
+            Sub-segments
+          </div>
+
+          <div class="switch-description">
+            Enable this if this event contains separate registration categories.
+          </div>
+
+        </div>
+
+
+        <label class="switch">
+
+          <input
+            type="checkbox"
+            id="hasSubsegments"
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div
+        class="payment-note"
+        id="paymentNote"
+      >
+        This event is marked as paid. The participant registration system will
+        require a configured payment method and transaction ID when registration
+        is implemented.
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="cancel-button"
+        id="cancelModalButton"
+        type="button"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        class="save-button"
+        id="saveEventButton"
+        type="button"
+      >
+        Save Changes
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <script src="supabase-config.js"></script>
 
 <script>
@@ -689,6 +1264,11 @@
       SUPABASE_URL,
       SUPABASE_PUBLISHABLE_KEY
     );
+
+
+  let currentEvents = [];
+
+  let currentEditingEvent = null;
 
 
   async function loadProfile() {
@@ -805,7 +1385,9 @@
     }
 
 
-    renderEvents(data || []);
+    currentEvents = data || [];
+
+    renderEvents(currentEvents);
 
   }
 
@@ -856,7 +1438,7 @@
       tableBody.innerHTML =
         `
         <tr>
-          <td colspan="7">
+          <td colspan="8">
             <div class="empty">
               No events found.
             </div>
@@ -914,6 +1496,7 @@
               <div class="capacity-number">
                 ${warning} / ${hard}
               </div>
+
               <div class="capacity-label">
                 Warning / Hard limit
               </div>
@@ -924,6 +1507,7 @@
               <div class="capacity-number">
                 ${warning} / Unlimited
               </div>
+
               <div class="capacity-label">
                 Warning / Hard limit
               </div>
@@ -933,8 +1517,8 @@
 
       const subsegmentText =
         event.has_subsegments
-          ? "Enabled"
-          : "Disabled";
+          ? `<span class="badge badge-open">Enabled</span>`
+          : `<span class="badge badge-closed">Disabled</span>`;
 
 
       row.innerHTML =
@@ -980,12 +1564,353 @@
         <td>
           ${subsegmentText}
         </td>
+
+
+        <td>
+
+          <button
+            class="edit-button"
+            type="button"
+            data-event-id="${escapeHtml(event.id)}"
+          >
+            Edit
+          </button>
+
+        </td>
         `;
+
+
+      const editButton =
+        row.querySelector(".edit-button");
+
+
+      editButton.addEventListener(
+        "click",
+        () => openEditModal(event)
+      );
 
 
       tableBody.appendChild(row);
 
     });
+
+  }
+
+
+  function openEditModal(event) {
+
+    currentEditingEvent = event;
+
+
+    document.getElementById(
+      "modalEventName"
+    ).textContent =
+      event.name;
+
+
+    document.getElementById(
+      "modalEventSlug"
+    ).textContent =
+      event.slug
+        ? event.slug
+        : "Event configuration";
+
+
+    document.getElementById(
+      "registrationEnabled"
+    ).checked =
+      Boolean(event.registration_enabled);
+
+
+    document.getElementById(
+      "paymentRequired"
+    ).checked =
+      Boolean(event.payment_required);
+
+
+    document.getElementById(
+      "fee"
+    ).value =
+      Number(event.fee || 0);
+
+
+    document.getElementById(
+      "participationType"
+    ).value =
+      event.participation_type || "individual";
+
+
+    document.getElementById(
+      "warningCapacity"
+    ).value =
+      Number(event.warning_capacity || 0);
+
+
+    document.getElementById(
+      "hardCapacity"
+    ).value =
+      Number(event.hard_capacity || 0);
+
+
+    document.getElementById(
+      "hasSubsegments"
+    ).checked =
+      Boolean(event.has_subsegments);
+
+
+    updatePaymentNote();
+
+
+    document.getElementById(
+      "successMessage"
+    ).classList.remove("show");
+
+
+    document.getElementById(
+      "editModal"
+    ).classList.add("show");
+
+  }
+
+
+  function closeEditModal() {
+
+    currentEditingEvent = null;
+
+
+    document.getElementById(
+      "editModal"
+    ).classList.remove("show");
+
+  }
+
+
+  function updatePaymentNote() {
+
+    const paid =
+      document.getElementById(
+        "paymentRequired"
+      ).checked;
+
+
+    document.getElementById(
+      "paymentNote"
+    ).classList.toggle(
+      "show",
+      paid
+    );
+
+  }
+
+
+  async function saveEventSettings() {
+
+    if (!currentEditingEvent) {
+
+      return;
+
+    }
+
+
+    const saveButton =
+      document.getElementById(
+        "saveEventButton"
+      );
+
+
+    const fee =
+      Number(
+        document.getElementById(
+          "fee"
+        ).value
+      );
+
+
+    const warningCapacity =
+      Number(
+        document.getElementById(
+          "warningCapacity"
+        ).value
+      );
+
+
+    const hardCapacity =
+      Number(
+        document.getElementById(
+          "hardCapacity"
+        ).value
+      );
+
+
+    const registrationEnabled =
+      document.getElementById(
+        "registrationEnabled"
+      ).checked;
+
+
+    const paymentRequired =
+      document.getElementById(
+        "paymentRequired"
+      ).checked;
+
+
+    const participationType =
+      document.getElementById(
+        "participationType"
+      ).value;
+
+
+    const hasSubsegments =
+      document.getElementById(
+        "hasSubsegments"
+      ).checked;
+
+
+    if (!Number.isFinite(fee) || fee < 0) {
+
+      alert(
+        "Fee must be 0 or greater."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !Number.isInteger(warningCapacity) ||
+      warningCapacity < 0
+    ) {
+
+      alert(
+        "Warning capacity must be a whole number of 0 or greater."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !Number.isInteger(hardCapacity) ||
+      hardCapacity < 0
+    ) {
+
+      alert(
+        "Hard capacity must be a whole number of 0 or greater."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      hardCapacity > 0 &&
+      hardCapacity < warningCapacity
+    ) {
+
+      alert(
+        "Hard capacity cannot be lower than warning capacity."
+      );
+
+      return;
+
+    }
+
+
+    saveButton.disabled = true;
+
+    saveButton.textContent =
+      "Saving...";
+
+
+    try {
+
+      const {
+        error
+      } = await supabaseClient.rpc(
+        "update_event_settings",
+        {
+          p_event_id:
+            currentEditingEvent.id,
+
+          p_registration_enabled:
+            registrationEnabled,
+
+          p_payment_required:
+            paymentRequired,
+
+          p_fee:
+            fee,
+
+          p_participation_type:
+            participationType,
+
+          p_warning_capacity:
+            warningCapacity,
+
+          p_hard_capacity:
+            hardCapacity,
+
+          p_has_subsegments:
+            hasSubsegments
+        }
+      );
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      document.getElementById(
+        "successMessage"
+      ).textContent =
+        "Event settings saved successfully.";
+
+
+      document.getElementById(
+        "successMessage"
+      ).classList.add("show");
+
+
+      await loadEvents();
+
+
+      setTimeout(
+        () => {
+
+          closeEditModal();
+
+        },
+        700
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+
+      alert(
+        "Unable to save event settings.\n\n" +
+        error.message
+      );
+
+    }
+
+    finally {
+
+      saveButton.disabled = false;
+
+      saveButton.textContent =
+        "Save Changes";
+
+    }
 
   }
 
@@ -1055,9 +1980,15 @@
       ).innerHTML =
         `
         <div class="error">
-          <strong>Unable to load Events Management.</strong>
+
+          <strong>
+            Unable to load Events Management.
+          </strong>
+
           <br><br>
+
           ${escapeHtml(error.message)}
+
         </div>
         `;
 
@@ -1101,6 +2032,56 @@
 
       button.textContent =
         "Refresh";
+
+    }
+  );
+
+
+  document.getElementById(
+    "paymentRequired"
+  ).addEventListener(
+    "change",
+    updatePaymentNote
+  );
+
+
+  document.getElementById(
+    "closeModalButton"
+  ).addEventListener(
+    "click",
+    closeEditModal
+  );
+
+
+  document.getElementById(
+    "cancelModalButton"
+  ).addEventListener(
+    "click",
+    closeEditModal
+  );
+
+
+  document.getElementById(
+    "saveEventButton"
+  ).addEventListener(
+    "click",
+    saveEventSettings
+  );
+
+
+  document.getElementById(
+    "editModal"
+  ).addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target.id === "editModal"
+      ) {
+
+        closeEditModal();
+
+      }
 
     }
   );
