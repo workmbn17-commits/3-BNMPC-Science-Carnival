@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Executive Signup — 3ʳᵈ BNMPC Science Carnival</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <h1>Executive Account Application</h1>
+  <p>3ʳᵈ BNMPC Science Carnival</p>
+
+  <form id="signupForm">
+
+    <label for="fullName">Full Name</label><br>
+    <input
+      type="text"
+      id="fullName"
+      required
+      autocomplete="name"
+    >
+
+    <br><br>
+
+    <label for="phone">Phone Number</label><br>
+    <input
+      type="tel"
+      id="phone"
+      autocomplete="tel"
+    >
+
+    <br><br>
+
+    <label for="email">Email</label><br>
+    <input
+      type="email"
+      id="email"
+      required
+      autocomplete="email"
+    >
+
+    <br><br>
+
+    <label for="password">Password</label><br>
+    <input
+      type="password"
+      id="password"
+      required
+      minlength="8"
+      autocomplete="new-password"
+    >
+
+    <br><br>
+
+    <label for="requestedRole">Requested Role</label><br>
+    <select id="requestedRole" required>
+      <option value="member">Member</option>
+      <option value="segment_executive">Segment Executive</option>
+      <option value="higher_executive">Higher Executive</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Submit Application</button>
+
+  </form>
+
+  <p id="message"></p>
+
+  <script src="supabase-config.js"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const signupForm = document.getElementById("signupForm");
+    const message = document.getElementById("message");
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      message.textContent = "Submitting application...";
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const requestedRole =
+        document.getElementById("requestedRole").value;
+
+      const { error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone,
+            requested_role: requestedRole
+          }
+        }
+      });
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      message.textContent =
+        "Application submitted. Your account must be approved before you can access the Executive Portal.";
+      
+      signupForm.reset();
+    });
+  </script>
+
+</body>
+</html>
