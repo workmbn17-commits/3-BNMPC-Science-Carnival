@@ -400,7 +400,7 @@
       Events
     </button>
 
-    <button class="nav-button">
+    <button class="nav-button" onclick="window.location.href='registrations.html'">
       Registrations
     </button>
 
@@ -580,7 +580,11 @@
 
           <div class="quick-actions">
 
-            <button class="action-card" id="manageEventsButton">
+            <button
+              class="action-card"
+              id="manageEventsButton"
+              type="button"
+            >
 
               <div class="action-title">
                 Manage Events
@@ -593,7 +597,11 @@
             </button>
 
 
-            <button class="action-card">
+            <button
+              class="action-card"
+              id="reviewRegistrationsButton"
+              type="button"
+            >
 
               <div class="action-title">
                 Review Registrations
@@ -606,7 +614,11 @@
             </button>
 
 
-            <button class="action-card">
+            <button
+              class="action-card"
+              id="staffManagementButton"
+              type="button"
+            >
 
               <div class="action-title">
                 Staff Management
@@ -619,7 +631,10 @@
             </button>
 
 
-            <button class="action-card">
+            <button
+              class="action-card"
+              type="button"
+            >
 
               <div class="action-title">
                 System Settings
@@ -747,96 +762,118 @@
 
   async function loadDashboard() {
 
-    const {
-      data: {
-        session
+    try {
+
+      const {
+        data: {
+          session
+        }
+      } = await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+
+        window.location.href = "login.html";
+
+        return;
       }
-    } = await supabaseClient.auth.getSession();
 
 
-    if (!session) {
-
-      window.location.href = "login.html";
-
-      return;
-    }
+      const {
+        data,
+        error
+      } = await supabaseClient.rpc("get_my_staff_profile");
 
 
-    const {
-      data,
-      error
-    } = await supabaseClient.rpc("get_my_staff_profile");
+      if (error) {
+
+        console.error(
+          "Unable to load staff profile:",
+          error
+        );
+
+        document.getElementById("loading").textContent =
+          "Unable to load your staff profile.";
+
+        return;
+      }
 
 
-    if (error) {
+      if (!data || data.length === 0) {
 
-      console.error(error);
+        document.getElementById("loading").textContent =
+          "No staff profile was found for this account.";
+
+        return;
+      }
+
+
+      const profile = data[0];
+
+
+      document.getElementById("topUserName").textContent =
+        profile.full_name || "Executive";
+
+
+      document.getElementById("topUserRole").textContent =
+        formatRole(profile.role);
+
+
+      document.getElementById("welcomeTitle").textContent =
+        "Welcome, " + (profile.full_name || "Executive");
+
+
+      document.getElementById("accountStatus").textContent =
+        profile.account_status || "Unknown";
+
+
+      document.getElementById("accountRole").textContent =
+        formatRole(profile.role);
+
+
+      const firstLetter =
+        profile.full_name
+          ? profile.full_name.trim().charAt(0).toUpperCase()
+          : "?";
+
+
+      document.getElementById("userAvatar").textContent =
+        firstLetter;
+
+
+      document.getElementById("loading").style.display =
+        "none";
+
+
+      if (
+        profile.account_status === "active" &&
+        (
+          profile.role === "supreme_executive" ||
+          profile.role === "higher_executive"
+        )
+      ) {
+
+        document.getElementById("dashboardContent").style.display =
+          "block";
+
+        await loadEventCount();
+
+      } else {
+
+        document.getElementById("restrictedContent").style.display =
+          "block";
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Dashboard loading error:",
+        error
+      );
 
       document.getElementById("loading").textContent =
-        "Unable to load your staff profile.";
-
-      return;
-    }
-
-
-    if (!data || data.length === 0) {
-
-      document.getElementById("loading").textContent =
-        "No staff profile was found for this account.";
-
-      return;
-    }
-
-
-    const profile = data[0];
-
-
-    document.getElementById("topUserName").textContent =
-      profile.full_name;
-
-    document.getElementById("topUserRole").textContent =
-      formatRole(profile.role);
-
-    document.getElementById("welcomeTitle").textContent =
-      "Welcome, " + profile.full_name;
-
-    document.getElementById("accountStatus").textContent =
-      profile.account_status;
-
-    document.getElementById("accountRole").textContent =
-      formatRole(profile.role);
-
-
-    const firstLetter =
-      profile.full_name
-        ? profile.full_name.trim().charAt(0).toUpperCase()
-        : "?";
-
-    document.getElementById("userAvatar").textContent =
-      firstLetter;
-
-
-    document.getElementById("loading").style.display =
-      "none";
-
-
-    if (
-      profile.account_status === "active" &&
-      (
-        profile.role === "supreme_executive" ||
-        profile.role === "higher_executive"
-      )
-    ) {
-
-      document.getElementById("dashboardContent").style.display =
-        "block";
-
-      await loadEventCount();
-
-    } else {
-
-      document.getElementById("restrictedContent").style.display =
-        "block";
+        "Unable to load the Executive Portal. Please refresh the page.";
 
     }
 
@@ -889,14 +926,6 @@
   }
 
 
-  document.getElementById("eventsNav")
-    .addEventListener("click", () => {
-
-      window.location.href = "events.html";
-
-    });
-
-
   document.getElementById("manageEventsButton")
     .addEventListener("click", () => {
 
@@ -905,10 +934,18 @@
     });
 
 
-  document.getElementById("dashboardNav")
+  document.getElementById("reviewRegistrationsButton")
     .addEventListener("click", () => {
 
-      window.location.href = "dashboard.html";
+      window.location.href = "registrations.html";
+
+    });
+
+
+  document.getElementById("staffManagementButton")
+    .addEventListener("click", () => {
+
+      window.location.href = "staff.html";
 
     });
 
