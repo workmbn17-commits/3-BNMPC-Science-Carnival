@@ -335,6 +335,11 @@
       color: #9d174d;
     }
 
+    .badge-both {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
     .capacity {
       min-width: 120px;
     }
@@ -384,8 +389,6 @@
       text-align: center;
       color: #6b7280;
     }
-
-    /* Modal */
 
     .modal-overlay {
       position: fixed;
@@ -975,8 +978,6 @@
 </div>
 
 
-<!-- EDIT EVENT MODAL -->
-
 <div
   class="modal-overlay"
   id="editModal"
@@ -1131,7 +1132,15 @@
             Team
           </option>
 
+          <option value="both">
+            Both
+          </option>
+
         </select>
+
+        <div class="form-help">
+          Choose Both when the event can contain both individual and team registration categories.
+        </div>
 
       </div>
 
@@ -1469,10 +1478,29 @@
           : `<span class="badge badge-free">Free</span>`;
 
 
-      const participationBadge =
-        event.participation_type === "team"
-          ? `<span class="badge badge-team">Team</span>`
-          : `<span class="badge badge-individual">Individual</span>`;
+      let participationBadge;
+
+
+      if (event.participation_type === "team") {
+
+        participationBadge =
+          `<span class="badge badge-team">Team</span>`;
+
+      }
+
+      else if (event.participation_type === "both") {
+
+        participationBadge =
+          `<span class="badge badge-both">Both</span>`;
+
+      }
+
+      else {
+
+        participationBadge =
+          `<span class="badge badge-individual">Individual</span>`;
+
+      }
 
 
       const feeText =
@@ -1634,10 +1662,19 @@
       Number(event.fee || 0);
 
 
+    const storedParticipationType =
+      event.participation_type;
+
+
     document.getElementById(
       "participationType"
     ).value =
-      event.participation_type || "individual";
+      (
+        storedParticipationType === "team" ||
+        storedParticipationType === "both"
+      )
+        ? storedParticipationType
+        : "individual";
 
 
     document.getElementById(
@@ -1812,6 +1849,23 @@
 
       alert(
         "Hard capacity cannot be lower than warning capacity."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      ![
+        "individual",
+        "team",
+        "both"
+      ].includes(participationType)
+    ) {
+
+      alert(
+        "Please select a valid participation type."
       );
 
       return;
