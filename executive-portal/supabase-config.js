@@ -1,6 +1,48 @@
 const SUPABASE_URL = "https://tbwrjorqzumjyiptglkf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG";
 
+/* Readability pass: make the smallest operational labels easier to read without enlarging the main UI excessively. */
+(function improveSmallTextReadability(){
+  const style = document.createElement('style');
+  style.id = 'ep-small-text-readability';
+  style.textContent = `
+    .ep-brand-subtitle,
+    .ep-sidebar-label,
+    .ep-nav-meta,
+    .ep-user-role,
+    .ep-header-kicker,
+    .ep-system-state,
+    .ep-signout,
+    .ep-command-label,
+    .ep-command-note,
+    .ep-status-meta,
+    .ep-empty,
+    .ep-loading,
+    .ep-stat-label,
+    .ep-table th,
+    .ep-kicker,
+    .ep-badge {
+      font-size: 11px !important;
+    }
+
+    .ep-page-description,
+    .ep-surface-subheading,
+    .ep-action-description,
+    .ep-alert-copy,
+    .ep-error {
+      font-size: 12px !important;
+    }
+
+    .ep-user-name,
+    .ep-action-title,
+    .ep-status-copy,
+    .ep-alert-title {
+      font-size: 12px !important;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
 (function mountStaffRoleControls(){
   if(!/\/staff(?:\.html)?$/.test(window.location.pathname)) return;
 
