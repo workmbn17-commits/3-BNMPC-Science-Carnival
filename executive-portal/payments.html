@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070909" />
+  <meta name="description" content="Payment review center for the 3rd BNMPC National Science Carnival" />
+
+  <title>Payments — 3ʳᵈ BNMPC Science Carnival</title>
+
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/executive-shell.css" />
+  <link rel="stylesheet" href="assets/css/payments-theme.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body class="ep-app-body">
+  <div class="ep-app">
+    <aside class="ep-sidebar">
+      <div class="ep-brand">
+        <div class="ep-brand-mark">B</div>
+        <div class="ep-brand-copy">
+          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
+          <div class="ep-brand-subtitle">National Science Carnival</div>
+        </div>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Control</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="dashboard.html">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
+          </button>
+          <button class="ep-nav-button" data-route="events.html">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 4v4M16 10v4M10 16v4"/></svg>
+            <span>Events</span>
+          </button>
+          <button class="ep-nav-button" data-route="registrations.html">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v4h4M9 11h6M9 15h6M9 19h4"/></svg>
+            <span>Registrations</span>
+          </button>
+          <button class="ep-nav-button active" data-route="payments.html">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14"/><path d="M3 10h18M7 15h4"/></svg>
+            <span>Payments</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">People</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="staff.html">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c.5-3.5 2.4-5 6-5s5.5 1.5 6 5M15 15c2.9 0 4.7 1.3 5 4"/></svg>
+            <span>Staff</span>
+          </button>
+          <button class="ep-nav-button" data-route="assignments.html">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M9 8.5l6 6M15 8.5l-6 6"/></svg>
+            <span>Assignments</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Operations</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="checkin.html" data-coming-soon="QR Check-in">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 5h4M5 5v4M19 5h-4M19 5v4M5 19h4M5 19v-4M19 19h-4M19 19v-4"/><path d="M8 12h8"/></svg>
+            <span>QR Check-in</span>
+            <span class="ep-nav-meta">DAY</span>
+          </button>
+          <button class="ep-nav-button" data-route="reports.html" data-coming-soon="Reports">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 20V9M12 20V4M19 20v-7"/><path d="M3 20h18"/></svg>
+            <span>Reports</span>
+          </button>
+          <button class="ep-nav-button" data-route="settings.html" data-coming-soon="Settings">
+            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2.1-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2.1 1.2L5.1 5.9l-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2.1 1.2L10 21h4l.5-2.6a7 7 0 0 0 2.1-1.2l2.3.9 2-3.4-2 1.5c.1-.4.1-.8.1-1.2Z"/></svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-bottom">
+        <div class="ep-user-card">
+          <div class="ep-avatar" id="avatar">EX</div>
+          <div class="ep-user-copy">
+            <div class="ep-user-name" id="sideUserName">Executive</div>
+            <div class="ep-user-role" id="sideUserRole">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="ep-main">
+      <header class="ep-header">
+        <div class="ep-header-title">
+          <span class="ep-header-kicker">Executive Control</span>
+          <span class="ep-header-divider"></span>
+          <span class="ep-header-name">Payments</span>
+        </div>
+        <div class="ep-header-right">
+          <div class="ep-system-state">
+            <span class="ep-system-dot"></span>
+            <span>Payment review</span>
+          </div>
+          <button class="ep-signout" id="logoutButton">Sign out</button>
+        </div>
+      </header>
+
+      <section class="ep-page">
+        <div class="ep-loading-wrap" id="loading">
+          <div class="ep-loading"><span class="ep-loader"></span>Loading payment center</div>
+        </div>
+
+        <div class="ep-error" id="errorBox"></div>
+
+        <div id="pageContent" style="display:none;">
+          <div class="ep-page-intro">
+            <div>
+              <div class="ep-kicker">Operations / Payments</div>
+              <h1 class="ep-page-title">Payment verification</h1>
+              <p class="ep-page-description">Review submitted transactions for paid competitions. Verification is recorded against the registration before the registration can be approved.</p>
+            </div>
+            <div class="ep-page-actions">
+              <button class="ep-btn" id="refreshButton">Refresh queue</button>
+            </div>
+          </div>
+
+          <div class="payment-command">
+            <div class="payment-stat">
+              <div class="payment-stat-label">Paid registrations</div>
+              <div class="payment-stat-value" id="statTotal">0</div>
+              <div class="payment-stat-note">accessible in your scope</div>
+            </div>
+            <div class="payment-stat">
+              <div class="payment-stat-label">Pending review</div>
+              <div class="payment-stat-value warn" id="statPending">0</div>
+              <div class="payment-stat-note">needs a decision</div>
+            </div>
+            <div class="payment-stat">
+              <div class="payment-stat-label">Verified</div>
+              <div class="payment-stat-value green" id="statVerified">0</div>
+              <div class="payment-stat-note">payment accepted</div>
+            </div>
+            <div class="payment-stat">
+              <div class="payment-stat-label">Rejected</div>
+              <div class="payment-stat-value danger" id="statRejected">0</div>
+              <div class="payment-stat-note">payment not accepted</div>
+            </div>
+          </div>
+
+          <section class="ep-surface">
+            <div class="ep-surface-header">
+              <div>
+                <div class="ep-surface-heading">Verification queue</div>
+                <div class="ep-surface-subheading" id="queueScope">Paid registrations visible to your event scope</div>
+              </div>
+            </div>
+
+            <div class="ep-surface-body">
+              <div class="payment-toolbar">
+                <div class="payment-filter">
+                  <label for="searchInput">Search</label>
+                  <input id="searchInput" type="search" placeholder="Registration number, name, institution, transaction ID" autocomplete="off" />
+                </div>
+                <div class="payment-filter">
+                  <label for="statusFilter">Payment status</label>
+                  <select id="statusFilter">
+                    <option value="all">All statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+                <div class="payment-filter">
+                  <label for="eventFilter">Event</label>
+                  <select id="eventFilter">
+                    <option value="all">All events</option>
+                  </select>
+                </div>
+                <button class="ep-btn" id="clearFilters">Clear</button>
+              </div>
+
+              <div class="payment-table-wrap">
+                <table class="payment-table">
+                  <thead>
+                    <tr>
+                      <th>Registration</th>
+                      <th>Event</th>
+                      <th>Participant / team</th>
+                      <th>Method</th>
+                      <th>Transaction</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="paymentTableBody">
+                    <tr><td colspan="8"><div class="payment-empty"><div class="payment-empty-title">Loading queue</div></div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="payment-access-note"><strong>Access scope:</strong> Core Executives can review all paid registrations. Segment Managers can review payments only for registrations belonging to events assigned to them. Volunteers do not have payment-review access.</div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="payment-drawer-overlay" id="drawerOverlay">
+    <aside class="payment-drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div class="payment-drawer-header">
+        <div>
+          <div class="payment-drawer-kicker">Payment record</div>
+          <div class="payment-drawer-title" id="drawerTitle">Details</div>
+        </div>
+        <button class="payment-drawer-close" id="drawerClose" aria-label="Close">×</button>
+      </div>
+
+      <div class="payment-drawer-body" id="drawerBody"></div>
+
+      <div class="payment-drawer-footer">
+        <button class="verify-button" id="drawerVerify">Verify payment</button>
+        <button class="reject-button" id="drawerReject">Reject payment</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="rejection-dialog" id="rejectionDialog">
+    <div class="rejection-card" role="dialog" aria-modal="true" aria-labelledby="rejectionTitle">
+      <div class="rejection-title" id="rejectionTitle">Reject payment</div>
+      <div class="rejection-copy">A rejection reason is required. Keep it concise and operational; the reason is stored with the payment record.</div>
+      <textarea id="rejectionReason" maxlength="500" placeholder="Example: Transaction ID could not be verified against the submitted payment."></textarea>
+      <div class="rejection-actions">
+        <button id="cancelRejection">Cancel</button>
+        <button class="confirm" id="confirmRejection">Reject payment</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const state = {
+      profile: null,
+      registrations: [],
+      events: new Map(),
+      subsegments: new Map(),
+      classes: new Map(),
+      selected: null
+    };
+
+    const els = {
+      loading: document.getElementById('loading'),
+      errorBox: document.getElementById('errorBox'),
+      pageContent: document.getElementById('pageContent'),
+      sideUserName: document.getElementById('sideUserName'),
+      sideUserRole: document.getElementById('sideUserRole'),
+      avatar: document.getElementById('avatar'),
+      statTotal: document.getElementById('statTotal'),
+      statPending: document.getElementById('statPending'),
+      statVerified: document.getElementById('statVerified'),
+      statRejected: document.getElementById('statRejected'),
+      queueScope: document.getElementById('queueScope'),
+      searchInput: document.getElementById('searchInput'),
+      statusFilter: document.getElementById('statusFilter'),
+      eventFilter: document.getElementById('eventFilter'),
+      clearFilters: document.getElementById('clearFilters'),
+      refreshButton: document.getElementById('refreshButton'),
+      tableBody: document.getElementById('paymentTableBody'),
+      drawerOverlay: document.getElementById('drawerOverlay'),
+      drawerTitle: document.getElementById('drawerTitle'),
+      drawerBody: document.getElementById('drawerBody'),
+      drawerClose: document.getElementById('drawerClose'),
+      drawerVerify: document.getElementById('drawerVerify'),
+      drawerReject: document.getElementById('drawerReject'),
+      rejectionDialog: document.getElementById('rejectionDialog'),
+      rejectionReason: document.getElementById('rejectionReason'),
+      cancelRejection: document.getElementById('cancelRejection'),
+      confirmRejection: document.getElementById('confirmRejection'),
+      logoutButton: document.getElementById('logoutButton')
+    };
+
+    const roleLabels = {
+      supreme_executive: 'Core Executive',
+      higher_executive: 'Core Executive',
+      segment_executive: 'Segment Manager',
+      volunteer: 'Volunteer'
+    };
+
+    function showError(message) {
+      els.errorBox.textContent = message;
+      els.errorBox.style.display = 'block';
+    }
+
+    function clearError() {
+      els.errorBox.textContent = '';
+      els.errorBox.style.display = 'none';
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function roleLabel(role) {
+      return roleLabels[role] || role || 'Staff';
+    }
+
+    function initials(name) {
+      return String(name || 'EX')
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part => part[0] || '')
+        .join('')
+        .toUpperCase() || 'EX';
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '—';
+      return date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+    }
+
+    function money(value) {
+      const amount = Number(value ?? 0);
+      return new Intl.NumberFormat('en-BD', { style: 'currency', currency: 'BDT', maximumFractionDigits: 0 }).format(amount);
+    }
+
+    function paymentChip(status) {
+      const safe = status || 'pending';
+      const label = safe.replaceAll('_', ' ');
+      return `<span class="payment-chip ${escapeHtml(safe)}">${escapeHtml(label)}</span>`;
+    }
+
+    function eventName(id) {
+      return state.events.get(id)?.name || 'Unknown event';
+    }
+
+    function subsegmentName(id) {
+      return state.subsegments.get(id)?.name || 'Main event';
+    }
+
+    function className(id) {
+      return state.classes.get(id)?.name || '—';
+    }
+
+    async function requireSession() {
+      const { data, error } = await client.auth.getSession();
+      if (error) throw error;
+      if (!data.session) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    async function loadProfile() {
+      const { data, error } = await client.rpc('get_my_staff_profile');
+      if (error) throw error;
+      const profile = Array.isArray(data) ? data[0] : data;
+      if (!profile) throw new Error('Staff profile not found.');
+      if (profile.account_status !== 'active') throw new Error('Your staff account is not active.');
+      if (!['supreme_executive', 'higher_executive', 'segment_executive'].includes(profile.role)) {
+        throw new Error('Payment review access is limited to Core Executives and Segment Managers.');
+      }
+      state.profile = profile;
+      els.sideUserName.textContent = profile.full_name || 'Executive';
+      els.sideUserRole.textContent = roleLabel(profile.role);
+      els.avatar.textContent = initials(profile.full_name);
+      els.queueScope.textContent = profile.role === 'segment_executive'
+        ? 'Paid registrations within events assigned to you'
+        : 'All paid registrations across the carnival';
+    }
+
+    async function loadReferenceData() {
+      const [eventsResult, subsegmentsResult, classesResult] = await Promise.all([
+        client.from('events').select('id,name,participation_type,payment_required,fee').order('name'),
+        client.from('subsegments').select('id,event_id,name').order('sort_order').order('name'),
+        client.from('class_groups').select('id,name').order('name')
+      ]);
+      if (eventsResult.error) throw eventsResult.error;
+      if (subsegmentsResult.error) throw subsegmentsResult.error;
+      if (classesResult.error) throw classesResult.error;
+
+      state.events = new Map((eventsResult.data || []).map(row => [row.id, row]));
+      state.subsegments = new Map((subsegmentsResult.data || []).map(row => [row.id, row]));
+      state.classes = new Map((classesResult.data || []).map(row => [row.id, row]));
+
+      const paidEvents = [...state.events.values()].filter(event => event.payment_required);
+      els.eventFilter.innerHTML = '<option value="all">All events</option>' + paidEvents.map(event => `<option value="${escapeHtml(event.id)}">${escapeHtml(event.name)}</option>`).join('');
+    }
+
+    async function loadRegistrations() {
+      const { data, error } = await client
+        .from('registrations')
+        .select('id,registration_number,event_id,subsegment_id,participation_type,participant_name,email,phone,institution,class_group_id,address,team_name,payment_required,payment_method,transaction_id,payment_status,registration_status,confirmation_status,fee_amount,created_at,payment_reviewed_at,payment_rejection_reason')
+        .eq('payment_required', true)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      state.registrations = data || [];
+    }
+
+    function renderStats() {
+      const rows = state.registrations;
+      els.statTotal.textContent = rows.length;
+      els.statPending.textContent = rows.filter(row => row.payment_status === 'pending').length;
+      els.statVerified.textContent = rows.filter(row => row.payment_status === 'verified').length;
+      els.statRejected.textContent = rows.filter(row => row.payment_status === 'rejected').length;
+    }
+
+    function filteredRows() {
+      const search = els.searchInput.value.trim().toLowerCase();
+      const status = els.statusFilter.value;
+      const eventId = els.eventFilter.value;
+
+      return state.registrations.filter(row => {
+        if (status !== 'all' && row.payment_status !== status) return false;
+        if (eventId !== 'all' && row.event_id !== eventId) return false;
+        if (!search) return true;
+        const haystack = [
+          row.registration_number,
+          row.participant_name,
+          row.team_name,
+          row.institution,
+          row.transaction_id,
+          row.email,
+          row.phone,
+          eventName(row.event_id),
+          subsegmentName(row.subsegment_id)
+        ].join(' ').toLowerCase();
+        return haystack.includes(search);
+      });
+    }
+
+    function rowHtml(row) {
+      const displayName = row.participation_type === 'team' ? (row.team_name || row.participant_name || 'Team') : (row.participant_name || 'Participant');
+      const context = row.participation_type === 'team' ? `Team / ${row.participant_name || 'Lead'}` : row.institution || 'Participant';
+      const actionDisabled = row.registration_status === 'cancelled';
+      return `
+        <tr>
+          <td>
+            <button class="ep-btn ep-btn-ghost" data-open-payment="${escapeHtml(row.id)}" style="padding:0;border:0;background:transparent;text-align:left;min-height:auto;display:block;">
+              <div class="payment-id">${escapeHtml(row.registration_number)}</div>
+              <div class="payment-secondary">${escapeHtml(formatDate(row.created_at))}</div>
+            </button>
+          </td>
+          <td>
+            <div class="payment-primary">${escapeHtml(eventName(row.event_id))}</div>
+            <div class="payment-secondary">${escapeHtml(subsegmentName(row.subsegment_id))}</div>
+          </td>
+          <td>
+            <div class="payment-primary">${escapeHtml(displayName)}</div>
+            <div class="payment-secondary">${escapeHtml(context)}</div>
+          </td>
+          <td><span class="payment-method">${escapeHtml(row.payment_method || '—')}</span></td>
+          <td><span class="payment-method">${escapeHtml(row.transaction_id || '—')}</span></td>
+          <td><span class="payment-amount">${escapeHtml(money(row.fee_amount))}</span></td>
+          <td>${paymentChip(row.payment_status)}</td>
+          <td>
+            <div class="payment-action">
+              <button class="verify" data-verify="${escapeHtml(row.id)}" ${actionDisabled ? 'disabled' : ''}>Verify</button>
+              <button class="reject" data-reject="${escapeHtml(row.id)}" ${actionDisabled ? 'disabled' : ''}>Reject</button>
+            </div>
+          </td>
+        </tr>`;
+    }
+
+    function renderTable() {
+      const rows = filteredRows();
+      if (!rows.length) {
+        els.tableBody.innerHTML = `<tr><td colspan="8"><div class="payment-empty"><div class="payment-empty-mark">₿</div><div class="payment-empty-title">No payment records found</div><div class="payment-empty-copy">There are no paid registrations matching the current filters. New submissions will appear here automatically after refresh.</div></div></td></tr>`;
+        return;
+      }
+      els.tableBody.innerHTML = rows.map(rowHtml).join('');
+    }
+
+    function detailItem(label, value, mono = false) {
+      return `<div class="payment-detail"><div class="payment-detail-label">${escapeHtml(label)}</div><div class="payment-detail-value ${mono ? 'mono' : ''}">${escapeHtml(value ?? '—')}</div></div>`;
+    }
+
+    function openDrawer(id) {
+      const row = state.registrations.find(item => item.id === id);
+      if (!row) return;
+      state.selected = row;
+      els.drawerTitle.textContent = row.registration_number || 'Payment record';
+      const primaryName = row.participation_type === 'team' ? (row.team_name || 'Team') : (row.participant_name || 'Participant');
+      const actionDisabled = row.registration_status === 'cancelled';
+
+      els.drawerBody.innerHTML = `
+        <div class="payment-detail-grid">
+          ${detailItem('Registration', row.registration_number, true)}
+          ${detailItem('Payment status', row.payment_status)}
+          ${detailItem('Event', eventName(row.event_id))}
+          ${detailItem('Subsegment', subsegmentName(row.subsegment_id))}
+          ${detailItem('Participant / team', primaryName)}
+          ${detailItem('Participation', row.participation_type)}
+          ${detailItem('Institution', row.institution)}
+          ${detailItem('Class group', className(row.class_group_id))}
+          ${detailItem('Phone', row.phone)}
+          ${detailItem('Email', row.email)}
+          ${detailItem('Payment method', row.payment_method)}
+          ${detailItem('Amount', money(row.fee_amount))}
+          ${detailItem('Transaction ID', row.transaction_id, true)}
+          ${detailItem('Registration status', row.registration_status)}
+          ${detailItem('Confirmation', row.confirmation_status)}
+          ${detailItem('Submitted', formatDate(row.created_at))}
+        </div>
+
+        <div class="payment-section">
+          <div class="payment-section-title">Contact / address</div>
+          <div class="payment-detail-value" style="padding:10px 11px;border:1px solid var(--border-subtle);background:var(--surface-input);">${escapeHtml(row.address || 'No address supplied')}</div>
+        </div>
+
+        <div class="payment-section">
+          <div class="payment-section-title">Payment review history</div>
+          <div class="payment-history">
+            <div class="payment-history-row"><span class="payment-history-label">Reviewed at</span><span class="payment-history-value">${escapeHtml(formatDate(row.payment_reviewed_at))}</span></div>
+            <div class="payment-history-row"><span class="payment-history-label">Rejection reason</span><span class="payment-history-value">${escapeHtml(row.payment_rejection_reason || '—')}</span></div>
+          </div>
+        </div>
+      `;
+
+      els.drawerVerify.disabled = actionDisabled;
+      els.drawerReject.disabled = actionDisabled;
+      els.drawerOverlay.classList.add('open');
+    }
+
+    function closeDrawer() {
+      els.drawerOverlay.classList.remove('open');
+      state.selected = null;
+    }
+
+    function openRejectionDialog(id) {
+      const row = state.registrations.find(item => item.id === id);
+      if (!row) return;
+      state.selected = row;
+      els.rejectionReason.value = '';
+      els.rejectionDialog.classList.add('open');
+      setTimeout(() => els.rejectionReason.focus(), 0);
+    }
+
+    function closeRejectionDialog() {
+      els.rejectionDialog.classList.remove('open');
+      els.rejectionReason.value = '';
+    }
+
+    async function reviewPayment(id, status, reason = null) {
+      clearError();
+      const target = state.registrations.find(row => row.id === id);
+      if (!target) return;
+
+      els.drawerVerify.disabled = true;
+      els.drawerReject.disabled = true;
+      els.confirmRejection.disabled = true;
+
+      const { data, error } = await client.rpc('review_registration_payment', {
+        p_registration_id: id,
+        p_new_status: status,
+        p_rejection_reason: reason
+      });
+
+      if (error) {
+        els.confirmRejection.disabled = false;
+        showError(error.message || 'Payment review failed.');
+        if (state.selected) {
+          els.drawerVerify.disabled = state.selected.registration_status === 'cancelled';
+          els.drawerReject.disabled = state.selected.registration_status === 'cancelled';
+        }
+        return;
+      }
+
+      const updated = Array.isArray(data) ? data[0] : data;
+      const index = state.registrations.findIndex(row => row.id === id);
+      if (index >= 0 && updated) state.registrations[index] = { ...state.registrations[index], ...updated };
+      renderStats();
+      renderTable();
+      closeRejectionDialog();
+      openDrawer(id);
+    }
+
+    async function refresh() {
+      clearError();
+      try {
+        await loadReferenceData();
+        await loadRegistrations();
+        renderStats();
+        renderTable();
+      } catch (error) {
+        showError(error.message || 'Unable to load payment records.');
+      }
+    }
+
+    document.querySelectorAll('[data-route]').forEach(button => {
+      button.addEventListener('click', () => {
+        if (button.dataset.comingSoon) {
+          window.alert(`${button.dataset.comingSoon} is not part of this build step yet.`);
+          return;
+        }
+        const route = button.dataset.route;
+        if (route) window.location.href = route;
+      });
+    });
+
+    els.searchInput.addEventListener('input', renderTable);
+    els.statusFilter.addEventListener('change', renderTable);
+    els.eventFilter.addEventListener('change', renderTable);
+    els.clearFilters.addEventListener('click', () => {
+      els.searchInput.value = '';
+      els.statusFilter.value = 'all';
+      els.eventFilter.value = 'all';
+      renderTable();
+    });
+    els.refreshButton.addEventListener('click', refresh);
+
+    els.tableBody.addEventListener('click', event => {
+      const openButton = event.target.closest('[data-open-payment]');
+      if (openButton) openDrawer(openButton.dataset.openPayment);
+
+      const verifyButton = event.target.closest('[data-verify]');
+      if (verifyButton && !verifyButton.disabled) reviewPayment(verifyButton.dataset.verify, 'verified');
+
+      const rejectButton = event.target.closest('[data-reject]');
+      if (rejectButton && !rejectButton.disabled) openRejectionDialog(rejectButton.dataset.reject);
+    });
+
+    els.drawerClose.addEventListener('click', closeDrawer);
+    els.drawerOverlay.addEventListener('click', event => {
+      if (event.target === els.drawerOverlay) closeDrawer();
+    });
+
+    els.drawerVerify.addEventListener('click', () => {
+      if (state.selected) reviewPayment(state.selected.id, 'verified');
+    });
+
+    els.drawerReject.addEventListener('click', () => {
+      if (state.selected) openRejectionDialog(state.selected.id);
+    });
+
+    els.cancelRejection.addEventListener('click', closeRejectionDialog);
+    els.confirmRejection.addEventListener('click', () => {
+      if (!state.selected) return;
+      const reason = els.rejectionReason.value.trim();
+      if (!reason) {
+        els.rejectionReason.focus();
+        return;
+      }
+      reviewPayment(state.selected.id, 'rejected', reason);
+    });
+
+    els.rejectionDialog.addEventListener('click', event => {
+      if (event.target === els.rejectionDialog) closeRejectionDialog();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeRejectionDialog();
+        closeDrawer();
+      }
+    });
+
+    els.logoutButton.addEventListener('click', async () => {
+      await client.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    (async function init() {
+      try {
+        if (!await requireSession()) return;
+        await loadProfile();
+        await refresh();
+        els.loading.style.display = 'none';
+        els.pageContent.style.display = 'block';
+      } catch (error) {
+        els.loading.style.display = 'none';
+        showError(error.message || 'Unable to initialize payment center.');
+      }
+    })();
+  </script>
+</body>
+</html>
