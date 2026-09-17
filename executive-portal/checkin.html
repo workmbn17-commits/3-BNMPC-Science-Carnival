@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <meta name="description" content="Event-day QR check-in console for the 3rd BNMPC National Science Carnival">
+  <title>QR Check-in — 3ʳᵈ BNMPC National Science Carnival</title>
+
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="assets/css/executive-shell.css">
+  <link rel="stylesheet" href="assets/css/checkin-theme.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body class="ep-app-body">
+  <div class="ep-app">
+    <aside class="ep-sidebar">
+      <div class="ep-brand">
+        <div class="ep-brand-mark">B</div>
+        <div class="ep-brand-copy">
+          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
+          <div class="ep-brand-subtitle">National Science Carnival</div>
+        </div>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Control</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="dashboard.html"><span>▦</span><span>Dashboard</span></button>
+          <button class="ep-nav-button" data-route="events.html"><span>≡</span><span>Events</span></button>
+          <button class="ep-nav-button" data-route="registrations.html"><span>□</span><span>Registrations</span></button>
+          <button class="ep-nav-button" data-route="payments.html"><span>¤</span><span>Payments</span></button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">People</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="staff.html"><span>◎</span><span>Staff</span></button>
+          <button class="ep-nav-button" data-route="assignments.html"><span>↔</span><span>Assignments</span></button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Operations</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button active" data-route="checkin.html"><span>⌗</span><span>QR Check-in</span><span class="ep-nav-meta">DAY</span></button>
+          <button class="ep-nav-button" data-route="reports.html"><span>▥</span><span>Reports</span></button>
+          <button class="ep-nav-button" data-route="settings.html"><span>⚙</span><span>Settings</span></button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-bottom">
+        <div class="ep-user-card">
+          <div class="ep-avatar" id="avatar">EX</div>
+          <div class="ep-user-copy">
+            <div class="ep-user-name" id="sideUserName">Executive</div>
+            <div class="ep-user-role" id="sideUserRole">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="ep-main">
+      <header class="ep-header">
+        <div class="ep-header-title">
+          <span class="ep-header-kicker">Executive Control</span>
+          <span class="ep-header-divider"></span>
+          <span class="ep-header-name">QR Check-in</span>
+        </div>
+        <div class="ep-header-right">
+          <div class="ep-system-state"><span class="ep-system-dot"></span><span id="headerState">Scanner ready</span></div>
+          <button class="ep-signout" id="logoutButton">Sign out</button>
+        </div>
+      </header>
+
+      <section class="ep-page">
+        <div id="loading" class="ep-loading-wrap">
+          <div class="ep-loading"><span class="ep-loader"></span>Loading event-day check-in console</div>
+        </div>
+        <div id="errorBox" class="ep-error"></div>
+
+        <div id="pageContent" style="display:none;">
+          <div class="ep-page-intro">
+            <div>
+              <div class="ep-kicker">Operations / Event Day</div>
+              <h1 class="ep-page-title">QR Check-in</h1>
+              <p class="ep-page-description" id="pageDescription">Scan an approved and confirmed registration QR code, then verify the attendee against the live Supabase record. Volunteers and executives use the same secure check-in operation.</p>
+            </div>
+          </div>
+
+          <div class="event-day-strip">
+            <div class="event-day-stat"><div class="event-day-label">Checked in this session</div><div class="event-day-value green" id="sessionCount">0</div></div>
+            <div class="event-day-stat"><div class="event-day-label">Last result</div><div class="event-day-value" id="lastResult">—</div></div>
+            <div class="event-day-stat"><div class="event-day-label">Operator</div><div class="event-day-value" id="operatorRole">—</div></div>
+          </div>
+
+          <div class="checkin-layout">
+            <section class="ep-surface checkin-scanner-surface">
+              <div class="ep-surface-header">
+                <div>
+                  <div class="ep-surface-heading">Camera scanner</div>
+                  <div class="ep-surface-subheading">Point the device at the participant QR code</div>
+                </div>
+                <button class="ep-btn" id="scannerToggle" type="button">Stop scanner</button>
+              </div>
+              <div class="scanner-frame">
+                <div id="reader"></div>
+                <div class="scanner-corners"></div>
+              </div>
+              <div class="scanner-status">
+                <span class="scanner-status-copy" id="scannerStatusCopy">Initializing camera scanner…</span>
+                <span class="scanner-status-meta" id="scannerStatusMeta">INITIALIZING</span>
+              </div>
+              <div class="manual-grid">
+                <input class="ep-input" id="manualToken" type="text" autocomplete="off" placeholder="Paste QR token for manual verification">
+                <button class="ep-btn ep-btn-primary" id="manualVerify" type="button">Verify token</button>
+              </div>
+              <div class="permission-note"><strong>Security:</strong> the browser sends only the QR token to the protected verification function. No participant data is stored in the page as the QR payload.</div>
+            </section>
+
+            <div class="ep-panel-stack">
+              <section class="ep-surface checkin-result-surface">
+                <div class="ep-surface-header">
+                  <div>
+                    <div class="ep-surface-heading">Verification result</div>
+                    <div class="ep-surface-subheading">Live response from the check-in service</div>
+                  </div>
+                </div>
+                <div class="result-shell" id="resultShell">
+                  <div class="result-state neutral">
+                    <div class="result-mark">?</div>
+                    <div class="result-kicker">Awaiting scan</div>
+                    <div class="result-title">Ready for QR verification</div>
+                    <div class="result-message">Scan a participant code or enter a QR token manually. The server will decide whether the registration is approved, confirmed, already checked in, or invalid.</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="ep-surface checkin-history-surface">
+                <div class="ep-surface-header">
+                  <div>
+                    <div class="ep-surface-heading">Recent activity</div>
+                    <div class="ep-surface-subheading">Current browser session only</div>
+                  </div>
+                </div>
+                <div class="history-list" id="historyList"><div class="history-empty">No scans recorded in this session.</div></div>
+              </section>
+            </div>
+          </div>
+
+          <div class="assignment-note" style="margin-top:18px;">
+            <strong>Check-in rule:</strong> only an active staff account can use QR verification. A registration must already be approved and confirmed. Paid registrations therefore reach check-in only after their payment has been verified and the registration approved.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const $ = id => document.getElementById(id);
+    const ROLE_LABELS = {
+      supreme_executive: 'Core Executive',
+      higher_executive: 'Core Executive',
+      segment_executive: 'Segment Manager',
+      member: 'Volunteer'
+    };
+    const state = { profile:null, scanner:null, scannerRunning:false, sessionScans:[], busy:false };
+
+    function esc(v){
+      return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+    }
+    function roleLabel(role){ return ROLE_LABELS[role] || 'Staff'; }
+    function initials(name){
+      if(!name) return 'EX';
+      const p=name.trim().split(/\s+/).filter(Boolean);
+      return p.length===1 ? p[0].slice(0,2).toUpperCase() : (p[0][0]+p[p.length-1][0]).toUpperCase();
+    }
+    function formatDate(value){
+      if(!value) return '—';
+      const d = new Date(value);
+      if(Number.isNaN(d.getTime())) return String(value);
+      return d.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});
+    }
+    function setHeader(text){ $('headerState').textContent = text; }
+    function showError(message){ $('errorBox').textContent = message; $('errorBox').style.display = 'block'; }
+    function clearError(){ $('errorBox').textContent = ''; $('errorBox').style.display = 'none'; }
+
+    const routes = new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
+    document.querySelectorAll('[data-route]').forEach(button => button.addEventListener('click', () => {
+      const route = button.dataset.route;
+      if(routes.has(route)) window.location.href = route;
+    }));
+
+    async function loadProfile(){
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+      if(sessionError || !sessionData?.session){ window.location.href='login.html'; return false; }
+
+      const { data, error } = await supabaseClient.rpc('get_my_staff_profile');
+      if(error) throw error;
+      const profile = data?.[0];
+      if(!profile) throw new Error('No staff profile was found for this account.');
+      if(profile.account_status !== 'active') throw new Error('Your staff account is not active.');
+      if(!['member','segment_executive','higher_executive','supreme_executive'].includes(profile.role)) throw new Error('QR verification access is not available for this account.');
+
+      state.profile = profile;
+      $('sideUserName').textContent = profile.full_name || 'Executive';
+      $('sideUserRole').textContent = roleLabel(profile.role);
+      $('avatar').textContent = initials(profile.full_name);
+      $('operatorRole').textContent = roleLabel(profile.role);
+      $('pageDescription').textContent = profile.role === 'member'
+        ? 'Scan participant QR codes during event operations. Verification is performed server-side and marks a successful check-in exactly once.'
+        : 'Scan participant QR codes during event operations. Executives and volunteers use the same secure server-side verification operation.';
+      return true;
+    }
+
+    function updateScannerStatus(copy, meta){
+      $('scannerStatusCopy').textContent = copy;
+      $('scannerStatusMeta').textContent = meta;
+    }
+
+    function makeResult(kind, mark, kicker, title, message, fields=[]){
+      const grid = fields.length ? `<div class="result-grid">${fields.map(([label,value]) => `<div class="result-item"><div class="result-label">${esc(label)}</div><div class="result-value">${esc(value ?? '—')}</div></div>`).join('')}</div>` : '';
+      $('resultShell').innerHTML = `<div class="result-state ${kind}"><div class="result-mark">${esc(mark)}</div><div class="result-kicker">${esc(kicker)}</div><div class="result-title">${esc(title)}</div><div class="result-message">${esc(message)}</div>${grid}</div>`;
+    }
+
+    function pushHistory(payload){
+      const entry = { ...payload, time: new Date().toISOString() };
+      state.sessionScans.unshift(entry);
+      state.sessionScans = state.sessionScans.slice(0, 8);
+      $('sessionCount').textContent = state.sessionScans.filter(x => x.success).length;
+      $('lastResult').textContent = entry.status_label || '—';
+      renderHistory();
+    }
+
+    function renderHistory(){
+      const list = $('historyList');
+      if(!state.sessionScans.length){ list.innerHTML='<div class="history-empty">No scans recorded in this session.</div>'; return; }
+      list.innerHTML = state.sessionScans.map((item,index)=>`<div class="history-row"><div class="history-index">${String(index+1).padStart(2,'0')}</div><div><div class="history-primary">${esc(item.registration_number || item.participant_name || 'Unknown QR')}</div><div class="history-meta">${esc(item.event_name || '—')} · ${esc(item.status_label || item.status || 'Result')}</div></div><div class="history-time">${esc(formatDate(item.time))}</div></div>`).join('');
+    }
+
+    function normalizeToken(raw){
+      const value = String(raw || '').trim();
+      if(!value) return '';
+      return value.replace(/^https?:\/\/[^/]+\//i,'').trim();
+    }
+
+    async function verifyToken(raw, source='manual'){
+      const token = normalizeToken(raw);
+      if(!token || state.busy) return;
+      clearError();
+      state.busy = true;
+      setHeader('Verifying…');
+      updateScannerStatus(source === 'camera' ? 'QR detected. Verifying with Supabase…' : 'Verifying manual token…', 'VERIFYING');
+      try{
+        const { data, error } = await supabaseClient.rpc('verify_registration_qr', { p_qr_token: token });
+        if(error) throw error;
+        const result = data || {};
+        const status = result.status || 'unknown';
+
+        if(result.success === true && status === 'verified'){
+          makeResult('success','✓','Verified','Participant checked in',result.message || 'Participant verified successfully.',[
+            ['Registration',result.registration_number],
+            ['Participant',result.participant_name],
+            ['Event',result.event_name],
+            ['Subsegment',result.subsegment_name || 'Main event'],
+            ['Team',result.team_name || 'Individual'],
+            ['Project',result.project_name || '—'],
+            ['Checked in at',formatDate(result.checked_in_at)]
+          ]);
+          pushHistory({...result,status_label:'VERIFIED'});
+          setHeader('Check-in successful');
+          updateScannerStatus('Verification completed successfully. Scanner remains ready.', 'READY');
+          $('manualToken').value = '';
+        } else if(status === 'already_checked_in'){
+          makeResult('warning','!','Already used','QR already checked in',result.message || 'This QR code has already been verified.',[
+            ['Registration',result.registration_number],
+            ['Participant',result.participant_name],
+            ['Event',result.event_name],
+            ['Subsegment',result.subsegment_name || 'Main event'],
+            ['Checked in at',formatDate(result.checked_in_at)]
+          ]);
+          pushHistory({...result,status_label:'ALREADY CHECKED IN',success:false});
+          setHeader('Duplicate scan');
+          updateScannerStatus('Existing check-in detected. Scanner remains ready.', 'READY');
+          $('manualToken').value = '';
+        } else if(status === 'not_approved'){
+          makeResult('danger','×','Blocked','Registration not approved',result.message || 'This registration has not been approved.');
+          pushHistory({...result,status_label:'NOT APPROVED',success:false});
+          setHeader('Check-in blocked');
+          updateScannerStatus('Registration not approved.', 'BLOCKED');
+        } else if(status === 'not_confirmed'){
+          makeResult('danger','×','Blocked','Registration not confirmed',result.message || 'This registration has not been confirmed.');
+          pushHistory({...result,status_label:'NOT CONFIRMED',success:false});
+          setHeader('Check-in blocked');
+          updateScannerStatus('Registration not confirmed.', 'BLOCKED');
+        } else {
+          makeResult('danger','×','Invalid','QR verification failed',result.message || 'Invalid QR code.');
+          pushHistory({...result,status_label:'INVALID QR',success:false});
+          setHeader('Verification failed');
+          updateScannerStatus('The scanned code could not be verified.', 'ERROR');
+        }
+      }catch(error){
+        console.error(error);
+        makeResult('danger','×','Service error','Verification unavailable',error?.message || 'The verification request could not be completed.');
+        setHeader('Service error');
+        updateScannerStatus('Verification service returned an error.', 'ERROR');
+        showError(error?.message || 'Unable to verify this QR code.');
+      }finally{
+        state.busy = false;
+      }
+    }
+
+    async function startScanner(){
+      if(state.scannerRunning) return;
+      if(typeof Html5Qrcode === 'undefined'){
+        updateScannerStatus('Scanner library is still loading. Try again in a moment.', 'WAIT');
+        return;
+      }
+      state.scanner = state.scanner || new Html5Qrcode('reader');
+      try{
+        await state.scanner.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
+          decodedText => verifyToken(decodedText,'camera'),
+          () => {}
+        );
+        state.scannerRunning = true;
+        $('scannerToggle').textContent = 'Stop scanner';
+        updateScannerStatus('Camera scanner is live. Hold the QR code inside the frame.', 'SCANNING');
+        setHeader('Scanner live');
+      }catch(error){
+        console.error(error);
+        state.scannerRunning = false;
+        $('scannerToggle').textContent = 'Start scanner';
+        updateScannerStatus('Camera access is unavailable. Use manual verification below.', 'MANUAL');
+        showError('Camera scanner could not start. Check browser camera permission or use manual token verification.');
+      }
+    }
+
+    async function stopScanner(){
+      if(!state.scanner || !state.scannerRunning) return;
+      try{ await state.scanner.stop(); }catch(error){ console.warn(error); }
+      state.scannerRunning = false;
+      $('scannerToggle').textContent = 'Start scanner';
+      updateScannerStatus('Scanner stopped. Use Start scanner to resume.', 'STOPPED');
+      setHeader('Scanner stopped');
+    }
+
+    async function initialize(){
+      try{
+        const allowed = await loadProfile();
+        if(!allowed) return;
+        $('loading').style.display='none';
+        $('pageContent').style.display='block';
+        $('scannerToggle').disabled = false;
+        updateScannerStatus('Starting camera scanner…', 'STARTING');
+        const tryStart = () => startScanner();
+        if(typeof Html5Qrcode === 'undefined') window.setTimeout(tryStart, 600);
+        else tryStart();
+      }catch(error){
+        console.error(error);
+        $('loading').style.display='none';
+        showError(error?.message || 'Unable to load the QR check-in console.');
+      }
+    }
+
+    $('scannerToggle').addEventListener('click', async()=>{ clearError(); if(state.scannerRunning) await stopScanner(); else await startScanner(); });
+    $('manualVerify').addEventListener('click',()=>verifyToken($('manualToken').value,'manual'));
+    $('manualToken').addEventListener('keydown',event=>{ if(event.key==='Enter') verifyToken($('manualToken').value,'manual'); });
+    $('logoutButton').addEventListener('click',async()=>{ if(state.scannerRunning) await stopScanner(); await supabaseClient.auth.signOut(); window.location.href='login.html'; });
+    document.addEventListener('keydown',event=>{ if(event.key==='Escape' && state.scannerRunning) stopScanner(); });
+
+    window.addEventListener('load', initialize);
+  </script>
+</body>
+</html>
