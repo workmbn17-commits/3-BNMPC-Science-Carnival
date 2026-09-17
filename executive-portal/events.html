@@ -6,4798 +6,937 @@
 
   <title>Events Management — 3ʳᵈ BNMPC Science Carnival</title>
 
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="assets/css/executive-shell.css">
+  <link rel="stylesheet" href="assets/css/events-theme.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: #f4f7fb;
-      color: #172033;
-    }
-
-    .app {
+    /* Page-specific layout only. The shared design system and events theme
+       provide the common visual language. */
+    .events-toolbar {
       display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 260px;
-      background: #111827;
-      color: white;
-      padding: 24px 16px;
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-    }
-
-    .brand {
-      padding: 4px 12px 28px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 22px;
-    }
-
-    .brand-title {
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .brand-subtitle {
-      margin-top: 7px;
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .nav-section {
-      margin: 20px 12px 8px;
-      color: #6b7280;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .nav-button {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: #d1d5db;
-      text-align: left;
-      padding: 12px;
-      border-radius: 9px;
-      margin-bottom: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .nav-button:hover {
-      background: #1f2937;
-      color: white;
-    }
-
-    .nav-button.active {
-      background: #2563eb;
-      color: white;
-    }
-
-    .sidebar-bottom {
-      position: absolute;
-      left: 16px;
-      right: 16px;
-      bottom: 20px;
-    }
-
-    .logout-button {
-      width: 100%;
-      border: 1px solid #374151;
-      background: transparent;
-      color: #d1d5db;
-      padding: 11px;
-      border-radius: 9px;
-      cursor: pointer;
-    }
-
-    .logout-button:hover {
-      background: #1f2937;
-      color: white;
-    }
-
-    .main {
-      margin-left: 260px;
-      width: calc(100% - 260px);
-      min-height: 100vh;
-    }
-
-    .topbar {
-      height: 72px;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-    }
-
-    .page-title {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-info {
-      text-align: right;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .user-role {
-      font-size: 11px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
-
-    .user-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #2563eb;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-    }
-
-    .content {
-      padding: 32px;
-    }
-
-    .page-heading {
-      display: flex;
-      justify-content: space-between;
       align-items: flex-end;
-      margin-bottom: 24px;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
     }
 
-    .page-heading h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .page-heading p {
-      margin: 7px 0 0;
-      color: #6b7280;
-      font-size: 14px;
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .event-summary {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 20px 22px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 36px;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
     }
 
     .summary-item {
       display: flex;
       flex-direction: column;
+      justify-content: center;
       gap: 5px;
     }
 
     .summary-label {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .summary-value {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .table-panel {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    }
-
-    .table-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .table-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .table-subtitle {
-      margin-top: 4px;
-      color: #9ca3af;
-      font-size: 12px;
-    }
-
-    .refresh-button {
-      border: 1px solid #d1d5db;
-      background: white;
-      color: #374151;
-      padding: 9px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .refresh-button:hover {
-      background: #f9fafb;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1200px;
-    }
-
-    th {
-      background: #f8fafc;
-      color: #6b7280;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      text-align: left;
-      padding: 14px 16px;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 16px;
-      border-bottom: 1px solid #eef2f7;
-      font-size: 13px;
-      vertical-align: middle;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .event-name {
-      font-weight: 700;
-      color: #172033;
-    }
-
-    .event-slug {
-      margin-top: 4px;
-      color: #9ca3af;
-      font-size: 11px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .badge-open {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .badge-closed {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .badge-free {
-      background: #e0f2fe;
-      color: #075985;
-    }
-
-    .badge-paid {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .badge-individual {
-      background: #ede9fe;
-      color: #5b21b6;
-    }
-
-    .badge-team {
-      background: #fce7f3;
-      color: #9d174d;
-    }
-
-    .badge-both {
-      background: #e0e7ff;
-      color: #3730a3;
-    }
-
-    .capacity {
-      min-width: 120px;
-    }
-
-    .capacity-number {
-      font-weight: 700;
-    }
-
-    .capacity-label {
-      color: #9ca3af;
-      font-size: 11px;
-      margin-top: 3px;
-    }
-
-    .action-group {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-    }
-
-    .edit-button,
-    .subsegment-button {
-      border: 0;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .edit-button {
-      background: #2563eb;
-    }
-
-    .edit-button:hover {
-      background: #1d4ed8;
-    }
-
-    .subsegment-button {
-      background: #111827;
-    }
-
-    .subsegment-button:hover {
-      background: #1f2937;
-    }
-
-    .loading {
-      padding: 50px;
-      text-align: center;
-      color: #6b7280;
-    }
-
-    .error {
-      padding: 22px;
-      margin: 20px;
-      border-radius: 10px;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-    }
-
-    .empty {
-      padding: 50px;
-      text-align: center;
-      color: #6b7280;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-    }
-
-    .modal-overlay.show {
-      display: flex;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 650px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
-    }
-
-    .modal-large {
-      max-width: 900px;
-    }
-
-    .modal-header {
-      padding: 22px 24px;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-    }
-
-    .modal-title {
-      font-size: 19px;
-      font-weight: 700;
-    }
-
-    .modal-subtitle {
-      margin-top: 5px;
-      color: #6b7280;
-      font-size: 12px;
-    }
-
-    .close-button {
-      border: 0;
-      background: #f3f4f6;
-      color: #374151;
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .close-button:hover {
-      background: #e5e7eb;
-    }
-
-    .modal-body {
-      padding: 24px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
       display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #374151;
-      margin-bottom: 7px;
     }
 
-    .form-help {
-      margin-top: 5px;
-      color: #9ca3af;
-      font-size: 11px;
-      line-height: 1.5;
+    .event-capacity-wrap {
+      min-width: 118px;
     }
 
-    .form-input,
-    .form-select {
+    .capacity-track {
       width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 13px;
-      background: white;
-      color: #172033;
-      outline: none;
+      max-width: 118px;
+      height: 4px;
+      margin-bottom: 5px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-subtle);
     }
 
-    .form-input:focus,
-    .form-select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-row-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-    }
-
-    .switch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px 16px;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      background: #f8fafc;
-      margin-bottom: 14px;
-    }
-
-    .switch-title {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .switch-description {
-      margin-top: 4px;
-      color: #6b7280;
-      font-size: 11px;
-      line-height: 1.45;
-    }
-
-    .switch {
-      position: relative;
-      width: 48px;
-      height: 26px;
-      flex-shrink: 0;
-    }
-
-    .switch input {
-      opacity: 0;
+    .capacity-fill {
+      height: 100%;
       width: 0;
-      height: 0;
+      background: var(--brand-green-500);
     }
 
-    .slider {
-      position: absolute;
-      inset: 0;
-      cursor: pointer;
-      background: #d1d5db;
-      border-radius: 999px;
-      transition: 0.2s;
+    .subsegment-panel {
+      margin-top: 14px;
+      border: 1px solid var(--border-default);
+      background: var(--surface-raised);
     }
 
-    .slider::before {
-      content: "";
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      left: 3px;
-      top: 3px;
-      background: white;
-      border-radius: 50%;
-      transition: 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-
-    .switch input:checked + .slider {
-      background: #2563eb;
-    }
-
-    .switch input:checked + .slider::before {
-      transform: translateX(22px);
-    }
-
-    .payment-note {
-      padding: 12px 14px;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: 9px;
-      color: #92400e;
-      font-size: 11px;
-      line-height: 1.5;
-      margin-top: 8px;
-      display: none;
-    }
-
-    .payment-note.show {
-      display: block;
-    }
-
-    .modal-footer {
-      padding: 18px 24px;
-      border-top: 1px solid #e5e7eb;
+    .subsegment-header {
+      min-height: 50px;
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .cancel-button {
-      border: 1px solid #d1d5db;
-      background: white;
-      color: #374151;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .cancel-button:hover {
-      background: #f9fafb;
-    }
-
-    .save-button {
-      border: 0;
-      background: #2563eb;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .save-button:hover {
-      background: #1d4ed8;
-    }
-
-    .save-button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .danger-button {
-      border: 0;
-      background: #dc2626;
-      color: white;
-      padding: 9px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .danger-button:hover {
-      background: #b91c1c;
-    }
-
-    .success-message {
-      display: none;
-      padding: 11px 14px;
-      border-radius: 8px;
-      background: #dcfce7;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-      font-size: 12px;
-      margin-bottom: 16px;
-    }
-
-    .success-message.show {
-      display: block;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--border-default);
     }
 
     .subsegment-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      display: grid;
+      gap: 7px;
+      padding: 10px;
     }
 
-    .subsegment-card {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px;
-      background: #f8fafc;
-    }
-
-    .subsegment-card-header {
+    .subsegment-item {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 12px;
+      gap: 12px;
+      padding: 10px 11px;
+      border: 1px solid var(--border-default);
+      background: var(--surface-input);
     }
 
-    .subsegment-card-title {
-      font-size: 15px;
+    .subsegment-copy strong {
+      display: block;
+      color: var(--text-primary);
+      font-size: 10px;
       font-weight: 700;
     }
 
-    .subsegment-card-slug {
-      margin-top: 4px;
-      color: #9ca3af;
-      font-size: 11px;
+    .subsegment-copy span {
+      display: block;
+      margin-top: 3px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 8px;
     }
 
     .subsegment-actions {
       display: flex;
-      gap: 7px;
-      flex-shrink: 0;
-    }
-
-    .small-button {
-      border: 1px solid #d1d5db;
-      background: white;
-      color: #374151;
-      padding: 7px 10px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .small-button:hover {
-      background: #f3f4f6;
-    }
-
-    .small-danger-button {
-      border: 1px solid #fecaca;
-      background: #fff;
-      color: #b91c1c;
-      padding: 7px 10px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .small-danger-button:hover {
-      background: #fef2f2;
-    }
-
-    .subsegment-meta {
-      display: flex;
-      gap: 7px;
+      gap: 6px;
       flex-wrap: wrap;
-      margin-bottom: 12px;
     }
 
-    .subsegment-details {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 14px 20px;
     }
 
-    .detail-box {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 10px;
-    }
-
-    .detail-label {
-      color: #9ca3af;
-      font-size: 10px;
-      margin-bottom: 4px;
-    }
-
-    .detail-value {
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .class-group-selector {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .class-group-option {
-      position: relative;
-    }
-
-    .class-group-option input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .class-group-label {
-      display: block;
-      border: 1px solid #d1d5db;
-      border-radius: 9px;
-      padding: 12px 8px;
-      text-align: center;
-      cursor: pointer;
-      background: white;
-      font-size: 12px;
-      font-weight: 700;
-      transition: 0.15s;
-    }
-
-    .class-group-label:hover {
-      border-color: #2563eb;
-    }
-
-    .class-group-option input:checked + .class-group-label {
-      background: #eff6ff;
-      border-color: #2563eb;
-      color: #1d4ed8;
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.08);
-    }
-
-    .empty-subsegments {
-      padding: 35px 20px;
-      text-align: center;
-      border: 1px dashed #d1d5db;
-      border-radius: 12px;
-      color: #6b7280;
-      background: #f8fafc;
-    }
-
-    .empty-subsegments-title {
-      font-weight: 700;
-      color: #374151;
-      margin-bottom: 5px;
-    }
-
-    .top-action {
-      border: 0;
-      background: #2563eb;
-      color: white;
-      padding: 9px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .top-action:hover {
-      background: #1d4ed8;
-    }
-
-    .info-box {
-      padding: 12px 14px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 9px;
-      color: #1e40af;
-      font-size: 11px;
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
-
-    .team-size-fields {
-      display: none;
-    }
-
-    .team-size-fields.show {
-      display: grid;
-    }
-
-    @media (max-width: 1000px) {
-      .subsegment-details {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 800px) {
-      .sidebar {
-        width: 210px;
-      }
-
-      .main {
-        margin-left: 210px;
-        width: calc(100% - 210px);
-      }
-
-      .content {
-        padding: 20px;
-      }
-
-      .topbar {
-        padding: 0 20px;
-      }
-
-      .user-info {
-        display: none;
+    @media (max-width: 860px) {
+      .events-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
       }
 
       .event-summary {
-        flex-wrap: wrap;
-      }
-
-      .form-row,
-      .form-row-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .class-group-selector {
-        grid-template-columns: 1fr;
-      }
-
-      .subsegment-card-header {
-        flex-direction: column;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
 </head>
 
 <body>
-
-<div class="app">
-
-  <aside class="sidebar">
-
-    <div class="brand">
-      <div class="brand-title">
-        3ʳᵈ BNMPC National<br>
-        Science Carnival
-      </div>
-
-      <div class="brand-subtitle">
-        Executive Management Portal
-      </div>
-    </div>
-
-    <div class="nav-section">
-      Overview
-    </div>
-
-    <button
-      class="nav-button"
-      onclick="window.location.href='dashboard.html'"
-    >
-      Dashboard
-    </button>
-
-    <div class="nav-section">
-      Management
-    </div>
-
-    <button class="nav-button active">
-      Events
-    </button>
-
-    <button class="nav-button">
-      Registrations
-    </button>
-
-    <button class="nav-button">
-      Payments
-    </button>
-
-    <div class="nav-section">
-      People
-    </div>
-
-    <button class="nav-button" onclick="window.location.href='staff.html'">
-      Staff & Executives
-    </button>
-
-    <button class="nav-button" onclick="window.location.href='assignments.html'">
-      Event Assignments
-    </button>
-
-    <div class="nav-section">
-      System
-    </div>
-
-    <button class="nav-button">
-      Reports
-    </button>
-
-    <button class="nav-button">
-      Settings
-    </button>
-
-    <div class="sidebar-bottom">
-
-      <button
-        class="logout-button"
-        id="logoutButton"
-      >
-        Log Out
-      </button>
-
-    </div>
-
-  </aside>
-
-
-  <main class="main">
-
-    <header class="topbar">
-
-      <div class="page-title">
-        Events Management
-      </div>
-
-      <div class="user-area">
-
-        <div class="user-info">
-
-          <div
-            class="user-name"
-            id="topUserName"
-          >
-            Loading...
-          </div>
-
-          <div
-            class="user-role"
-            id="topUserRole"
-          >
-            Loading...
-          </div>
-
-        </div>
-
-        <div
-          class="user-avatar"
-          id="userAvatar"
-        >
-          ?
-        </div>
-
-      </div>
-
-    </header>
-
-
-    <div
-      id="loading"
-      class="loading"
-    >
-      Loading events...
-    </div>
-
-
-    <section
-      id="eventsContent"
-      class="content"
-      style="display:none;"
-    >
-
-      <div class="page-heading">
-
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
         <div>
-
-          <h1>
-            Events
-          </h1>
-
-          <p>
-            Manage the registration configuration for every main carnival event.
-          </p>
-
+          <div class="brand-title">3ʳᵈ BNMPC</div>
+          <div class="brand-subtitle">National Science Carnival</div>
         </div>
-
       </div>
 
+      <div class="nav-section">Control</div>
+      <nav>
+        <button class="nav-button" onclick="window.location.href='dashboard.html'">Dashboard</button>
+        <button class="nav-button active" onclick="window.location.href='events.html'">Events</button>
+        <button class="nav-button" onclick="window.location.href='registrations.html'">Registrations</button>
+        <button class="nav-button" onclick="window.location.href='payments.html'">Payments</button>
+      </nav>
 
-      <div class="event-summary">
+      <div class="nav-section">People</div>
+      <nav>
+        <button class="nav-button" onclick="window.location.href='staff.html'">Staff</button>
+        <button class="nav-button" onclick="window.location.href='assignments.html'">Assignments</button>
+      </nav>
 
-        <div class="summary-item">
+      <div class="nav-section">Operations</div>
+      <nav>
+        <button class="nav-button" onclick="window.location.href='checkin.html'">QR Check-in</button>
+        <button class="nav-button" onclick="window.location.href='reports.html'">Reports</button>
+        <button class="nav-button" onclick="window.location.href='settings.html'">Settings</button>
+      </nav>
 
-          <span class="summary-label">
-            Total Events
-          </span>
-
-          <span
-            class="summary-value"
-            id="totalEvents"
-          >
-            0
-          </span>
-
-        </div>
-
-
-        <div class="summary-item">
-
-          <span class="summary-label">
-            Registration Open
-          </span>
-
-          <span
-            class="summary-value"
-            id="openEvents"
-          >
-            0
-          </span>
-
-        </div>
-
-
-        <div class="summary-item">
-
-          <span class="summary-label">
-            Paid Events
-          </span>
-
-          <span
-            class="summary-value"
-            id="paidEvents"
-          >
-            0
-          </span>
-
-        </div>
-
-
-        <div class="summary-item">
-
-          <span class="summary-label">
-            With Sub-segments
-          </span>
-
-          <span
-            class="summary-value"
-            id="subsegmentEvents"
-          >
-            0
-          </span>
-
-        </div>
-
+      <div class="sidebar-bottom">
+        <button class="logout-button" id="logoutButton">Sign out</button>
       </div>
+    </aside>
 
+    <main class="main">
+      <header class="topbar">
+        <div class="page-title">Events</div>
+        <div class="user-area">
+          <div class="user-info">
+            <div class="user-name" id="topUserName">Executive</div>
+            <div class="user-role" id="topUserRole">Loading...</div>
+          </div>
+          <div class="user-avatar" id="userAvatar">EX</div>
+        </div>
+      </header>
 
-      <div class="table-panel">
+      <section class="content">
+        <div id="errorBox" class="error" style="display:none;"></div>
 
-        <div class="table-header">
-
-          <div>
-
-            <div class="table-title">
-              Main Events
+        <div class="events-toolbar">
+          <div class="page-heading" style="margin-bottom:0;">
+            <div>
+              <h1>Event Management</h1>
+              <p>Configure registration rules, capacity, fees, participation and subsegments.</p>
             </div>
+          </div>
+          <div class="toolbar-actions">
+            <button class="refresh-button" id="refreshButton">Refresh</button>
+          </div>
+        </div>
 
-            <div class="table-subtitle">
-              Live configuration from the Supabase database
+        <div class="event-summary" id="eventSummary">
+          <div class="summary-item"><span class="summary-label">Total events</span><strong class="summary-value" id="totalEvents">—</strong></div>
+          <div class="summary-item"><span class="summary-label">Open</span><strong class="summary-value" id="openEvents">—</strong></div>
+          <div class="summary-item"><span class="summary-label">Paid</span><strong class="summary-value" id="paidEvents">—</strong></div>
+          <div class="summary-item"><span class="summary-label">With subsegments</span><strong class="summary-value" id="subsegmentEvents">—</strong></div>
+        </div>
+
+        <section class="table-panel">
+          <div class="table-header">
+            <div>
+              <div class="table-title">Configured events</div>
+              <div class="table-subtitle">Manage the event catalog used by the registration portal.</div>
             </div>
-
           </div>
-
-
-          <button
-            class="refresh-button"
-            id="refreshButton"
-          >
-            Refresh
-          </button>
-
-        </div>
-
-
-        <div class="table-wrapper">
-
-          <table>
-
-            <thead>
-
-              <tr>
-
-                <th>
-                  Event
-                </th>
-
-                <th>
-                  Registration
-                </th>
-
-                <th>
-                  Type
-                </th>
-
-                <th>
-                  Payment
-                </th>
-
-                <th>
-                  Fee
-                </th>
-
-                <th>
-                  Capacity
-                </th>
-
-                <th>
-                  Sub-segments
-                </th>
-
-                <th>
-                  Action
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody id="eventsTableBody">
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-</div>
-
-
-<!-- ========================= -->
-<!-- MAIN EVENT EDIT MODAL -->
-<!-- ========================= -->
-
-<div
-  class="modal-overlay"
-  id="editModal"
->
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <div>
-
-        <div
-          class="modal-title"
-          id="modalEventName"
-        >
-          Edit Event
-        </div>
-
-        <div
-          class="modal-subtitle"
-          id="modalEventSlug"
-        >
-          Event configuration
-        </div>
-
-      </div>
-
-
-      <button
-        class="close-button"
-        id="closeModalButton"
-        type="button"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <div class="modal-body">
-
-      <div
-        class="success-message"
-        id="successMessage"
-      >
-        Event settings saved successfully.
-      </div>
-
-
-      <div class="switch-row">
-
-        <div>
-
-          <div class="switch-title">
-            Registration
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Participation</th>
+                  <th>Capacity</th>
+                  <th>Team size</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="eventTableBody">
+                <tr><td colspan="7"><div class="loading">Loading events</div></td></tr>
+              </tbody>
+            </table>
           </div>
-
-          <div class="switch-description">
-            Turn participant registration on or off for this event.
-          </div>
-
-        </div>
-
-
-        <label class="switch">
-
-          <input
-            type="checkbox"
-            id="registrationEnabled"
-          >
-
-          <span class="slider"></span>
-
-        </label>
-
-      </div>
-
-
-      <div class="switch-row">
-
-        <div>
-
-          <div class="switch-title">
-            Paid Event
-          </div>
-
-          <div class="switch-description">
-            Enable this when participants must pay a registration fee.
-          </div>
-
-        </div>
-
-
-        <label class="switch">
-
-          <input
-            type="checkbox"
-            id="paymentRequired"
-          >
-
-          <span class="slider"></span>
-
-        </label>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="fee"
-        >
-          Registration Fee (৳)
-        </label>
-
-        <input
-          class="form-input"
-          type="number"
-          id="fee"
-          min="0"
-          step="0.01"
-          value="0"
-        >
-
-        <div class="form-help">
-          Keep this at 0 until the official fee is decided.
-        </div>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="participationType"
-        >
-          Participation Type
-        </label>
-
-        <select
-          class="form-select"
-          id="participationType"
-        >
-
-          <option value="individual">
-            Individual
-          </option>
-
-          <option value="team">
-            Team
-          </option>
-
-          <option value="both">
-            Both
-          </option>
-
-        </select>
-
-        <div class="form-help">
-          Use Both when the event can contain both individual and team participation.
-        </div>
-
-      </div>
-
-
-            <div
-        class="form-row team-size-fields"
-        id="mainEventTeamSizeFields"
-      >
-
-        <div class="form-group">
-          <label class="form-label" for="minTeamSize">Minimum Team Size</label>
-          <input class="form-input" type="number" id="minTeamSize" min="1" step="1" value="1">
-          <div class="form-help">Choose the minimum number of members allowed in a team.</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="maxTeamSize">Maximum Team Size</label>
-          <input class="form-input" type="number" id="maxTeamSize" min="1" step="1" value="1">
-          <div class="form-help">Choose the maximum number of members allowed in a team.</div>
-        </div>
-
-      </div>
-
-
-<div class="form-row">
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="warningCapacity"
-          >
-            Warning / Target Capacity
-          </label>
-
-          <input
-            class="form-input"
-            type="number"
-            id="warningCapacity"
-            min="0"
-            step="1"
-          >
-
-          <div class="form-help">
-            Executives are alerted when registrations reach this number.
-          </div>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="hardCapacity"
-          >
-            Hard Maximum Capacity
-          </label>
-
-          <input
-            class="form-input"
-            type="number"
-            id="hardCapacity"
-            min="0"
-            step="1"
-          >
-
-          <div class="form-help">
-            0 means unlimited. Otherwise registration stops at this number.
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="switch-row">
-
-        <div>
-
-          <div class="switch-title">
-            Sub-segments
-          </div>
-
-          <div class="switch-description">
-            Enable this if this event contains separate registration categories.
-          </div>
-
-        </div>
-
-
-        <label class="switch">
-
-          <input
-            type="checkbox"
-            id="hasSubsegments"
-          >
-
-          <span class="slider"></span>
-
-        </label>
-
-      </div>
-
-
-      <div
-        class="payment-note"
-        id="paymentNote"
-      >
-        This event is marked as paid. The participant registration system will
-        require a configured payment method and transaction ID when registration
-        is implemented.
-      </div>
-
-    </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="cancel-button"
-        id="cancelModalButton"
-        type="button"
-      >
-        Cancel
-      </button>
-
-
-      <button
-        class="save-button"
-        id="saveEventButton"
-        type="button"
-      >
-        Save Changes
-      </button>
-
-    </div>
-
+        </section>
+      </section>
+    </main>
   </div>
 
-</div>
+  <div class="modal-overlay" id="eventModalOverlay">
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="eventModalTitle">Edit event</div>
+          <div class="modal-subtitle" id="eventModalSubtitle">Event settings</div>
+        </div>
+        <button class="close-button" id="closeEventModal" aria-label="Close">×</button>
+      </div>
+      <form id="eventForm">
+        <div class="modal-body">
+          <input type="hidden" id="eventId">
 
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="eventName">Event name</label>
+              <input class="form-input" id="eventName" type="text" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="eventSlug">Slug</label>
+              <input class="form-input" id="eventSlug" type="text" required>
+            </div>
+          </div>
 
-<!-- ========================= -->
-<!-- SUB-SEGMENT MANAGEMENT MODAL -->
-<!-- ========================= -->
+          <div class="form-group">
+            <label class="form-label" for="eventDescription">Description</label>
+            <textarea class="form-input" id="eventDescription" rows="3"></textarea>
+          </div>
 
-<div
-  class="modal-overlay"
-  id="subsegmentsModal"
->
+          <div class="switch-row">
+            <div>
+              <div class="switch-title">Registration enabled</div>
+              <div class="switch-description">Allow this event to accept registrations when the global system is open.</div>
+            </div>
+            <label class="switch">
+              <input id="registrationEnabled" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
 
-  <div class="modal modal-large">
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label" for="participationType">Participation</label>
+              <select class="form-select" id="participationType">
+                <option value="individual">Individual</option>
+                <option value="team">Team</option>
+                <option value="both">Individual + Team</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="paymentRequired">Payment</label>
+              <select class="form-select" id="paymentRequired">
+                <option value="false">Free</option>
+                <option value="true">Paid</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fee">Fee (৳)</label>
+              <input class="form-input" id="fee" type="number" min="0" step="0.01">
+            </div>
+          </div>
 
-    <div class="modal-header">
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label" for="warningCapacity">Warning capacity</label>
+              <input class="form-input" id="warningCapacity" type="number" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="hardCapacity">Hard capacity</label>
+              <input class="form-input" id="hardCapacity" type="number" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="hasSubsegments">Subsegments</label>
+              <select class="form-select" id="hasSubsegments">
+                <option value="false">No subsegments</option>
+                <option value="true">Use subsegments</option>
+              </select>
+            </div>
+          </div>
 
-      <div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="minTeamSize">Minimum team size</label>
+              <input class="form-input" id="minTeamSize" type="number" min="1" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="maxTeamSize">Maximum team size</label>
+              <input class="form-input" id="maxTeamSize" type="number" min="1" step="1">
+            </div>
+          </div>
 
-        <div
-          class="modal-title"
-          id="subsegmentsModalTitle"
-        >
-          Sub-segments
+          <div class="form-help" id="teamSizeHelp">For individual events, team-size fields are disabled by the database.</div>
+
+          <div class="form-group">
+            <label class="form-label">Eligible class groups</label>
+            <div id="classGroupList"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rulesText">Rules</label>
+            <textarea class="form-input" id="rulesText" rows="5"></textarea>
+          </div>
         </div>
 
-        <div
-          class="modal-subtitle"
-          id="subsegmentsModalSubtitle"
-        >
-          Manage event categories
+        <div class="modal-footer">
+          <button type="button" class="refresh-button" id="cancelEventButton">Cancel</button>
+          <button type="submit" class="edit-button">Save changes</button>
         </div>
-
-      </div>
-
-
-      <button
-        class="close-button"
-        id="closeSubsegmentsModalButton"
-        type="button"
-      >
-        ×
-      </button>
-
+      </form>
     </div>
-
-
-    <div class="modal-body">
-
-      <div class="info-box">
-        Each sub-segment can have its own participation type, registration status,
-        payment requirement, fee, capacity, team size and allowed class groups.
-      </div>
-
-
-      <div
-        id="subsegmentsLoading"
-        class="loading"
-      >
-        Loading sub-segments...
-      </div>
-
-
-      <div
-        id="subsegmentsContainer"
-        class="subsegment-list"
-        style="display:none;"
-      >
-      </div>
-
-    </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="cancel-button"
-        id="closeSubsegmentsFooterButton"
-        type="button"
-      >
-        Close
-      </button>
-
-
-      <button
-        class="top-action"
-        id="addSubsegmentButton"
-        type="button"
-      >
-        + Add Sub-segment
-      </button>
-
-    </div>
-
   </div>
 
-</div>
-
-
-<!-- ========================= -->
-<!-- ADD / EDIT SUB-SEGMENT MODAL -->
-<!-- ========================= -->
-
-<div
-  class="modal-overlay"
-  id="subsegmentFormModal"
->
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <div>
-
-        <div
-          class="modal-title"
-          id="subsegmentFormTitle"
-        >
-          Add Sub-segment
-        </div>
-
-        <div
-          class="modal-subtitle"
-          id="subsegmentFormSubtitle"
-        >
-          Event sub-segment configuration
-        </div>
-
-      </div>
-
-
-      <button
-        class="close-button"
-        id="closeSubsegmentFormButton"
-        type="button"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <div class="modal-body">
-
-      <div
-        class="success-message"
-        id="subsegmentSuccessMessage"
-      >
-        Sub-segment saved successfully.
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="subsegmentName"
-        >
-          Sub-segment Name
-        </label>
-
-        <input
-          class="form-input"
-          type="text"
-          id="subsegmentName"
-          placeholder="Example: FIFA Solo"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="subsegmentSlug"
-        >
-          Slug
-        </label>
-
-        <input
-          class="form-input"
-          type="text"
-          id="subsegmentSlug"
-          placeholder="Example: fifa-solo"
-        >
-
-        <div class="form-help">
-          Use lowercase letters, numbers and hyphens.
-        </div>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="subsegmentParticipationType"
-        >
-          Participation Type
-        </label>
-
-        <select
-          class="form-select"
-          id="subsegmentParticipationType"
-        >
-
-          <option value="individual">
-            Individual
-          </option>
-
-          <option value="team">
-            Team
-          </option>
-
-          <option value="both">
-            Both
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="switch-row">
-
+  <div class="modal-overlay" id="subsegmentModalOverlay">
+    <div class="modal modal-large">
+      <div class="modal-header">
         <div>
-
-          <div class="switch-title">
-            Registration
-          </div>
-
-          <div class="switch-description">
-            Allow participants to register for this sub-segment.
-          </div>
-
+          <div class="modal-title" id="subsegmentModalTitle">Manage subsegments</div>
+          <div class="modal-subtitle" id="subsegmentModalSubtitle">Configure subsegments for this event.</div>
         </div>
-
-
-        <label class="switch">
-
-          <input
-            type="checkbox"
-            id="subsegmentRegistrationEnabled"
-            checked
-          >
-
-          <span class="slider"></span>
-
-        </label>
-
+        <button class="close-button" id="closeSubsegmentModal" aria-label="Close">×</button>
       </div>
-
-
-      <div class="switch-row">
-
-        <div>
-
-          <div class="switch-title">
-            Paid Sub-segment
-          </div>
-
-          <div class="switch-description">
-            Turn this on when participants must pay a fee for this sub-segment.
-          </div>
-
-        </div>
-
-
-        <label class="switch">
-
-          <input
-            type="checkbox"
-            id="subsegmentPaymentRequired"
-          >
-
-          <span class="slider"></span>
-
-        </label>
-
+      <div class="modal-body">
+        <div id="subsegmentListContainer" class="subsegment-list"></div>
       </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="subsegmentFee"
-        >
-          Registration Fee (৳)
-        </label>
-
-        <input
-          class="form-input"
-          type="number"
-          id="subsegmentFee"
-          min="0"
-          step="0.01"
-          value="0"
-        >
-
+      <div class="modal-footer">
+        <button type="button" class="refresh-button" id="cancelSubsegmentButton">Close</button>
+        <button type="button" class="edit-button" id="addSubsegmentButton">Add subsegment</button>
       </div>
-
-
-      <div class="form-row">
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="subsegmentWarningCapacity"
-          >
-            Warning / Target Capacity
-          </label>
-
-          <input
-            class="form-input"
-            type="number"
-            id="subsegmentWarningCapacity"
-            min="0"
-            step="1"
-            value="0"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="subsegmentHardCapacity"
-          >
-            Hard Maximum Capacity
-          </label>
-
-          <input
-            class="form-input"
-            type="number"
-            id="subsegmentHardCapacity"
-            min="0"
-            step="1"
-            value="0"
-          >
-
-          <div class="form-help">
-            0 means unlimited.
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="form-row team-size-fields"
-        id="teamSizeFields"
-      >
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="subsegmentMinTeamSize"
-          >
-            Minimum Team Size
-          </label>
-
-          <input
-            class="form-input"
-            type="number"
-            id="subsegmentMinTeamSize"
-            min="1"
-            step="1"
-            value="1"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="subsegmentMaxTeamSize"
-          >
-            Maximum Team Size
-          </label>
-
-          <input
-            class="form-input"
-            type="number"
-            id="subsegmentMaxTeamSize"
-            min="1"
-            step="1"
-            value="1"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label class="form-label">
-          Allowed Class Groups
-        </label>
-
-        <div class="class-group-selector">
-
-          <div class="class-group-option">
-
-            <input
-              type="checkbox"
-              id="classGroupA"
-              value="A"
-            >
-
-            <label
-              class="class-group-label"
-              for="classGroupA"
-            >
-              Group A<br>
-              Class 6–8
-            </label>
-
-          </div>
-
-
-          <div class="class-group-option">
-
-            <input
-              type="checkbox"
-              id="classGroupB"
-              value="B"
-            >
-
-            <label
-              class="class-group-label"
-              for="classGroupB"
-            >
-              Group B<br>
-              Class 9–10
-            </label>
-
-          </div>
-
-
-          <div class="class-group-option">
-
-            <input
-              type="checkbox"
-              id="classGroupC"
-              value="C"
-            >
-
-            <label
-              class="class-group-label"
-              for="classGroupC"
-            >
-              Group C<br>
-              Class 11–12
-            </label>
-
-          </div>
-
-        </div>
-
-        <div class="form-help">
-          Select at least one class group.
-        </div>
-
-      </div>
-
-
-      <div class="form-row">
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="subsegmentOpenAt"
-          >
-            Opens At
-          </label>
-
-          <input
-            class="form-input"
-            type="datetime-local"
-            id="subsegmentOpenAt"
-          >
-
-          <div class="form-help">
-            Leave empty if there is no scheduled opening time.
-          </div>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label
-            class="form-label"
-            for="subsegmentCloseAt"
-          >
-            Closes At
-          </label>
-
-          <input
-            class="form-input"
-            type="datetime-local"
-            id="subsegmentCloseAt"
-          >
-
-          <div class="form-help">
-            Leave empty if there is no scheduled closing time.
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="payment-note"
-        id="subsegmentPaymentNote"
-      >
-        This sub-segment is marked as paid. The participant registration system
-        will require a configured payment method and transaction ID.
-      </div>
-
     </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="cancel-button"
-        id="cancelSubsegmentFormButton"
-        type="button"
-      >
-        Cancel
-      </button>
-
-
-      <button
-        class="save-button"
-        id="saveSubsegmentButton"
-        type="button"
-      >
-        Save Sub-segment
-      </button>
-
-    </div>
-
   </div>
 
-</div>
+  <div class="modal-overlay" id="subsegmentEditOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="subsegmentEditTitle">Add subsegment</div>
+          <div class="modal-subtitle">Subsegment configuration</div>
+        </div>
+        <button class="close-button" id="closeSubsegmentEdit" aria-label="Close">×</button>
+      </div>
+      <form id="subsegmentForm">
+        <div class="modal-body">
+          <input type="hidden" id="subsegmentId">
+          <div class="form-group">
+            <label class="form-label" for="subsegmentName">Name</label>
+            <input class="form-input" id="subsegmentName" type="text" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="subsegmentSlug">Slug</label>
+            <input class="form-input" id="subsegmentSlug" type="text" required>
+          </div>
+          <div class="switch-row">
+            <div>
+              <div class="switch-title">Registration enabled</div>
+              <div class="switch-description">Allow registrations for this subsegment.</div>
+            </div>
+            <label class="switch">
+              <input id="subsegmentRegistrationEnabled" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label" for="subsegmentParticipationType">Participation</label>
+              <select class="form-select" id="subsegmentParticipationType">
+                <option value="individual">Individual</option>
+                <option value="team">Team</option>
+                <option value="both">Individual + Team</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subsegmentPaymentRequired">Payment</label>
+              <select class="form-select" id="subsegmentPaymentRequired">
+                <option value="false">Free</option>
+                <option value="true">Paid</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subsegmentFee">Fee (৳)</label>
+              <input class="form-input" id="subsegmentFee" type="number" min="0" step="0.01">
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label" for="subsegmentWarningCapacity">Warning capacity</label>
+              <input class="form-input" id="subsegmentWarningCapacity" type="number" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subsegmentHardCapacity">Hard capacity</label>
+              <input class="form-input" id="subsegmentHardCapacity" type="number" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subsegmentSortOrder">Sort order</label>
+              <input class="form-input" id="subsegmentSortOrder" type="number" min="0" step="1" value="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="subsegmentMinTeamSize">Minimum team size</label>
+              <input class="form-input" id="subsegmentMinTeamSize" type="number" min="1" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subsegmentMaxTeamSize">Maximum team size</label>
+              <input class="form-input" id="subsegmentMaxTeamSize" type="number" min="1" step="1">
+            </div>
+          </div>
+          <div class="form-help">Individual subsegments are normalized to team size 1 by the database.</div>
+          <div class="form-group">
+            <label class="form-label">Eligible class groups</label>
+            <div id="subsegmentClassGroupList"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="subsegmentDescription">Description</label>
+            <textarea class="form-input" id="subsegmentDescription" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="subsegmentRulesText">Rules</label>
+            <textarea class="form-input" id="subsegmentRulesText" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="refresh-button" id="cancelSubsegmentEdit">Cancel</button>
+          <button type="submit" class="edit-button">Save subsegment</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
+  <script>
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-<script src="supabase-config.js"></script>
+    const state = {
+      profile: null,
+      events: [],
+      classGroups: [],
+      currentEvent: null,
+      currentSubsegmentEvent: null,
+      currentSubsegment: null,
+      subsegments: []
+    };
 
-<script>
+    const $ = (id) => document.getElementById(id);
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+    function formatRole(role) {
+      const roles = {
+        core_executive: 'Core Executive',
+        segment_manager: 'Segment Manager',
+        volunteer: 'Volunteer',
+        supreme_executive: 'Core Executive',
+        higher_executive: 'Core Executive',
+        segment_executive: 'Segment Manager',
+        member: 'Volunteer'
+      };
+      return roles[role] || 'Staff';
+    }
 
+    function initials(name) {
+      const parts = String(name || 'Executive').trim().split(/\s+/).filter(Boolean);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
 
-  let currentEvents = [];
+    function showError(message) {
+      $('errorBox').textContent = message;
+      $('errorBox').style.display = 'block';
+    }
 
-  let currentEditingEvent = null;
+    function clearError() {
+      $('errorBox').style.display = 'none';
+    }
 
-  let currentSubsegmentEvent = null;
+    function openModal(id) {
+      $(id).classList.add('show');
+    }
 
-  let currentSubsegments = [];
+    function closeModal(id) {
+      $(id).classList.remove('show');
+    }
 
-  let currentEditingSubsegment = null;
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
-  let classGroups = [];
+    function getCapacityTone(current, warning, hard) {
+      if (hard > 0 && current >= hard) return 'full';
+      if (warning > 0 && current >= warning) return 'full';
+      return 'normal';
+    }
 
-
-  /* ========================================= */
-  /* PROFILE */
-  /* ========================================= */
-
-  async function loadProfile() {
-
-    const {
-      data: {
-        session
+    async function loadProfile() {
+      const { data, error } = await supabaseClient.rpc('get_my_staff_profile');
+      if (error) throw error;
+      const profile = data?.[0];
+      if (!profile) throw new Error('No staff profile found.');
+      if (profile.account_status !== 'active') throw new Error('Your staff account is not active.');
+      if (profile.role !== 'core_executive' && !['supreme_executive','higher_executive'].includes(profile.role)) {
+        throw new Error('Only Core Executives can manage the event catalog.');
       }
-    } = await supabaseClient.auth.getSession();
-
-
-    if (!session) {
-
-      window.location.href = "login.html";
-
-      return null;
-
+      state.profile = profile;
+      $('topUserName').textContent = profile.full_name || 'Executive';
+      $('topUserRole').textContent = formatRole(profile.role);
+      $('userAvatar').textContent = initials(profile.full_name);
     }
 
-
-    const {
-      data,
-      error
-    } = await supabaseClient.rpc(
-      "get_my_staff_profile"
-    );
-
-
-    if (error) {
-
-      throw error;
-
+    async function loadClassGroups() {
+      const { data, error } = await supabaseClient.from('class_groups').select('id,code,name').order('code');
+      if (error) throw error;
+      state.classGroups = data || [];
     }
 
-
-    if (!data || data.length === 0) {
-
-      throw new Error(
-        "No staff profile was found for this account."
-      );
-
+    async function loadEvents() {
+      const { data, error } = await supabaseClient
+        .from('events')
+        .select('*')
+        .order('name', { ascending: true });
+      if (error) throw error;
+      state.events = data || [];
+      renderSummary();
+      await renderEventTable();
     }
 
-
-    const profile = data[0];
-
-
-    document.getElementById(
-      "topUserName"
-    ).textContent =
-      profile.full_name;
-
-
-    document.getElementById(
-      "topUserRole"
-    ).textContent =
-      formatRole(profile.role);
-
-
-    document.getElementById(
-      "userAvatar"
-    ).textContent =
-      profile.full_name
-        ? profile.full_name.trim().charAt(0).toUpperCase()
-        : "?";
-
-
-    if (
-      profile.account_status !== "active" ||
-      (
-        profile.role !== "supreme_executive" &&
-        profile.role !== "higher_executive"
-      )
-    ) {
-
-      throw new Error(
-        "Management access is required to view this page."
-      );
-
+    function renderSummary() {
+      const events = state.events;
+      $('totalEvents').textContent = events.length;
+      $('openEvents').textContent = events.filter(e => e.registration_enabled).length;
+      $('paidEvents').textContent = events.filter(e => e.payment_required).length;
+      $('subsegmentEvents').textContent = events.filter(e => e.has_subsegments).length;
     }
 
-
-    return profile;
-
-  }
-
-
-  /* ========================================= */
-  /* CLASS GROUPS */
-  /* ========================================= */
-
-  async function loadClassGroups() {
-
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from("class_groups")
-      .select("id, code, name")
-      .order("code");
-
-
-    if (error) {
-
-      throw error;
-
+    async function getEventRegistrationCount(eventId) {
+      const { count, error } = await supabaseClient
+        .from('registrations')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_id', eventId)
+        .not('registration_status', 'in', '(rejected,cancelled)');
+      if (error) return 0;
+      return count || 0;
     }
 
-
-    classGroups = data || [];
-
-  }
-
-
-  /* ========================================= */
-  /* EVENTS */
-  /* ========================================= */
-
-  async function loadEvents() {
-
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from("events")
-      .select(`
-        id,
-        name,
-        slug,
-        registration_enabled,
-        payment_required,
-        fee,
-        participation_type,
-        warning_capacity,
-        hard_capacity,
-        has_subsegments,
-        min_team_size,
-        max_team_size
-      `)
-      .order("name");
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    currentEvents = data || [];
-
-    renderEvents(currentEvents);
-
-  }
-
-
-  function renderEvents(events) {
-
-    const tableBody =
-      document.getElementById(
-        "eventsTableBody"
-      );
-
-
-    tableBody.innerHTML = "";
-
-
-    document.getElementById(
-      "totalEvents"
-    ).textContent =
-      events.length;
-
-
-    document.getElementById(
-      "openEvents"
-    ).textContent =
-      events.filter(
-        event => event.registration_enabled
-      ).length;
-
-
-    document.getElementById(
-      "paidEvents"
-    ).textContent =
-      events.filter(
-        event => event.payment_required
-      ).length;
-
-
-    document.getElementById(
-      "subsegmentEvents"
-    ).textContent =
-      events.filter(
-        event => event.has_subsegments
-      ).length;
-
-
-    if (events.length === 0) {
-
-      tableBody.innerHTML =
-        `
+    async function renderEventTable() {
+      const body = $('eventTableBody');
+      if (!state.events.length) {
+        body.innerHTML = '<tr><td colspan="7"><div class="empty">No events configured</div></td></tr>';
+        return;
+      }
+      body.innerHTML = state.events.map(event => `
         <tr>
-          <td colspan="8">
-            <div class="empty">
-              No events found.
+          <td>
+            <div class="event-name">${escapeHtml(event.name)}</div>
+            <div class="event-slug">${escapeHtml(event.slug)}</div>
+          </td>
+          <td><span class="badge ${event.registration_enabled ? 'badge-open' : 'badge-closed'}">${event.registration_enabled ? 'Open' : 'Closed'}</span></td>
+          <td><span class="badge ${event.payment_required ? 'badge-paid' : 'badge-free'}">${event.payment_required ? '৳ ' + Number(event.fee || 0).toFixed(2) : 'Free'}</span></td>
+          <td><span class="badge badge-${escapeHtml(event.participation_type || 'individual')}">${escapeHtml(event.participation_type || 'individual')}</span></td>
+          <td>
+            <div class="event-capacity-wrap" data-capacity-event="${event.id}">
+              <div class="capacity-track"><div class="capacity-fill"></div></div>
+              <div class="capacity-number">Loading…</div>
+              <div class="capacity-label">${event.hard_capacity > 0 ? 'max ' + event.hard_capacity : 'no hard cap'}</div>
+            </div>
+          </td>
+          <td>${event.participation_type === 'individual' ? '1' : `${event.min_team_size ?? '—'}–${event.max_team_size ?? '—'}`}</td>
+          <td>
+            <div class="action-group">
+              <button class="edit-button" data-edit-event="${event.id}">Edit</button>
+              ${event.has_subsegments ? `<button class="subsegment-button" data-manage-subsegments="${event.id}">Subsegments</button>` : ''}
             </div>
           </td>
         </tr>
-        `;
+      `).join('');
 
-      return;
+      for (const event of state.events) {
+        const current = await getEventRegistrationCount(event.id);
+        const node = document.querySelector(`[data-capacity-event="${event.id}"]`);
+        if (!node) continue;
+        const hard = Number(event.hard_capacity || 0);
+        const warning = Number(event.warning_capacity || 0);
+        const pct = hard > 0 ? Math.min(100, (current / hard) * 100) : 0;
+        node.querySelector('.capacity-fill').style.width = `${pct}%`;
+        node.querySelector('.capacity-number').textContent = hard > 0 ? `${current} / ${hard}` : `${current}`;
+        const tone = getCapacityTone(current, warning, hard);
+        if (tone === 'full') node.querySelector('.capacity-fill').style.background = 'var(--warning)';
+      }
 
+      body.querySelectorAll('[data-edit-event]').forEach(button => {
+        button.addEventListener('click', () => openEventEditor(button.dataset.editEvent));
+      });
+      body.querySelectorAll('[data-manage-subsegments]').forEach(button => {
+        button.addEventListener('click', () => openSubsegmentManager(button.dataset.manageSubsegments));
+      });
     }
 
+    function renderClassGroups(containerId, selectedIds = []) {
+      const container = $(containerId);
+      const selected = new Set(selectedIds || []);
+      container.innerHTML = '';
+      state.classGroups.forEach(group => {
+        const wrapper = document.createElement('label');
+        wrapper.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 0;color:var(--text-secondary);font-size:10px;cursor:pointer;';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.value = group.code;
+        input.checked = selected.has(group.id) || selected.has(group.code);
+        input.style.accentColor = 'var(--brand-green-500)';
+        wrapper.appendChild(input);
+        const text = document.createElement('span');
+        text.textContent = `${group.code} — ${group.name || ''}`.replace(/ — $/, '');
+        wrapper.appendChild(text);
+        container.appendChild(wrapper);
+      });
+    }
 
-    events.forEach(event => {
+    async function loadEventClassGroups(eventId) {
+      const { data, error } = await supabaseClient
+        .from('event_class_groups')
+        .select('class_group_id')
+        .eq('event_id', eventId);
+      if (error) throw error;
+      return (data || []).map(row => row.class_group_id);
+    }
 
-      const row =
-        document.createElement("tr");
+    async function openEventEditor(eventId) {
+      const event = state.events.find(item => item.id === eventId);
+      if (!event) return;
+      state.currentEvent = event;
+      $('eventModalTitle').textContent = 'Edit event';
+      $('eventModalSubtitle').textContent = `${event.name} · ${event.slug}`;
+      $('eventId').value = event.id;
+      $('eventName').value = event.name || '';
+      $('eventSlug').value = event.slug || '';
+      $('eventDescription').value = event.description || '';
+      $('registrationEnabled').checked = !!event.registration_enabled;
+      $('participationType').value = event.participation_type || 'individual';
+      $('paymentRequired').value = String(!!event.payment_required);
+      $('fee').value = Number(event.fee || 0);
+      $('warningCapacity').value = Number(event.warning_capacity || 0);
+      $('hardCapacity').value = Number(event.hard_capacity || 0);
+      $('hasSubsegments').value = String(!!event.has_subsegments);
+      $('minTeamSize').value = event.min_team_size ?? '';
+      $('maxTeamSize').value = event.max_team_size ?? '';
+      $('rulesText').value = event.rules_text || '';
+      updateTeamSizeFields();
+      renderClassGroups('classGroupList', await loadEventClassGroups(event.id));
+      openModal('eventModalOverlay');
+    }
 
+    function updateTeamSizeFields() {
+      const individual = $('participationType').value === 'individual';
+      $('minTeamSize').disabled = individual;
+      $('maxTeamSize').disabled = individual;
+      if (individual) {
+        $('minTeamSize').value = '';
+        $('maxTeamSize').value = '';
+      }
+    }
 
-      const registrationBadge =
-        event.registration_enabled
-          ? `<span class="badge badge-open">Open</span>`
-          : `<span class="badge badge-closed">Closed</span>`;
+    async function saveEvent(event) {
+      const participationType = $('participationType').value;
+      const minTeam = participationType === 'individual' ? null : ($('minTeamSize').value === '' ? null : Number($('minTeamSize').value));
+      const maxTeam = participationType === 'individual' ? null : ($('maxTeamSize').value === '' ? null : Number($('maxTeamSize').value));
+      const payload = {
+        p_event_id: event.id,
+        p_registration_enabled: $('registrationEnabled').checked,
+        p_payment_required: $('paymentRequired').value === 'true',
+        p_fee: Number($('fee').value || 0),
+        p_participation_type: participationType,
+        p_warning_capacity: Number($('warningCapacity').value || 0),
+        p_hard_capacity: Number($('hardCapacity').value || 0),
+        p_has_subsegments: $('hasSubsegments').value === 'true',
+        p_min_team_size: minTeam,
+        p_max_team_size: maxTeam
+      };
+      const { error } = await supabaseClient.rpc('update_event_settings', payload);
+      if (error) throw error;
 
-
-      const paymentBadge =
-        event.payment_required
-          ? `<span class="badge badge-paid">Paid</span>`
-          : `<span class="badge badge-free">Free</span>`;
-
-
-      let participationBadge;
-
-
-      if (
-        event.participation_type === "team"
-      ) {
-
-        participationBadge =
-          `<span class="badge badge-team">Team</span>`;
-
+      const classCodes = [...document.querySelectorAll('#classGroupList input[type="checkbox"]:checked')].map(input => input.value);
+      if (classCodes.length) {
+        const { error: classError } = await supabaseClient.rpc('set_event_class_groups', {
+          p_event_id: event.id,
+          p_class_group_codes: classCodes
+        });
+        if (classError) throw classError;
       }
 
-      else if (
-        event.participation_type === "both"
-      ) {
+      await loadEvents();
+      closeModal('eventModalOverlay');
+    }
 
-        participationBadge =
-          `<span class="badge badge-both">Both</span>`;
+    async function loadSubsegments(eventId) {
+      const { data, error } = await supabaseClient
+        .from('subsegments')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true });
+      if (error) throw error;
+      state.subsegments = data || [];
+    }
 
+    async function openSubsegmentManager(eventId) {
+      const event = state.events.find(item => item.id === eventId);
+      if (!event) return;
+      state.currentSubsegmentEvent = event;
+      $('subsegmentModalTitle').textContent = `${event.name} — Subsegments`;
+      $('subsegmentModalSubtitle').textContent = 'Configure the operational segments under this main event.';
+      await loadSubsegments(eventId);
+      renderSubsegmentList();
+      openModal('subsegmentModalOverlay');
+    }
+
+    function renderSubsegmentList() {
+      const container = $('subsegmentListContainer');
+      if (!state.subsegments.length) {
+        container.innerHTML = '<div class="empty">No subsegments configured.</div>';
+        return;
       }
-
-      else {
-
-        participationBadge =
-          `<span class="badge badge-individual">Individual</span>`;
-
-      }
-
-
-      const feeText =
-        event.payment_required
-          ? `৳${Number(event.fee || 0).toFixed(2)}`
-          : "Free";
-
-
-      const warning =
-        event.warning_capacity ?? 0;
-
-
-      const hard =
-        event.hard_capacity ?? 0;
-
-
-      const capacityText =
-        hard > 0
-          ? `
-            <div class="capacity">
-              <div class="capacity-number">
-                ${warning} / ${hard}
-              </div>
-
-              <div class="capacity-label">
-                Warning / Hard limit
-              </div>
-            </div>
-          `
-          : `
-            <div class="capacity">
-              <div class="capacity-number">
-                ${warning} / Unlimited
-              </div>
-
-              <div class="capacity-label">
-                Warning / Hard limit
-              </div>
-            </div>
-          `;
-
-
-      const subsegmentText =
-        event.has_subsegments
-          ? `<span class="badge badge-open">Enabled</span>`
-          : `<span class="badge badge-closed">Disabled</span>`;
-
-
-      row.innerHTML =
-        `
-        <td>
-
-          <div class="event-name">
-            ${escapeHtml(event.name)}
+      container.innerHTML = state.subsegments.map(segment => `
+        <div class="subsegment-item">
+          <div class="subsegment-copy">
+            <strong>${escapeHtml(segment.name)}</strong>
+            <span>${escapeHtml(segment.slug)} · ${escapeHtml(segment.participation_type || 'individual')} · ${segment.payment_required ? 'paid' : 'free'}</span>
           </div>
-
-          <div class="event-slug">
-            ${escapeHtml(event.slug || "")}
+          <div class="subsegment-actions">
+            <button class="subsegment-button" data-edit-subsegment="${segment.id}">Edit</button>
+            <button class="subsegment-button" data-delete-subsegment="${segment.id}">Remove</button>
           </div>
+        </div>
+      `).join('');
 
-        </td>
+      container.querySelectorAll('[data-edit-subsegment]').forEach(button => button.addEventListener('click', () => editSubsegment(button.dataset.editSubsegment)));
+      container.querySelectorAll('[data-delete-subsegment]').forEach(button => button.addEventListener('click', () => deleteSubsegment(button.dataset.deleteSubsegment)));
+    }
 
+    async function editSubsegment(subsegmentId = null) {
+      const subsegment = state.subsegments.find(item => item.id === subsegmentId) || null;
+      state.currentSubsegment = subsegment;
+      $('subsegmentId').value = subsegment?.id || '';
+      $('subsegmentName').value = subsegment?.name || '';
+      $('subsegmentSlug').value = subsegment?.slug || '';
+      $('subsegmentRegistrationEnabled').checked = subsegment ? !!subsegment.registration_enabled : true;
+      $('subsegmentParticipationType').value = subsegment?.participation_type || 'individual';
+      $('subsegmentPaymentRequired').value = String(!!subsegment?.payment_required);
+      $('subsegmentFee').value = Number(subsegment?.fee || 0);
+      $('subsegmentWarningCapacity').value = Number(subsegment?.warning_capacity || 0);
+      $('subsegmentHardCapacity').value = Number(subsegment?.hard_capacity || 0);
+      $('subsegmentSortOrder').value = Number(subsegment?.sort_order || 0);
+      $('subsegmentMinTeamSize').value = subsegment?.min_team_size ?? '';
+      $('subsegmentMaxTeamSize').value = subsegment?.max_team_size ?? '';
+      $('subsegmentDescription').value = subsegment?.description || '';
+      $('subsegmentRulesText').value = subsegment?.rules_text || '';
+      await renderSubsegmentClassGroups('subsegmentClassGroupList', subsegment?.id);
+      updateSubsegmentTeamSizeFields();
+      $('subsegmentEditTitle').textContent = subsegment ? 'Edit subsegment' : 'Add subsegment';
+      openModal('subsegmentEditOverlay');
+    }
 
-        <td>
-          ${registrationBadge}
-        </td>
-
-
-        <td>
-          ${participationBadge}
-        </td>
-
-
-        <td>
-          ${paymentBadge}
-        </td>
-
-
-        <td>
-          ${feeText}
-        </td>
-
-
-        <td>
-          ${capacityText}
-        </td>
-
-
-        <td>
-          ${subsegmentText}
-        </td>
-
-
-        <td>
-
-          <div class="action-group">
-
-            <button
-              class="edit-button"
-              type="button"
-            >
-              Edit
-            </button>
-
-            ${
-              event.has_subsegments
-                ? `
-                  <button
-                    class="subsegment-button"
-                    type="button"
-                  >
-                    Sub-segments
-                  </button>
-                `
-                : ""
-            }
-
-          </div>
-
-        </td>
-        `;
-
-
-      const editButton =
-        row.querySelector(".edit-button");
-
-
-      editButton.addEventListener(
-        "click",
-        () => openEditModal(event)
-      );
-
-
-      const subsegmentButton =
-        row.querySelector(".subsegment-button");
-
-
-      if (subsegmentButton) {
-
-        subsegmentButton.addEventListener(
-          "click",
-          () => openSubsegmentsModal(event)
-        );
-
+    async function renderSubsegmentClassGroups(containerId, subsegmentId) {
+      let selected = [];
+      if (subsegmentId) {
+        const { data, error } = await supabaseClient.from('subsegment_class_groups').select('class_group_id').eq('subsegment_id', subsegmentId);
+        if (!error) selected = (data || []).map(row => row.class_group_id);
       }
+      renderClassGroups(containerId, selected);
+    }
 
+    function updateSubsegmentTeamSizeFields() {
+      const individual = $('subsegmentParticipationType').value === 'individual';
+      $('subsegmentMinTeamSize').disabled = individual;
+      $('subsegmentMaxTeamSize').disabled = individual;
+      if (individual) {
+        $('subsegmentMinTeamSize').value = '';
+        $('subsegmentMaxTeamSize').value = '';
+      }
+    }
 
-      tableBody.appendChild(row);
+    async function saveSubsegment() {
+      const event = state.currentSubsegmentEvent;
+      if (!event) return;
+      const participationType = $('subsegmentParticipationType').value;
+      const payload = {
+        p_subsegment_id: $('subsegmentId').value || null,
+        p_event_id: event.id,
+        p_name: $('subsegmentName').value.trim(),
+        p_slug: $('subsegmentSlug').value.trim(),
+        p_participation_type: participationType,
+        p_registration_enabled: $('subsegmentRegistrationEnabled').checked,
+        p_payment_required: $('subsegmentPaymentRequired').value === 'true',
+        p_fee: Number($('subsegmentFee').value || 0),
+        p_warning_capacity: Number($('subsegmentWarningCapacity').value || 0),
+        p_hard_capacity: Number($('subsegmentHardCapacity').value || 0),
+        p_min_team_size: participationType === 'individual' ? null : ($('subsegmentMinTeamSize').value === '' ? null : Number($('subsegmentMinTeamSize').value)),
+        p_max_team_size: participationType === 'individual' ? null : ($('subsegmentMaxTeamSize').value === '' ? null : Number($('subsegmentMaxTeamSize').value)),
+        p_open_at: null,
+        p_close_at: null
+      };
+      const { data: id, error } = await supabaseClient.rpc('save_subsegment', payload);
+      if (error) throw error;
+      const classCodes = [...document.querySelectorAll('#subsegmentClassGroupList input[type="checkbox"]:checked')].map(input => input.value);
+      const { error: classError } = await supabaseClient.rpc('set_subsegment_class_groups', {
+        p_subsegment_id: id,
+        p_class_group_codes: classCodes
+      });
+      if (classError) throw classError;
+      closeModal('subsegmentEditOverlay');
+      await loadSubsegments(event.id);
+      renderSubsegmentList();
+      await loadEvents();
+    }
 
+    async function deleteSubsegment(subsegmentId) {
+      if (!confirm('Remove this subsegment? The database will prevent removal if registrations already exist.')) return;
+      const { error } = await supabaseClient.rpc('delete_subsegment', { p_subsegment_id: subsegmentId });
+      if (error) {
+        showError(error.message);
+        return;
+      }
+      await loadSubsegments(state.currentSubsegmentEvent.id);
+      renderSubsegmentList();
+      await loadEvents();
+    }
+
+    $('participationType').addEventListener('change', updateTeamSizeFields);
+    $('subsegmentParticipationType').addEventListener('change', updateSubsegmentTeamSizeFields);
+
+    $('eventForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      clearError();
+      try {
+        await saveEvent(state.currentEvent);
+      } catch (error) {
+        showError(error.message || 'Unable to save event.');
+      }
     });
 
-  }
-
-
-  /* ========================================= */
-  /* MAIN EVENT EDIT MODAL */
-  /* ========================================= */
-
-  function openEditModal(event) {
-
-    currentEditingEvent = event;
-
-
-    document.getElementById(
-      "modalEventName"
-    ).textContent =
-      event.name;
-
-
-    document.getElementById(
-      "modalEventSlug"
-    ).textContent =
-      event.slug
-        ? event.slug
-        : "Event configuration";
-
-
-    document.getElementById(
-      "registrationEnabled"
-    ).checked =
-      Boolean(event.registration_enabled);
-
-
-    document.getElementById(
-      "paymentRequired"
-    ).checked =
-      Boolean(event.payment_required);
-
-
-    document.getElementById(
-      "fee"
-    ).value =
-      Number(event.fee || 0);
-
-
-    document.getElementById(
-      "participationType"
-    ).value =
-      event.participation_type || "individual";
-
-
-    document.getElementById(
-      "warningCapacity"
-    ).value =
-      Number(event.warning_capacity || 0);
-
-
-    document.getElementById(
-      "hardCapacity"
-    ).value =
-      Number(event.hard_capacity || 0);
-
-
-    document.getElementById(
-      "hasSubsegments"
-    ).checked =
-      Boolean(event.has_subsegments);
-
-    document.getElementById(
-      "minTeamSize"
-    ).value =
-      event.min_team_size != null
-        ? Number(event.min_team_size)
-        : 1;
-
-    document.getElementById(
-      "maxTeamSize"
-    ).value =
-      event.max_team_size != null
-        ? Number(event.max_team_size)
-        : 1;
-
-
-    updatePaymentNote();
-
-
-    document.getElementById(
-      "successMessage"
-    ).classList.remove("show");
-
-
-    document.getElementById(
-      "editModal"
-    ).classList.add("show");
-
-  }
-
-
-  function closeEditModal() {
-
-    currentEditingEvent = null;
-
-
-    document.getElementById(
-      "editModal"
-    ).classList.remove("show");
-
-  }
-
-
-  function updateMainEventTeamFields() {
-
-    const type =
-      document.getElementById(
-        "participationType"
-      ).value;
-
-    const usesTeams =
-      type === "team" ||
-      type === "both";
-
-    document.getElementById(
-      "mainEventTeamSizeFields"
-    ).classList.toggle(
-      "show",
-      usesTeams
-    );
-
-  }
-
-
-  function updatePaymentNote() {
-
-    const paid =
-      document.getElementById(
-        "paymentRequired"
-      ).checked;
-
-
-    document.getElementById(
-      "paymentNote"
-    ).classList.toggle(
-      "show",
-      paid
-    );
-
-  }
-
-
-  async function saveEventSettings() {
-
-    if (!currentEditingEvent) {
-
-      return;
-
-    }
-
-
-    const saveButton =
-      document.getElementById(
-        "saveEventButton"
-      );
-
-
-    const fee =
-      Number(
-        document.getElementById(
-          "fee"
-        ).value
-      );
-
-
-    const warningCapacity =
-      Number(
-        document.getElementById(
-          "warningCapacity"
-        ).value
-      );
-
-
-    const hardCapacity =
-      Number(
-        document.getElementById(
-          "hardCapacity"
-        ).value
-      );
-
-
-    const registrationEnabled =
-      document.getElementById(
-        "registrationEnabled"
-      ).checked;
-
-
-    const paymentRequired =
-      document.getElementById(
-        "paymentRequired"
-      ).checked;
-
-
-    const participationType =
-      document.getElementById(
-        "participationType"
-      ).value;
-
-
-    const hasSubsegments =
-      document.getElementById(
-        "hasSubsegments"
-      ).checked;
-    let minTeamSize = null;
-    let maxTeamSize = null;
-
-    if (
-      participationType === "team" ||
-      participationType === "both"
-    ) {
-
-      minTeamSize = Number(
-        document.getElementById(
-          "minTeamSize"
-        ).value
-      );
-
-      maxTeamSize = Number(
-        document.getElementById(
-          "maxTeamSize"
-        ).value
-      );
-
-      if (
-        !Number.isInteger(minTeamSize) ||
-        minTeamSize < 1
-      ) {
-        alert("Minimum team size must be a whole number of at least 1.");
-        return;
-      }
-
-      if (
-        !Number.isInteger(maxTeamSize) ||
-        maxTeamSize < 1
-      ) {
-        alert("Maximum team size must be a whole number of at least 1.");
-        return;
-      }
-
-      if (maxTeamSize < minTeamSize) {
-        alert("Maximum team size cannot be smaller than minimum team size.");
-        return;
-      }
-
-    }
-
-
-
-    if (!Number.isFinite(fee) || fee < 0) {
-
-      alert(
-        "Fee must be 0 or greater."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !Number.isInteger(warningCapacity) ||
-      warningCapacity < 0
-    ) {
-
-      alert(
-        "Warning capacity must be a whole number of 0 or greater."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !Number.isInteger(hardCapacity) ||
-      hardCapacity < 0
-    ) {
-
-      alert(
-        "Hard capacity must be a whole number of 0 or greater."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      hardCapacity > 0 &&
-      hardCapacity < warningCapacity
-    ) {
-
-      alert(
-        "Hard capacity cannot be lower than warning capacity."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      ![
-        "individual",
-        "team",
-        "both"
-      ].includes(participationType)
-    ) {
-
-      alert(
-        "Please select a valid participation type."
-      );
-
-      return;
-
-    }
-
-
-    saveButton.disabled = true;
-
-    saveButton.textContent =
-      "Saving...";
-
-
-    try {
-
-      const {
-        error
-      } = await supabaseClient.rpc(
-        "update_event_settings",
-        {
-          p_event_id:
-            currentEditingEvent.id,
-
-          p_registration_enabled:
-            registrationEnabled,
-
-          p_payment_required:
-            paymentRequired,
-
-          p_fee:
-            fee,
-
-          p_participation_type:
-            participationType,
-
-          p_warning_capacity:
-            warningCapacity,
-
-          p_hard_capacity:
-            hardCapacity,
-
-          p_has_subsegments:
-            hasSubsegments,
-
-          p_min_team_size:
-            minTeamSize,
-
-          p_max_team_size:
-            maxTeamSize
-        }
-      );
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      document.getElementById(
-        "successMessage"
-      ).textContent =
-        "Event settings saved successfully.";
-
-
-      document.getElementById(
-        "successMessage"
-      ).classList.add("show");
-
-
-      await loadEvents();
-
-
-      setTimeout(
-        () => {
-
-          closeEditModal();
-
-        },
-        700
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(error);
-
-
-      alert(
-        "Unable to save event settings.\n\n" +
-        error.message
-      );
-
-    }
-
-    finally {
-
-      saveButton.disabled = false;
-
-      saveButton.textContent =
-        "Save Changes";
-
-    }
-
-  }
-
-
-  /* ========================================= */
-  /* SUB-SEGMENT MANAGEMENT */
-  /* ========================================= */
-
-  async function openSubsegmentsModal(event) {
-
-    currentSubsegmentEvent = event;
-
-
-    document.getElementById(
-      "subsegmentsModalTitle"
-    ).textContent =
-      "Sub-segments — " + event.name;
-
-
-    document.getElementById(
-      "subsegmentsModalSubtitle"
-    ).textContent =
-      event.slug || "Manage event sub-segments";
-
-
-    document.getElementById(
-      "subsegmentsModal"
-    ).classList.add("show");
-
-
-    await loadSubsegments();
-
-  }
-
-
-  function closeSubsegmentsModal() {
-
-    currentSubsegmentEvent = null;
-
-    currentSubsegments = [];
-
-
-    document.getElementById(
-      "subsegmentsModal"
-    ).classList.remove("show");
-
-  }
-
-
-  async function loadSubsegments() {
-
-    if (!currentSubsegmentEvent) {
-
-      return;
-
-    }
-
-
-    const loading =
-      document.getElementById(
-        "subsegmentsLoading"
-      );
-
-
-    const container =
-      document.getElementById(
-        "subsegmentsContainer"
-      );
-
-
-    loading.style.display =
-      "block";
-
-
-    container.style.display =
-      "none";
-
-
-    try {
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("subsegments")
-        .select(`
-          id,
-          event_id,
-          name,
-          slug,
-          participation_type,
-          registration_enabled,
-          payment_required,
-          fee,
-          warning_capacity,
-          hard_capacity,
-          min_team_size,
-          max_team_size,
-          open_at,
-          close_at,
-          created_at,
-          updated_at
-        `)
-        .eq(
-          "event_id",
-          currentSubsegmentEvent.id
-        )
-        .order("name");
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      currentSubsegments =
-        data || [];
-
-
-      await renderSubsegments(
-        currentSubsegments
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(error);
-
-
-      container.innerHTML =
-        `
-        <div class="error">
-          Unable to load sub-segments.<br><br>
-          ${escapeHtml(error.message)}
-        </div>
-        `;
-
-      container.style.display =
-        "block";
-
-    }
-
-    finally {
-
-      loading.style.display =
-        "none";
-
-    }
-
-  }
-
-
-  async function renderSubsegments(
-    subsegments
-  ) {
-
-    const container =
-      document.getElementById(
-        "subsegmentsContainer"
-      );
-
-
-    container.innerHTML = "";
-
-
-    if (
-      !subsegments ||
-      subsegments.length === 0
-    ) {
-
-      container.innerHTML =
-        `
-        <div class="empty-subsegments">
-
-          <div class="empty-subsegments-title">
-            No sub-segments yet
-          </div>
-
-          <div>
-            Add the first registration category for this event.
-          </div>
-
-        </div>
-        `;
-
-
-      container.style.display =
-        "block";
-
-
-      return;
-
-    }
-
-
-    const {
-      data: mappings,
-      error: mappingError
-    } = await supabaseClient
-      .from("subsegment_class_groups")
-      .select(
-        "subsegment_id, class_group_id"
-      );
-
-
-    if (mappingError) {
-
-      throw mappingError;
-
-    }
-
-
-    subsegments.forEach(
-      subsegment => {
-
-        const subsegmentMappings =
-          (mappings || []).filter(
-            item =>
-              item.subsegment_id ===
-              subsegment.id
-          );
-
-
-        const allowedGroupCodes =
-          subsegmentMappings
-            .map(
-              item => {
-
-                const group =
-                  classGroups.find(
-                    classGroup =>
-                      classGroup.id ===
-                      item.class_group_id
-                  );
-
-                return group
-                  ? group.code
-                  : null;
-
-              }
-            )
-            .filter(Boolean);
-
-
-        const registrationBadge =
-          subsegment.registration_enabled
-            ? `<span class="badge badge-open">Open</span>`
-            : `<span class="badge badge-closed">Closed</span>`;
-
-
-        const paymentBadge =
-          subsegment.payment_required
-            ? `<span class="badge badge-paid">Paid</span>`
-            : `<span class="badge badge-free">Free</span>`;
-
-
-        let typeBadge;
-
-
-        if (
-          subsegment.participation_type === "team"
-        ) {
-
-          typeBadge =
-            `<span class="badge badge-team">Team</span>`;
-
-        }
-
-        else if (
-          subsegment.participation_type === "both"
-        ) {
-
-          typeBadge =
-            `<span class="badge badge-both">Both</span>`;
-
-        }
-
-        else {
-
-          typeBadge =
-            `<span class="badge badge-individual">Individual</span>`;
-
-        }
-
-
-        const feeText =
-          subsegment.payment_required
-            ? `৳${Number(subsegment.fee || 0).toFixed(2)}`
-            : "Free";
-
-
-        const capacityText =
-          Number(subsegment.hard_capacity || 0) > 0
-            ? `${Number(subsegment.warning_capacity || 0)} / ${Number(subsegment.hard_capacity || 0)}`
-            : `${Number(subsegment.warning_capacity || 0)} / Unlimited`;
-
-
-        const teamSizeText =
-          (
-            subsegment.participation_type === "team" ||
-            subsegment.participation_type === "both"
-          )
-            ? `${subsegment.min_team_size}–${subsegment.max_team_size}`
-            : "N/A";
-
-
-        const classGroupText =
-          allowedGroupCodes.length > 0
-            ? allowedGroupCodes.join(", ")
-            : "Not configured";
-
-
-        const card =
-          document.createElement("div");
-
-
-        card.className =
-          "subsegment-card";
-
-
-        card.innerHTML =
-          `
-          <div class="subsegment-card-header">
-
-            <div>
-
-              <div class="subsegment-card-title">
-                ${escapeHtml(subsegment.name)}
-              </div>
-
-              <div class="subsegment-card-slug">
-                ${escapeHtml(subsegment.slug || "")}
-              </div>
-
-            </div>
-
-
-            <div class="subsegment-actions">
-
-              <button
-                class="small-button edit-subsegment-button"
-                type="button"
-              >
-                Edit
-              </button>
-
-              <button
-                class="small-danger-button delete-subsegment-button"
-                type="button"
-              >
-                Remove
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <div class="subsegment-meta">
-
-            ${registrationBadge}
-
-            ${typeBadge}
-
-            ${paymentBadge}
-
-          </div>
-
-
-          <div class="subsegment-details">
-
-            <div class="detail-box">
-
-              <div class="detail-label">
-                Fee
-              </div>
-
-              <div class="detail-value">
-                ${feeText}
-              </div>
-
-            </div>
-
-
-            <div class="detail-box">
-
-              <div class="detail-label">
-                Capacity
-              </div>
-
-              <div class="detail-value">
-                ${capacityText}
-              </div>
-
-            </div>
-
-
-            <div class="detail-box">
-
-              <div class="detail-label">
-                Team Size
-              </div>
-
-              <div class="detail-value">
-                ${teamSizeText}
-              </div>
-
-            </div>
-
-
-            <div class="detail-box">
-
-              <div class="detail-label">
-                Class Groups
-              </div>
-
-              <div class="detail-value">
-                ${escapeHtml(classGroupText)}
-              </div>
-
-            </div>
-
-          </div>
-
-          `;
-
-
-        card
-          .querySelector(
-            ".edit-subsegment-button"
-          )
-          .addEventListener(
-            "click",
-            () =>
-              openSubsegmentForm(
-                subsegment
-              )
-          );
-
-
-        card
-          .querySelector(
-            ".delete-subsegment-button"
-          )
-          .addEventListener(
-            "click",
-            () =>
-              deleteSubsegment(
-                subsegment
-              )
-          );
-
-
-        container.appendChild(card);
-
-      }
-    );
-
-
-    container.style.display =
-      "flex";
-
-  }
-
-
-  /* ========================================= */
-  /* ADD / EDIT SUB-SEGMENT FORM */
-  /* ========================================= */
-
-  function openSubsegmentForm(
-    subsegment = null
-  ) {
-
-    if (!currentSubsegmentEvent) {
-
-      return;
-
-    }
-
-
-    currentEditingSubsegment =
-      subsegment;
-
-
-    document.getElementById(
-      "subsegmentFormTitle"
-    ).textContent =
-      subsegment
-        ? "Edit Sub-segment"
-        : "Add Sub-segment";
-
-
-    document.getElementById(
-      "subsegmentFormSubtitle"
-    ).textContent =
-      currentSubsegmentEvent.name;
-
-
-    if (subsegment) {
-
-      document.getElementById(
-        "subsegmentName"
-      ).value =
-        subsegment.name || "";
-
-
-      document.getElementById(
-        "subsegmentSlug"
-      ).value =
-        subsegment.slug || "";
-
-
-      document.getElementById(
-        "subsegmentParticipationType"
-      ).value =
-        subsegment.participation_type ||
-        "individual";
-
-
-      document.getElementById(
-        "subsegmentRegistrationEnabled"
-      ).checked =
-        Boolean(
-          subsegment.registration_enabled
-        );
-
-
-      document.getElementById(
-        "subsegmentPaymentRequired"
-      ).checked =
-        Boolean(
-          subsegment.payment_required
-        );
-
-
-      document.getElementById(
-        "subsegmentFee"
-      ).value =
-        Number(
-          subsegment.fee || 0
-        );
-
-
-      document.getElementById(
-        "subsegmentWarningCapacity"
-      ).value =
-        Number(
-          subsegment.warning_capacity || 0
-        );
-
-
-      document.getElementById(
-        "subsegmentHardCapacity"
-      ).value =
-        Number(
-          subsegment.hard_capacity || 0
-        );
-
-
-      document.getElementById(
-        "subsegmentMinTeamSize"
-      ).value =
-        Number(
-          subsegment.min_team_size || 1
-        );
-
-
-      document.getElementById(
-        "subsegmentMaxTeamSize"
-      ).value =
-        Number(
-          subsegment.max_team_size || 1
-        );
-
-
-      document.getElementById(
-        "subsegmentOpenAt"
-      ).value =
-        toLocalDateTimeInput(
-          subsegment.open_at
-        );
-
-
-      document.getElementById(
-        "subsegmentCloseAt"
-      ).value =
-        toLocalDateTimeInput(
-          subsegment.close_at
-        );
-
-    }
-
-    else {
-
-      document.getElementById(
-        "subsegmentName"
-      ).value = "";
-
-
-      document.getElementById(
-        "subsegmentSlug"
-      ).value = "";
-
-
-      document.getElementById(
-        "subsegmentParticipationType"
-      ).value =
-        "individual";
-
-
-      document.getElementById(
-        "subsegmentRegistrationEnabled"
-      ).checked =
-        true;
-
-
-      document.getElementById(
-        "subsegmentPaymentRequired"
-      ).checked =
-        false;
-
-
-      document.getElementById(
-        "subsegmentFee"
-      ).value =
-        0;
-
-
-      document.getElementById(
-        "subsegmentWarningCapacity"
-      ).value =
-        0;
-
-
-      document.getElementById(
-        "subsegmentHardCapacity"
-      ).value =
-        0;
-
-
-      document.getElementById(
-        "subsegmentMinTeamSize"
-      ).value =
-        1;
-
-
-      document.getElementById(
-        "subsegmentMaxTeamSize"
-      ).value =
-        1;
-
-
-      document.getElementById(
-        "subsegmentOpenAt"
-      ).value =
-        "";
-
-
-      document.getElementById(
-        "subsegmentCloseAt"
-      ).value =
-        "";
-
-    }
-
-
-    clearClassGroupSelections();
-
-
-    document.getElementById(
-      "subsegmentSuccessMessage"
-    ).classList.remove("show");
-
-
-    updateSubsegmentTeamFields();
-
-    updateSubsegmentPaymentNote();
-
-
-    document.getElementById(
-      "subsegmentFormModal"
-    ).classList.add("show");
-
-
-    if (subsegment) {
-
-      loadSelectedClassGroups(
-        subsegment.id
-      );
-
-    }
-
-  }
-
-
-  function closeSubsegmentForm() {
-
-    currentEditingSubsegment =
-      null;
-
-
-    document.getElementById(
-      "subsegmentFormModal"
-    ).classList.remove("show");
-
-  }
-
-
-  function clearClassGroupSelections() {
-
-    document.getElementById(
-      "classGroupA"
-    ).checked =
-      false;
-
-
-    document.getElementById(
-      "classGroupB"
-    ).checked =
-      false;
-
-
-    document.getElementById(
-      "classGroupC"
-    ).checked =
-      false;
-
-  }
-
-
-  async function loadSelectedClassGroups(
-    subsegmentId
-  ) {
-
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from("subsegment_class_groups")
-      .select(
-        "class_group_id"
-      )
-      .eq(
-        "subsegment_id",
-        subsegmentId
-      );
-
-
-    if (error) {
-
-      console.error(error);
-
-      return;
-
-    }
-
-
-    (data || []).forEach(
-      mapping => {
-
-        const group =
-          classGroups.find(
-            classGroup =>
-              classGroup.id ===
-              mapping.class_group_id
-          );
-
-
-        if (!group) {
-
-          return;
-
-        }
-
-
-        if (group.code === "A") {
-
-          document.getElementById(
-            "classGroupA"
-          ).checked =
-            true;
-
-        }
-
-        else if (group.code === "B") {
-
-          document.getElementById(
-            "classGroupB"
-          ).checked =
-            true;
-
-        }
-
-        else if (group.code === "C") {
-
-          document.getElementById(
-            "classGroupC"
-          ).checked =
-            true;
-
-        }
-
-      }
-    );
-
-  }
-
-
-  function updateSubsegmentTeamFields() {
-
-    const type =
-      document.getElementById(
-        "subsegmentParticipationType"
-      ).value;
-
-
-    const teamFields =
-      document.getElementById(
-        "teamSizeFields"
-      );
-
-
-    const usesTeams =
-      type === "team" ||
-      type === "both";
-
-
-    teamFields.classList.toggle(
-      "show",
-      usesTeams
-    );
-
-  }
-
-
-  function updateSubsegmentPaymentNote() {
-
-    const paid =
-      document.getElementById(
-        "subsegmentPaymentRequired"
-      ).checked;
-
-
-    document.getElementById(
-      "subsegmentPaymentNote"
-    ).classList.toggle(
-      "show",
-      paid
-    );
-
-  }
-
-
-  async function saveSubsegment() {
-
-    if (!currentSubsegmentEvent) {
-
-      return;
-
-    }
-
-
-    const saveButton =
-      document.getElementById(
-        "saveSubsegmentButton"
-      );
-
-
-    const name =
-      document.getElementById(
-        "subsegmentName"
-      ).value.trim();
-
-
-    const slug =
-      document.getElementById(
-        "subsegmentSlug"
-      ).value.trim()
-      .toLowerCase();
-
-
-    const participationType =
-      document.getElementById(
-        "subsegmentParticipationType"
-      ).value;
-
-
-    const registrationEnabled =
-      document.getElementById(
-        "subsegmentRegistrationEnabled"
-      ).checked;
-
-
-    const paymentRequired =
-      document.getElementById(
-        "subsegmentPaymentRequired"
-      ).checked;
-
-
-    const fee =
-      Number(
-        document.getElementById(
-          "subsegmentFee"
-        ).value
-      );
-
-
-    const warningCapacity =
-      Number(
-        document.getElementById(
-          "subsegmentWarningCapacity"
-        ).value
-      );
-
-
-    const hardCapacity =
-      Number(
-        document.getElementById(
-          "subsegmentHardCapacity"
-        ).value
-      );
-
-
-    let minTeamSize =
-      Number(
-        document.getElementById(
-          "subsegmentMinTeamSize"
-        ).value
-      );
-
-
-    let maxTeamSize =
-      Number(
-        document.getElementById(
-          "subsegmentMaxTeamSize"
-        ).value
-      );
-
-
-    const openAt =
-      document.getElementById(
-        "subsegmentOpenAt"
-      ).value;
-
-
-    const closeAt =
-      document.getElementById(
-        "subsegmentCloseAt"
-      ).value;
-
-
-    if (!name) {
-
-      alert(
-        "Sub-segment name is required."
-      );
-
-      return;
-
-    }
-
-
-    if (!slug) {
-
-      alert(
-        "Sub-segment slug is required."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
-    ) {
-
-      alert(
-        "Slug may contain only lowercase letters, numbers and hyphens."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      ![
-        "individual",
-        "team",
-        "both"
-      ].includes(participationType)
-    ) {
-
-      alert(
-        "Please select a valid participation type."
-      );
-
-      return;
-
-    }
-
-
-    if (!Number.isFinite(fee) || fee < 0) {
-
-      alert(
-        "Fee must be 0 or greater."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !Number.isInteger(warningCapacity) ||
-      warningCapacity < 0
-    ) {
-
-      alert(
-        "Warning capacity must be a whole number of 0 or greater."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !Number.isInteger(hardCapacity) ||
-      hardCapacity < 0
-    ) {
-
-      alert(
-        "Hard capacity must be a whole number of 0 or greater."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      hardCapacity > 0 &&
-      hardCapacity < warningCapacity
-    ) {
-
-      alert(
-        "Hard capacity cannot be lower than warning capacity."
-      );
-
-      return;
-
-    }
-
-
-    const usesTeams =
-      participationType === "team" ||
-      participationType === "both";
-
-
-    if (!usesTeams) {
-
-      minTeamSize = 1;
-
-      maxTeamSize = 1;
-
-    }
-
-    else {
-
-      if (
-        !Number.isInteger(minTeamSize) ||
-        minTeamSize < 1
-      ) {
-
-        alert(
-          "Minimum team size must be a whole number of at least 1."
-        );
-
-        return;
-
-      }
-
-
-      if (
-        !Number.isInteger(maxTeamSize) ||
-        maxTeamSize < minTeamSize
-      ) {
-
-        alert(
-          "Maximum team size must be at least the minimum team size."
-        );
-
-        return;
-
-      }
-
-    }
-
-
-    if (
-      openAt &&
-      closeAt &&
-      new Date(openAt) >= new Date(closeAt)
-    ) {
-
-      alert(
-        "The opening time must be earlier than the closing time."
-      );
-
-      return;
-
-    }
-
-
-    const classGroupCodes =
-      getSelectedClassGroupCodes();
-
-
-    if (classGroupCodes.length === 0) {
-
-      alert(
-        "Please select at least one allowed class group."
-      );
-
-      return;
-
-    }
-
-
-    saveButton.disabled =
-      true;
-
-
-    saveButton.textContent =
-      "Saving...";
-
-
-    try {
-
-      const {
-        data,
-        error
-      } = await supabaseClient.rpc(
-        "save_subsegment",
-        {
-          p_subsegment_id:
-            currentEditingSubsegment
-              ? currentEditingSubsegment.id
-              : null,
-
-          p_event_id:
-            currentSubsegmentEvent.id,
-
-          p_name:
-            name,
-
-          p_slug:
-            slug,
-
-          p_participation_type:
-            participationType,
-
-          p_registration_enabled:
-            registrationEnabled,
-
-          p_payment_required:
-            paymentRequired,
-
-          p_fee:
-            fee,
-
-          p_warning_capacity:
-            warningCapacity,
-
-          p_hard_capacity:
-            hardCapacity,
-
-          p_min_team_size:
-            minTeamSize,
-
-          p_max_team_size:
-            maxTeamSize,
-
-          p_open_at:
-            openAt
-              ? new Date(openAt).toISOString()
-              : null,
-
-          p_close_at:
-            closeAt
-              ? new Date(closeAt).toISOString()
-              : null
-        }
-      );
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      const savedSubsegmentId =
-        extractSubsegmentId(
-          data
-        );
-
-
-      if (!savedSubsegmentId) {
-
-        throw new Error(
-          "The sub-segment was saved, but its ID could not be determined."
-        );
-
-      }
-
-
-      const {
-        error: classGroupError
-      } = await supabaseClient.rpc(
-        "set_subsegment_class_groups",
-        {
-          p_subsegment_id:
-            savedSubsegmentId,
-
-          p_class_group_codes:
-            classGroupCodes
-        }
-      );
-
-
-      if (classGroupError) {
-
-        throw classGroupError;
-
-      }
-
-
-      document.getElementById(
-        "subsegmentSuccessMessage"
-      ).textContent =
-        currentEditingSubsegment
-          ? "Sub-segment updated successfully."
-          : "Sub-segment added successfully.";
-
-
-      document.getElementById(
-        "subsegmentSuccessMessage"
-      ).classList.add("show");
-
-
-      await loadSubsegments();
-
-
-      setTimeout(
-        () => {
-
-          closeSubsegmentForm();
-
-        },
-        700
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(error);
-
-
-      alert(
-        "Unable to save sub-segment.\n\n" +
-        error.message
-      );
-
-    }
-
-    finally {
-
-      saveButton.disabled =
-        false;
-
-
-      saveButton.textContent =
-        "Save Sub-segment";
-
-    }
-
-  }
-
-
-  function extractSubsegmentId(
-    data
-  ) {
-
-    if (!data) {
-
-      return null;
-
-    }
-
-
-    if (
-      typeof data === "string"
-    ) {
-
-      return data;
-
-    }
-
-
-    if (
-      Array.isArray(data)
-    ) {
-
-      if (data.length === 0) {
-
-        return null;
-
-      }
-
-
-      return extractSubsegmentId(
-        data[0]
-      );
-
-    }
-
-
-    if (
-      typeof data === "object"
-    ) {
-
-      return (
-        data.id ||
-        data.subsegment_id ||
-        null
-      );
-
-    }
-
-
-    return null;
-
-  }
-
-
-  function getSelectedClassGroupCodes() {
-
-    const codes = [];
-
-
-    if (
-      document.getElementById(
-        "classGroupA"
-      ).checked
-    ) {
-
-      codes.push("A");
-
-    }
-
-
-    if (
-      document.getElementById(
-        "classGroupB"
-      ).checked
-    ) {
-
-      codes.push("B");
-
-    }
-
-
-    if (
-      document.getElementById(
-        "classGroupC"
-      ).checked
-    ) {
-
-      codes.push("C");
-
-    }
-
-
-    return codes;
-
-  }
-
-
-  async function deleteSubsegment(
-    subsegment
-  ) {
-
-    if (!subsegment) {
-
-      return;
-
-    }
-
-
-    const confirmed =
-      window.confirm(
-        `Remove "${subsegment.name}"?\n\n` +
-        `This action will be blocked by the database if the sub-segment already has registrations.`
-      );
-
-
-    if (!confirmed) {
-
-      return;
-
-    }
-
-
-    try {
-
-      const {
-        error
-      } = await supabaseClient.rpc(
-        "delete_subsegment",
-        {
-          p_subsegment_id:
-            subsegment.id
-        }
-      );
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      await loadSubsegments();
-
-      await loadEvents();
-
-
-      alert(
-        "Sub-segment removed successfully."
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(error);
-
-
-      alert(
-        "Unable to remove sub-segment.\n\n" +
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* ========================================= */
-  /* DATE HELPERS */
-  /* ========================================= */
-
-  function toLocalDateTimeInput(
-    value
-  ) {
-
-    if (!value) {
-
-      return "";
-
-    }
-
-
-    const date =
-      new Date(value);
-
-
-    if (
-      Number.isNaN(
-        date.getTime()
-      )
-    ) {
-
-      return "";
-
-    }
-
-
-    const year =
-      date.getFullYear();
-
-
-    const month =
-      String(
-        date.getMonth() + 1
-      ).padStart(2, "0");
-
-
-    const day =
-      String(
-        date.getDate()
-      ).padStart(2, "0");
-
-
-    const hours =
-      String(
-        date.getHours()
-      ).padStart(2, "0");
-
-
-    const minutes =
-      String(
-        date.getMinutes()
-      ).padStart(2, "0");
-
-
-    return (
-      `${year}-${month}-${day}` +
-      `T${hours}:${minutes}`
-    );
-
-  }
-
-
-  /* ========================================= */
-  /* GENERAL HELPERS */
-  /* ========================================= */
-
-  function escapeHtml(value) {
-
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-
-  }
-
-
-  function formatRole(role) {
-
-    if (!role) {
-
-      return "Unknown";
-
-    }
-
-
-    return role
-      .split("_")
-      .map(
-        word =>
-          word.charAt(0).toUpperCase() +
-          word.slice(1)
-      )
-      .join(" ");
-
-  }
-
-
-  /* ========================================= */
-  /* INITIALIZATION */
-  /* ========================================= */
-
-  async function initializePage() {
-
-    try {
-
-      await loadProfile();
-
-      await loadClassGroups();
-
-      await loadEvents();
-
-
-      document.getElementById(
-        "loading"
-      ).style.display =
-        "none";
-
-
-      document.getElementById(
-        "eventsContent"
-      ).style.display =
-        "block";
-
-    }
-
-    catch (error) {
-
-      console.error(error);
-
-
-      document.getElementById(
-        "loading"
-      ).innerHTML =
-        `
-        <div class="error">
-
-          <strong>
-            Unable to load Events Management.
-          </strong>
-
-          <br><br>
-
-          ${escapeHtml(error.message)}
-
-        </div>
-        `;
-
-    }
-
-  }
-
-
-  /* ========================================= */
-  /* EVENT LISTENERS */
-  /* ========================================= */
-
-  document.getElementById(
-    "refreshButton"
-  ).addEventListener(
-    "click",
-    async () => {
-
-      const button =
-        document.getElementById(
-          "refreshButton"
-        );
-
-
-      button.textContent =
-        "Refreshing...";
-
-
+    $('subsegmentForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      clearError();
       try {
+        await saveSubsegment();
+      } catch (error) {
+        showError(error.message || 'Unable to save subsegment.');
+      }
+    });
 
+    $('refreshButton').addEventListener('click', async () => {
+      clearError();
+      try {
         await loadEvents();
-
+      } catch (error) {
+        showError(error.message || 'Unable to refresh events.');
       }
+    });
 
-      catch (error) {
+    $('closeEventModal').addEventListener('click', () => closeModal('eventModalOverlay'));
+    $('cancelEventButton').addEventListener('click', () => closeModal('eventModalOverlay'));
+    $('closeSubsegmentModal').addEventListener('click', () => closeModal('subsegmentModalOverlay'));
+    $('cancelSubsegmentButton').addEventListener('click', () => closeModal('subsegmentModalOverlay'));
+    $('closeSubsegmentEdit').addEventListener('click', () => closeModal('subsegmentEditOverlay'));
+    $('cancelSubsegmentEdit').addEventListener('click', () => closeModal('subsegmentEditOverlay'));
+    $('addSubsegmentButton').addEventListener('click', () => editSubsegment());
 
-        console.error(error);
+    ['eventModalOverlay','subsegmentModalOverlay','subsegmentEditOverlay'].forEach(id => {
+      $(id).addEventListener('click', event => {
+        if (event.target === $(id)) closeModal(id);
+      });
+    });
 
-        alert(
-          "Unable to refresh events."
-        );
-
+    $('logoutButton').addEventListener('click', async () => {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) {
+        showError('Unable to sign out. Please try again.');
+        return;
       }
+      window.location.href = 'login.html';
+    });
 
-
-      button.textContent =
-        "Refresh";
-
-    }
-  );
-
-
-  document.getElementById(
-    "paymentRequired"
-  ).addEventListener(
-    "change",
-    updatePaymentNote
-  );
-
-
-  document.getElementById(
-    "closeModalButton"
-  ).addEventListener(
-    "click",
-    closeEditModal
-  );
-
-
-  document.getElementById(
-    "cancelModalButton"
-  ).addEventListener(
-    "click",
-    closeEditModal
-  );
-
-
-  document.getElementById(
-    "saveEventButton"
-  ).addEventListener(
-    "click",
-    saveEventSettings
-  );
-
-
-  document.getElementById(
-    "editModal"
-  ).addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target.id === "editModal"
-      ) {
-
-        closeEditModal();
-
+    async function init() {
+      try {
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+        if (sessionError) throw new Error('Unable to verify your login session.');
+        if (!sessionData?.session) {
+          window.location.href = 'login.html';
+          return;
+        }
+        await loadProfile();
+        await Promise.all([loadClassGroups(), loadEvents()]);
+      } catch (error) {
+        showError(error.message || 'Unable to load events management.');
       }
-
     }
-  );
 
-
-  document.getElementById(
-    "closeSubsegmentsModalButton"
-  ).addEventListener(
-    "click",
-    closeSubsegmentsModal
-  );
-
-
-  document.getElementById(
-    "closeSubsegmentsFooterButton"
-  ).addEventListener(
-    "click",
-    closeSubsegmentsModal
-  );
-
-
-  document.getElementById(
-    "addSubsegmentButton"
-  ).addEventListener(
-    "click",
-    () => openSubsegmentForm()
-  );
-
-
-  document.getElementById(
-    "subsegmentsModal"
-  ).addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target.id ===
-        "subsegmentsModal"
-      ) {
-
-        closeSubsegmentsModal();
-
-      }
-
-    }
-  );
-
-
-  document.getElementById(
-    "closeSubsegmentFormButton"
-  ).addEventListener(
-    "click",
-    closeSubsegmentForm
-  );
-
-
-  document.getElementById(
-    "cancelSubsegmentFormButton"
-  ).addEventListener(
-    "click",
-    closeSubsegmentForm
-  );
-
-
-  document.getElementById(
-    "saveSubsegmentButton"
-  ).addEventListener(
-    "click",
-    saveSubsegment
-  );
-
-
-  document.getElementById(
-    "participationType"
-  ).addEventListener(
-    "change",
-    updateMainEventTeamFields
-  );
-
-
-  document.getElementById(
-    "subsegmentParticipationType"
-  ).addEventListener(
-    "change",
-    updateSubsegmentTeamFields
-  );
-
-
-  document.getElementById(
-    "subsegmentPaymentRequired"
-  ).addEventListener(
-    "change",
-    updateSubsegmentPaymentNote
-  );
-
-
-  document.getElementById(
-    "subsegmentFormModal"
-  ).addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target.id ===
-        "subsegmentFormModal"
-      ) {
-
-        closeSubsegmentForm();
-
-      }
-
-    }
-  );
-
-
-  document.getElementById(
-    "logoutButton"
-  ).addEventListener(
-    "click",
-    async () => {
-
-      await supabaseClient.auth.signOut();
-
-      window.location.href =
-        "login.html";
-
-    }
-  );
-
-
-  initializePage();
-
-</script>
-
+    init();
+  </script>
 </body>
 </html>
