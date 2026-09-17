@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070909" />
+  <meta name="description" content="Operations reports and analytics for the 3rd BNMPC National Science Carnival" />
+  <title>Reports — 3ʳᵈ BNMPC National Science Carnival</title>
+
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/executive-shell.css" />
+  <link rel="stylesheet" href="assets/css/reports-theme.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body class="ep-app-body">
+  <div class="ep-app">
+    <aside class="ep-sidebar">
+      <div class="ep-brand"><div class="ep-brand-mark">B</div><div class="ep-brand-copy"><div class="ep-brand-title">3ʳᵈ BNMPC</div><div class="ep-brand-subtitle">National Science Carnival</div></div></div>
+      <div class="ep-sidebar-section"><div class="ep-sidebar-label">Control</div><nav class="ep-nav"><button class="ep-nav-button" data-route="dashboard.html"><span>▦</span><span>Dashboard</span></button><button class="ep-nav-button" data-route="events.html"><span>≡</span><span>Events</span></button><button class="ep-nav-button" data-route="registrations.html"><span>□</span><span>Registrations</span></button><button class="ep-nav-button" data-route="payments.html"><span>¤</span><span>Payments</span></button></nav></div>
+      <div class="ep-sidebar-section"><div class="ep-sidebar-label">People</div><nav class="ep-nav"><button class="ep-nav-button" data-route="staff.html"><span>◎</span><span>Staff</span></button><button class="ep-nav-button" data-route="assignments.html"><span>↔</span><span>Assignments</span></button></nav></div>
+      <div class="ep-sidebar-section"><div class="ep-sidebar-label">Operations</div><nav class="ep-nav"><button class="ep-nav-button" data-route="checkin.html"><span>⌗</span><span>QR Check-in</span></button><button class="ep-nav-button active" data-route="reports.html"><span>▥</span><span>Reports</span></button><button class="ep-nav-button" data-route="settings.html"><span>⚙</span><span>Settings</span></button></nav></div>
+      <div class="ep-sidebar-bottom"><div class="ep-user-card"><div class="ep-avatar" id="avatar">EX</div><div class="ep-user-copy"><div class="ep-user-name" id="sideUserName">Executive</div><div class="ep-user-role" id="sideUserRole">Loading...</div></div></div></div>
+    </aside>
+
+    <main class="ep-main">
+      <header class="ep-header"><div class="ep-header-title"><span class="ep-header-kicker">Executive Control</span><span class="ep-header-divider"></span><span class="ep-header-name">Reports</span></div><div class="ep-header-right"><div class="ep-system-state"><span class="ep-system-dot"></span><span id="headerState">Live analytics</span></div><button class="ep-signout" id="logoutButton">Sign out</button></div></header>
+      <section class="ep-page">
+        <div id="loading" class="ep-loading-wrap"><div class="ep-loading"><span class="ep-loader"></span>Loading operations reports</div></div>
+        <div id="errorBox" class="ep-error"></div>
+
+        <div id="pageContent" style="display:none;">
+          <div class="ep-page-intro"><div><div class="ep-kicker">Operations / Analytics</div><h1 class="ep-page-title">Reports</h1><p class="ep-page-description" id="pageDescription">Live operational reporting across accessible events. Metrics reflect the current Supabase data visible to this account.</p></div></div>
+
+          <div class="ep-command-strip">
+            <div class="ep-command-item"><div class="ep-command-label">Registrations</div><div class="ep-command-value" id="totalRegistrations">0</div><div class="ep-command-note">all visible records</div></div>
+            <div class="ep-command-item"><div class="ep-command-label">Approved</div><div class="ep-command-value" id="approvedRegistrations">0</div><div class="ep-command-note">accepted registrations</div></div>
+            <div class="ep-command-item"><div class="ep-command-label">Checked in</div><div class="ep-command-value" id="checkedInRegistrations">0</div><div class="ep-command-note">event-day arrivals</div></div>
+            <div class="ep-command-item"><div class="ep-command-label">Verified value</div><div class="ep-command-value" id="verifiedValue">৳0</div><div class="ep-command-note">verified paid registrations</div></div>
+          </div>
+
+          <div class="reports-toolbar">
+            <div><label class="report-field-label" for="searchInput">Search</label><input class="report-control" id="searchInput" type="search" placeholder="Event, participant, institution, team..."></div>
+            <div><label class="report-field-label" for="eventFilter">Event</label><select class="report-control" id="eventFilter"><option value="all">All accessible events</option></select></div>
+            <div style="align-self:end"><button class="ep-btn" id="refreshButton" type="button">Refresh</button></div>
+            <div style="align-self:end"><button class="ep-btn ep-btn-primary" id="exportButton" type="button">Export CSV</button></div>
+          </div>
+
+          <div class="report-grid-3">
+            <section class="ep-surface report-chart"><div class="ep-surface-header"><div><div class="ep-surface-heading">Registration status</div><div class="ep-surface-subheading">Current visible registration outcomes</div></div></div><div class="ep-surface-body"><div class="chart-list" id="registrationStatusChart"></div></div></section>
+            <section class="ep-surface report-chart"><div class="ep-surface-header"><div><div class="ep-surface-heading">Payment status</div><div class="ep-surface-subheading">Paid-registration verification state</div></div></div><div class="ep-surface-body"><div class="chart-list" id="paymentStatusChart"></div></div></section>
+            <section class="ep-surface report-chart"><div class="ep-surface-header"><div><div class="ep-surface-heading">Participation type</div><div class="ep-surface-subheading">Individual versus team registrations</div></div></div><div class="ep-surface-body"><div class="chart-list" id="participationChart"></div></div></section>
+          </div>
+
+          <div class="report-grid-2">
+            <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Operational summary</div><div class="ep-surface-subheading">Key indicators for the current filtered dataset</div></div></div><div class="ep-surface-body"><div class="metric-stack" id="metricStack"></div></div></section>
+            <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Registration trend</div><div class="ep-surface-subheading">Submissions grouped by calendar date</div></div></div><div class="ep-surface-body"><div class="chart-list" id="trendChart"></div></div></section>
+          </div>
+
+          <section class="ep-surface" style="margin-top:18px;"><div class="ep-surface-header"><div><div class="ep-surface-heading">Event performance</div><div class="ep-surface-subheading">Registration volume, approval, check-in, payment verification, and capacity</div></div></div><div class="report-table-wrap"><table class="report-table"><thead><tr><th>Event</th><th>Registrations</th><th>Approved</th><th>Checked in</th><th>Payment</th><th>Capacity</th></tr></thead><tbody id="eventPerformanceBody"></tbody></table></div></section>
+
+          <div class="report-grid-2">
+            <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Operational insights</div><div class="ep-surface-subheading">Derived from the current visible records</div></div></div><div class="ep-surface-body"><div class="insight-list" id="insightList"></div></div></section>
+            <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Scope & notes</div><div class="ep-surface-subheading">How this report should be interpreted</div></div></div><div class="ep-surface-body"><div class="metric-stack"><div class="metric-line"><span class="metric-line-label">Account</span><span class="metric-line-value" id="scopeRole">—</span></div><div class="metric-line"><span class="metric-line-label">Accessible events</span><span class="metric-line-value" id="scopeEvents">0</span></div><div class="metric-line"><span class="metric-line-label">Data source</span><span class="metric-line-value">Supabase</span></div><div class="metric-line"><span class="metric-line-label">Report mode</span><span class="metric-line-value green">LIVE</span></div></div></div></section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const $ = id => document.getElementById(id);
+    const state = { profile:null, events:[], registrations:[], filtered:[] };
+    const ROLE_LABELS = { supreme_executive:'Core Executive', higher_executive:'Core Executive', segment_executive:'Segment Manager', member:'Volunteer' };
+    const REPORT_ROLES = ['supreme_executive','higher_executive','segment_executive'];
+
+    function esc(v){ return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function roleLabel(role){ return ROLE_LABELS[role] || 'Staff'; }
+    function initials(name){ if(!name)return 'EX'; const p=name.trim().split(/\s+/).filter(Boolean); return p.length===1?p[0].slice(0,2).toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
+    function money(value){ return '৳' + Number(value || 0).toLocaleString('en-BD',{maximumFractionDigits:2}); }
+    function dateKey(value){ const d=new Date(value); return Number.isNaN(d.getTime()) ? 'Unknown' : d.toISOString().slice(0,10); }
+    function formatDateShort(value){ const d=new Date(value+'T00:00:00'); return Number.isNaN(d.getTime())?value:d.toLocaleDateString(undefined,{month:'short',day:'numeric'}); }
+    function statusChip(value,tone='neutral'){ return `<span class="status-chip ${tone}">${esc(value)}</span>`; }
+    function toneForStatus(value){ const v=String(value||'').toLowerCase(); if(['approved','verified','confirmed'].includes(v))return'green'; if(v==='pending')return'warn'; if(['rejected','cancelled'].includes(v))return'danger'; return'neutral'; }
+    function showError(message){ $('errorBox').textContent=message; $('errorBox').style.display='block'; }
+    function clearError(){ $('errorBox').style.display='none'; $('errorBox').textContent=''; }
+
+    const routes = new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
+    document.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>{ if(routes.has(b.dataset.route))window.location.href=b.dataset.route; }));
+
+    async function loadProfile(){
+      const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+      if(sessionError||!sessionData?.session){ window.location.href='login.html'; return false; }
+      const {data,error}=await supabaseClient.rpc('get_my_staff_profile');
+      if(error)throw error;
+      const p=data?.[0];
+      if(!p)throw new Error('No staff profile was found for this account.');
+      if(p.account_status!=='active')throw new Error('Your staff account is not active.');
+      if(!REPORT_ROLES.includes(p.role))throw new Error('Reports are available to Core Executives and Segment Managers.');
+      state.profile=p;
+      $('sideUserName').textContent=p.full_name||'Executive';
+      $('sideUserRole').textContent=roleLabel(p.role);
+      $('avatar').textContent=initials(p.full_name);
+      $('scopeRole').textContent=roleLabel(p.role);
+      return true;
+    }
+
+    async function loadData(){
+      const [{data:events,error:eventError},{data:registrations,error:registrationError}]=await Promise.all([
+        supabaseClient.from('events').select('id,name,slug,registration_enabled,warning_capacity,hard_capacity,has_subsegments,sort_order').order('sort_order',{ascending:true}),
+        supabaseClient.from('registrations').select('id,registration_number,event_id,subsegment_id,participation_type,participant_name,email,phone,institution,team_name,project_name,payment_required,payment_method,transaction_id,payment_status,registration_status,confirmation_status,checked_in,checked_in_at,created_at,fee_amount')
+      ]);
+      if(eventError)throw eventError;
+      if(registrationError)throw registrationError;
+      state.events=events||[];
+      state.registrations=registrations||[];
+      const filter=$('eventFilter');
+      filter.innerHTML='<option value="all">All accessible events</option>'+state.events.map(e=>`<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('');
+      $('scopeEvents').textContent=state.events.length;
+      applyFilters();
+    }
+
+    function applyFilters(){
+      const q=$('searchInput').value.trim().toLowerCase();
+      const eventId=$('eventFilter').value;
+      state.filtered=state.registrations.filter(r=>{
+        if(eventId!=='all'&&r.event_id!==eventId)return false;
+        if(!q)return true;
+        const event=state.events.find(e=>e.id===r.event_id);
+        const hay=[r.registration_number,r.participant_name,r.institution,r.team_name,r.project_name,r.email,event?.name,event?.slug].map(v=>String(v||'').toLowerCase()).join(' ');
+        return hay.includes(q);
+      });
+      render();
+    }
+
+    function chartRows(containerId,items,total){
+      const el=$(containerId);
+      if(!items.length){el.innerHTML='<div class="report-empty">No data available</div>';return;}
+      el.innerHTML=items.map(([label,value])=>{
+        const pct=total?Math.round(value/total*100):0;
+        return `<div class="chart-row"><div class="chart-label">${esc(label)}</div><div class="chart-track"><div class="chart-fill" style="width:${pct}%"></div></div><div class="chart-value">${value}</div></div>`;
+      }).join('');
+    }
+
+    function render(){
+      const rows=state.filtered;
+      const total=rows.length;
+      const approved=rows.filter(r=>r.registration_status==='approved').length;
+      const checkedIn=rows.filter(r=>r.checked_in===true).length;
+      const verifiedValue=rows.filter(r=>r.payment_required===true&&r.payment_status==='verified').reduce((sum,r)=>sum+Number(r.fee_amount||0),0);
+      $('totalRegistrations').textContent=total;
+      $('approvedRegistrations').textContent=approved;
+      $('checkedInRegistrations').textContent=checkedIn;
+      $('verifiedValue').textContent=money(verifiedValue);
+
+      const registrationCounts={pending:0,approved:0,rejected:0,cancelled:0};
+      rows.forEach(r=>{if(registrationCounts[r.registration_status]!=null)registrationCounts[r.registration_status]++;});
+      chartRows('registrationStatusChart',Object.entries(registrationCounts).map(([k,v])=>[k.replace(/^./,x=>x.toUpperCase()),v]),total);
+
+      const paymentCounts={'Not required':0,'Pending':0,'Verified':0,'Rejected':0};
+      rows.forEach(r=>{const key=r.payment_required?(r.payment_status||'pending'):'not_required';const nice=key==='not_required'?'Not required':key.replace(/^./,x=>x.toUpperCase());if(paymentCounts[nice]!=null)paymentCounts[nice]++;});
+      chartRows('paymentStatusChart',Object.entries(paymentCounts),total);
+
+      const partCounts={Individual:0,Team:0};
+      rows.forEach(r=>{partCounts[r.participation_type==='team'?'Team':'Individual']++;});
+      chartRows('participationChart',Object.entries(partCounts),total);
+
+      renderMetrics(rows,total,approved,checkedIn,verifiedValue);
+      renderTrend(rows);
+      renderEventPerformance(rows);
+      renderInsights(rows,total,approved,checkedIn,verifiedValue);
+    }
+
+    function renderMetrics(rows,total,approved,checkedIn,verifiedValue){
+      const pending=rows.filter(r=>r.registration_status==='pending').length;
+      const paymentPending=rows.filter(r=>r.payment_required===true&&r.payment_status==='pending').length;
+      const confirmationPending=rows.filter(r=>r.confirmation_status==='pending').length;
+      const approvalRate=total?Math.round(approved/total*100):0;
+      const checkinRate=approved?Math.round(checkedIn/approved*100):0;
+      $('metricStack').innerHTML=`
+        <div class="metric-line"><span class="metric-line-label">Approval rate</span><span class="metric-line-value green">${approvalRate}%</span></div>
+        <div class="metric-line"><span class="metric-line-label">Check-in among approved</span><span class="metric-line-value green">${checkinRate}%</span></div>
+        <div class="metric-line"><span class="metric-line-label">Pending registration review</span><span class="metric-line-value warn">${pending}</span></div>
+        <div class="metric-line"><span class="metric-line-label">Pending payment verification</span><span class="metric-line-value warn">${paymentPending}</span></div>
+        <div class="metric-line"><span class="metric-line-label">Pending confirmation</span><span class="metric-line-value">${confirmationPending}</span></div>
+        <div class="metric-line"><span class="metric-line-label">Verified paid value</span><span class="metric-line-value">${money(verifiedValue)}</span></div>`;
+    }
+
+    function renderTrend(rows){
+      const counts=new Map();
+      rows.forEach(r=>{const key=dateKey(r.created_at);counts.set(key,(counts.get(key)||0)+1);});
+      const entries=[...counts.entries()].filter(([k])=>k!=='Unknown').sort((a,b)=>a[0].localeCompare(b[0]));
+      const max=Math.max(0,...entries.map(([,v])=>v));
+      const el=$('trendChart');
+      if(!entries.length){el.innerHTML='<div class="report-empty">No dated registrations available</div>';return;}
+      el.innerHTML=entries.slice(-12).map(([day,value])=>{const pct=max?Math.round(value/max*100):0;return `<div class="chart-row"><div class="chart-label">${esc(formatDateShort(day))}</div><div class="chart-track"><div class="chart-fill" style="width:${pct}%"></div></div><div class="chart-value">${value}</div></div>`;}).join('');
+    }
+
+    function renderEventPerformance(rows){
+      const body=$('eventPerformanceBody');
+      if(!state.events.length||!rows.length){body.innerHTML='<tr><td colspan="6"><div class="report-empty">No event performance data for the current filter</div></td></tr>';return;}
+      const activeEvents=state.events.filter(e=>rows.some(r=>r.event_id===e.id));
+      body.innerHTML=activeEvents.map(e=>{
+        const er=rows.filter(r=>r.event_id===e.id);
+        const approved=er.filter(r=>r.registration_status==='approved').length;
+        const checked=er.filter(r=>r.checked_in===true).length;
+        const payment=er.filter(r=>r.payment_required===true&&r.payment_status==='verified').length;
+        const hard=Number(e.hard_capacity||0); const pct=hard?Math.min(100,Math.round(er.length/hard*100)):0;
+        return `<tr><td><div class="report-event-name">${esc(e.name)}</div><div class="report-event-meta">${esc(e.slug||'event')} · ${e.has_subsegments?'subsegments':'main event'}</div></td><td><span class="report-number">${er.length}</span></td><td>${approved}</td><td>${checked}</td><td>${e.payment_required?`${payment} verified`:statusChip('Free','green')}</td><td><div class="report-mini-bar"><div class="report-mini-fill" style="width:${pct}%"></div></div><div class="report-mini-copy">${hard?`${er.length} / ${hard}`:`${er.length} / ∞`}</div></td></tr>`;
+      }).join('');
+    }
+
+    function renderInsights(rows,total,approved,checkedIn,verifiedValue){
+      const insights=[];
+      const eventCounts=state.events.map(e=>({event:e,count:rows.filter(r=>r.event_id===e.id).length})).sort((a,b)=>b.count-a.count);
+      if(total===0){
+        insights.push(['01','No registrations yet','The report is ready and will populate automatically as real submissions arrive.']);
+      } else {
+        const top=eventCounts[0];
+        if(top&&top.count>0)insights.push(['01','Highest visible volume',`${top.event.name} currently has ${top.count} visible registration${top.count===1?'':'s'}.`]);
+        insights.push(['02','Approval throughput',`${approved} of ${total} visible registrations are approved.`]);
+        insights.push(['03','Event-day progress',`${checkedIn} approved registrations are currently marked checked in.`]);
+        if(verifiedValue>0)insights.push(['04','Verified payment value',`${money(verifiedValue)} is attached to registrations with verified payment status.`]);
+        else insights.push(['04','Payment verification', 'No verified paid-registration value is present in the current filtered dataset.']);
+      }
+      $('insightList').innerHTML=insights.map(([i,t,c])=>`<div class="insight"><div class="insight-index">${i}</div><div><div class="insight-title">${esc(t)}</div><div class="insight-copy">${esc(c)}</div></div></div>`).join('');
+    }
+
+    function exportCsv(){
+      const headers=['Registration Number','Participant','Event','Participation','Institution','Team','Project','Payment Required','Payment Method','Transaction ID','Payment Status','Registration Status','Confirmation Status','Checked In','Created At','Fee Amount'];
+      const lines=[headers,...state.filtered.map(r=>{const e=state.events.find(x=>x.id===r.event_id);return [r.registration_number,r.participant_name,e?.name,r.participation_type,r.institution,r.team_name,r.project_name,r.payment_required?'Yes':'No',r.payment_method,r.transaction_id,r.payment_status,r.registration_status,r.confirmation_status,r.checked_in?'Yes':'No',r.created_at,r.fee_amount];})];
+      const csv=lines.map(row=>row.map(value=>`"${String(value??'').replaceAll('"','""')}"`).join(',')).join('\n');
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='bnmpc-report.csv'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    async function refresh(){
+      const btn=$('refreshButton'); btn.disabled=true; btn.textContent='Refreshing…'; clearError();
+      try{await loadData(); $('headerState').textContent='Live analytics';}
+      catch(e){console.error(e);showError(e.message||'Unable to refresh reports.');}
+      finally{btn.disabled=false;btn.textContent='Refresh';}
+    }
+
+    async function init(){
+      try{
+        const ok=await loadProfile(); if(!ok)return;
+        await loadData();
+        $('loading').style.display='none'; $('pageContent').style.display='block';
+      }catch(e){console.error(e);$('loading').style.display='none';showError(e.message||'Unable to load reports.');}
+    }
+
+    $('searchInput').addEventListener('input',applyFilters);
+    $('eventFilter').addEventListener('change',applyFilters);
+    $('refreshButton').addEventListener('click',refresh);
+    $('exportButton').addEventListener('click',exportCsv);
+    $('logoutButton').addEventListener('click',async()=>{await supabaseClient.auth.signOut();window.location.href='login.html';});
+    init();
+  </script>
+</body>
+</html>
