@@ -14,8 +14,6 @@
   <script src="supabase-config.js"></script>
 
   <style>
-    /* Page-specific layout only. The shared design system and events theme
-       provide the common visual language. */
     .events-toolbar {
       display: flex;
       align-items: flex-end;
@@ -155,7 +153,7 @@
         <button class="nav-button" onclick="window.location.href='dashboard.html'">Dashboard</button>
         <button class="nav-button active" onclick="window.location.href='events.html'">Events</button>
         <button class="nav-button" onclick="window.location.href='registrations.html'">Registrations</button>
-        <button class="nav-button" onclick="window.location.href='payments.html'">Payments</button>
+        <button class="nav-button" onclick="comingSoon('Payment Center')">Payments</button>
       </nav>
 
       <div class="nav-section">People</div>
@@ -166,9 +164,9 @@
 
       <div class="nav-section">Operations</div>
       <nav>
-        <button class="nav-button" onclick="window.location.href='checkin.html'">QR Check-in</button>
-        <button class="nav-button" onclick="window.location.href='reports.html'">Reports</button>
-        <button class="nav-button" onclick="window.location.href='settings.html'">Settings</button>
+        <button class="nav-button" onclick="comingSoon('QR Check-in')">QR Check-in</button>
+        <button class="nav-button" onclick="comingSoon('Reports')">Reports</button>
+        <button class="nav-button" onclick="comingSoon('Settings')">Settings</button>
       </nav>
 
       <div class="sidebar-bottom">
@@ -195,7 +193,7 @@
           <div class="page-heading" style="margin-bottom:0;">
             <div>
               <h1>Event Management</h1>
-              <p>Configure registration rules, capacity, fees, participation and subsegments.</p>
+              <p>Configure registration rules, capacity, fees, participation, eligibility and subsegments.</p>
             </div>
           </div>
           <div class="toolbar-actions">
@@ -331,6 +329,17 @@
             </div>
           </div>
 
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="registrationOpensAt">Registration opens</label>
+              <input class="form-input" id="registrationOpensAt" type="datetime-local">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="registrationClosesAt">Registration closes</label>
+              <input class="form-input" id="registrationClosesAt" type="datetime-local">
+            </div>
+          </div>
+
           <div class="form-help" id="teamSizeHelp">For individual events, team-size fields are disabled by the database.</div>
 
           <div class="form-group">
@@ -446,6 +455,16 @@
               <input class="form-input" id="subsegmentMaxTeamSize" type="number" min="1" step="1">
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="subsegmentRegistrationOpensAt">Registration opens</label>
+              <input class="form-input" id="subsegmentRegistrationOpensAt" type="datetime-local">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subsegmentRegistrationClosesAt">Registration closes</label>
+              <input class="form-input" id="subsegmentRegistrationClosesAt" type="datetime-local">
+            </div>
+          </div>
           <div class="form-help">Individual subsegments are normalized to team size 1 by the database.</div>
           <div class="form-group">
             <label class="form-label">Eligible class groups</label>
@@ -482,6 +501,10 @@
     };
 
     const $ = (id) => document.getElementById(id);
+
+    function comingSoon(name) {
+      alert(`${name} is coming in a later Executive Panel project.`);
+    }
 
     function formatRole(role) {
       const roles = {
@@ -534,13 +557,27 @@
       return 'normal';
     }
 
+    function toDatetimeLocal(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const pad = (number) => String(number).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function fromDatetimeLocal(value) {
+      if (!value) return null;
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date.toISOString();
+    }
+
     async function loadProfile() {
       const { data, error } = await supabaseClient.rpc('get_my_staff_profile');
       if (error) throw error;
       const profile = data?.[0];
       if (!profile) throw new Error('No staff profile found.');
       if (profile.account_status !== 'active') throw new Error('Your staff account is not active.');
-      if (profile.role !== 'core_executive' && !['supreme_executive','higher_executive'].includes(profile.role)) {
+      if (profile.role !== 'core_executive' && !['supreme_executive', 'higher_executive'].includes(profile.role)) {
         throw new Error('Only Core Executives can manage the event catalog.');
       }
       state.profile = profile;
@@ -651,7 +688,7 @@
         input.style.accentColor = 'var(--brand-green-500)';
         wrapper.appendChild(input);
         const text = document.createElement('span');
-        text.textContent = `${group.code} — ${group.name || ''}`.replace(/ — $/, '');
+        text.textContent = `${group.code}${group.name ? ' — ' + group.name : ''}`;
         wrapper.appendChild(text);
         container.appendChild(wrapper);
       });
@@ -685,6 +722,8 @@
       $('hasSubsegments').value = String(!!event.has_subsegments);
       $('minTeamSize').value = event.min_team_size ?? '';
       $('maxTeamSize').value = event.max_team_size ?? '';
+      $('registrationOpensAt').value = toDatetimeLocal(event.registration_opens_at);
+      $('registrationClosesAt').value = toDatetimeLocal(event.registration_closes_at);
       $('rulesText').value = event.rules_text || '';
       updateTeamSizeFields();
       renderClassGroups('classGroupList', await loadEventClassGroups(event.id));
@@ -702,10 +741,31 @@
     }
 
     async function saveEvent(event) {
+      if (!event) throw new Error('No event selected.');
       const participationType = $('participationType').value;
       const minTeam = participationType === 'individual' ? null : ($('minTeamSize').value === '' ? null : Number($('minTeamSize').value));
       const maxTeam = participationType === 'individual' ? null : ($('maxTeamSize').value === '' ? null : Number($('maxTeamSize').value));
-      const payload = {
+
+      const metadataPayload = {
+        p_event_id: event.id,
+        p_name: $('eventName').value.trim(),
+        p_slug: $('eventSlug').value.trim(),
+        p_description: $('eventDescription').value.trim() || null,
+        p_registration_enabled: $('registrationEnabled').checked,
+        p_participation_type: participationType,
+        p_payment_required: $('paymentRequired').value === 'true',
+        p_fee: Number($('fee').value || 0),
+        p_warning_capacity: Number($('warningCapacity').value || 0),
+        p_hard_capacity: Number($('hardCapacity').value || 0),
+        p_registration_opens_at: fromDatetimeLocal($('registrationOpensAt').value),
+        p_registration_closes_at: fromDatetimeLocal($('registrationClosesAt').value),
+        p_rules_text: $('rulesText').value.trim() || null
+      };
+
+      const { error: metadataError } = await supabaseClient.rpc('save_event_settings', metadataPayload);
+      if (metadataError) throw metadataError;
+
+      const settingsPayload = {
         p_event_id: event.id,
         p_registration_enabled: $('registrationEnabled').checked,
         p_payment_required: $('paymentRequired').value === 'true',
@@ -717,8 +777,8 @@
         p_min_team_size: minTeam,
         p_max_team_size: maxTeam
       };
-      const { error } = await supabaseClient.rpc('update_event_settings', payload);
-      if (error) throw error;
+      const { error: settingsError } = await supabaseClient.rpc('update_event_settings', settingsPayload);
+      if (settingsError) throw settingsError;
 
       const classCodes = [...document.querySelectorAll('#classGroupList input[type="checkbox"]:checked')].map(input => input.value);
       if (classCodes.length) {
@@ -765,7 +825,7 @@
         <div class="subsegment-item">
           <div class="subsegment-copy">
             <strong>${escapeHtml(segment.name)}</strong>
-            <span>${escapeHtml(segment.slug)} · ${escapeHtml(segment.participation_type || 'individual')} · ${segment.payment_required ? 'paid' : 'free'}</span>
+            <span>${escapeHtml(segment.slug)} · ${escapeHtml(segment.participation_type || 'individual')} · ${segment.payment_required ? 'paid' : 'free'} · ${segment.registration_enabled ? 'open' : 'closed'}</span>
           </div>
           <div class="subsegment-actions">
             <button class="subsegment-button" data-edit-subsegment="${segment.id}">Edit</button>
@@ -793,6 +853,8 @@
       $('subsegmentSortOrder').value = Number(subsegment?.sort_order || 0);
       $('subsegmentMinTeamSize').value = subsegment?.min_team_size ?? '';
       $('subsegmentMaxTeamSize').value = subsegment?.max_team_size ?? '';
+      $('subsegmentRegistrationOpensAt').value = toDatetimeLocal(subsegment?.registration_opens_at || subsegment?.open_at);
+      $('subsegmentRegistrationClosesAt').value = toDatetimeLocal(subsegment?.registration_closes_at || subsegment?.close_at);
       $('subsegmentDescription').value = subsegment?.description || '';
       $('subsegmentRulesText').value = subsegment?.rules_text || '';
       await renderSubsegmentClassGroups('subsegmentClassGroupList', subsegment?.id);
@@ -822,27 +884,33 @@
 
     async function saveSubsegment() {
       const event = state.currentSubsegmentEvent;
-      if (!event) return;
+      if (!event) throw new Error('No parent event selected.');
       const participationType = $('subsegmentParticipationType').value;
       const payload = {
-        p_subsegment_id: $('subsegmentId').value || null,
         p_event_id: event.id,
+        p_subsegment_id: $('subsegmentId').value || null,
         p_name: $('subsegmentName').value.trim(),
         p_slug: $('subsegmentSlug').value.trim(),
-        p_participation_type: participationType,
+        p_description: $('subsegmentDescription').value.trim() || null,
         p_registration_enabled: $('subsegmentRegistrationEnabled').checked,
+        p_participation_type: participationType,
         p_payment_required: $('subsegmentPaymentRequired').value === 'true',
         p_fee: Number($('subsegmentFee').value || 0),
-        p_warning_capacity: Number($('subsegmentWarningCapacity').value || 0),
-        p_hard_capacity: Number($('subsegmentHardCapacity').value || 0),
         p_min_team_size: participationType === 'individual' ? null : ($('subsegmentMinTeamSize').value === '' ? null : Number($('subsegmentMinTeamSize').value)),
         p_max_team_size: participationType === 'individual' ? null : ($('subsegmentMaxTeamSize').value === '' ? null : Number($('subsegmentMaxTeamSize').value)),
-        p_open_at: null,
-        p_close_at: null
+        p_warning_capacity: Number($('subsegmentWarningCapacity').value || 0),
+        p_hard_capacity: Number($('subsegmentHardCapacity').value || 0),
+        p_registration_opens_at: fromDatetimeLocal($('subsegmentRegistrationOpensAt').value),
+        p_registration_closes_at: fromDatetimeLocal($('subsegmentRegistrationClosesAt').value),
+        p_rules_text: $('subsegmentRulesText').value.trim() || null,
+        p_sort_order: Number($('subsegmentSortOrder').value || 0)
       };
+
       const { data: id, error } = await supabaseClient.rpc('save_subsegment', payload);
       if (error) throw error;
+
       const classCodes = [...document.querySelectorAll('#subsegmentClassGroupList input[type="checkbox"]:checked')].map(input => input.value);
+      if (!classCodes.length) throw new Error('At least one class group must be selected.');
       const { error: classError } = await supabaseClient.rpc('set_subsegment_class_groups', {
         p_subsegment_id: id,
         p_class_group_codes: classCodes
