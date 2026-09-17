@@ -4,234 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070909">
-  <meta name="description" content="Event assignment control for the 3rd BNMPC National Science Carnival">
   <title>Assignments — 3ʳᵈ BNMPC National Science Carnival</title>
-
   <link rel="stylesheet" href="assets/css/design-system.css">
   <link rel="stylesheet" href="assets/css/executive-shell.css">
   <link rel="stylesheet" href="assets/css/assignments-theme.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
 </head>
 <body class="ep-app-body">
   <div class="ep-app">
     <aside class="ep-sidebar">
-      <div class="ep-brand">
-        <div class="ep-brand-mark">B</div>
-        <div class="ep-brand-copy">
-          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
-          <div class="ep-brand-subtitle">National Science Carnival</div>
-        </div>
-      </div>
-
-      <div class="ep-sidebar-section">
-        <div class="ep-sidebar-label">Control</div>
-        <nav class="ep-nav">
-          <button class="ep-nav-button" data-route="dashboard.html"><span>▦</span><span>Dashboard</span></button>
-          <button class="ep-nav-button" data-route="events.html"><span>≡</span><span>Events</span></button>
-          <button class="ep-nav-button" data-route="registrations.html"><span>□</span><span>Registrations</span></button>
-          <button class="ep-nav-button" data-route="payments.html"><span>¤</span><span>Payments</span></button>
-        </nav>
-      </div>
-
-      <div class="ep-sidebar-section">
-        <div class="ep-sidebar-label">People</div>
-        <nav class="ep-nav">
-          <button class="ep-nav-button" data-route="staff.html"><span>◎</span><span>Staff</span></button>
-          <button class="ep-nav-button active" data-route="assignments.html"><span>↔</span><span>Assignments</span></button>
-        </nav>
-      </div>
-
-      <div class="ep-sidebar-section">
-        <div class="ep-sidebar-label">Operations</div>
-        <nav class="ep-nav">
-          <button class="ep-nav-button" data-route="checkin.html"><span>⌗</span><span>QR Check-in</span></button>
-          <button class="ep-nav-button" data-route="reports.html"><span>▥</span><span>Reports</span></button>
-          <button class="ep-nav-button" data-route="settings.html"><span>⚙</span><span>Settings</span></button>
-        </nav>
-      </div>
-
-      <div class="ep-sidebar-bottom">
-        <div class="ep-user-card">
-          <div class="ep-avatar" id="avatar">EX</div>
-          <div class="ep-user-copy">
-            <div class="ep-user-name" id="sideUserName">Executive</div>
-            <div class="ep-user-role" id="sideUserRole">Loading...</div>
-          </div>
-        </div>
-      </div>
+      <div class="ep-brand"><div class="ep-brand-mark">B</div><div class="ep-brand-copy"><div class="ep-brand-title">3ʳᵈ BNMPC</div><div class="ep-brand-subtitle">National Science Carnival</div></div></div>
+      <div class="ep-sidebar-section"><div class="ep-sidebar-label">Control</div><nav class="ep-nav">
+        <a class="ep-nav-button" href="dashboard.html"><span>▦</span><span>Dashboard</span></a>
+        <a class="ep-nav-button" href="events.html"><span>≡</span><span>Events</span></a>
+        <a class="ep-nav-button" href="registrations.html"><span>□</span><span>Registrations</span></a>
+        <a class="ep-nav-button" href="payments.html"><span>¤</span><span>Payments</span></a>
+      </nav></div>
+      <div class="ep-sidebar-section"><div class="ep-sidebar-label">People</div><nav class="ep-nav">
+        <a class="ep-nav-button" href="staff.html"><span>◎</span><span>Staff</span></a>
+        <a class="ep-nav-button active" href="assignments.html" aria-current="page"><span>↔</span><span>Assignments</span></a>
+      </nav></div>
+      <div class="ep-sidebar-section"><div class="ep-sidebar-label">Operations</div><nav class="ep-nav">
+        <a class="ep-nav-button" href="checkin.html"><span>⌗</span><span>QR Check-in</span></a>
+        <a class="ep-nav-button" href="reports.html"><span>▥</span><span>Reports</span></a>
+        <a class="ep-nav-button" href="settings.html"><span>⚙</span><span>Settings</span></a>
+      </nav></div>
+      <div class="ep-sidebar-bottom"><div class="ep-user-card"><div class="ep-avatar" id="avatar">EX</div><div class="ep-user-copy"><div class="ep-user-name" id="sideUserName">Executive</div><div class="ep-user-role" id="sideUserRole">Loading...</div></div></div></div>
     </aside>
-
     <main class="ep-main">
-      <header class="ep-header">
-        <div class="ep-header-title">
-          <span class="ep-header-kicker">Executive Control</span>
-          <span class="ep-header-divider"></span>
-          <span class="ep-header-name">Assignments</span>
-        </div>
-        <div class="ep-header-right">
-          <div class="ep-system-state"><span class="ep-system-dot"></span><span>Live data</span></div>
-          <button class="ep-signout" id="logoutButton">Sign out</button>
-        </div>
-      </header>
-
+      <header class="ep-header"><div class="ep-header-title"><span class="ep-header-kicker">Executive Control</span><span class="ep-header-divider"></span><span class="ep-header-name">Assignments</span></div><div class="ep-header-right"><div class="ep-system-state"><span class="ep-system-dot"></span><span>Live data</span></div><button class="ep-signout" id="logoutButton">Sign out</button></div></header>
       <section class="ep-page">
         <div id="loading" class="ep-loading-wrap"><div class="ep-loading"><span class="ep-loader"></span>Loading assignment control</div></div>
         <div id="errorBox" class="ep-error"></div>
-
         <div id="pageContent" style="display:none;">
-          <div class="ep-page-intro">
-            <div>
-              <div class="ep-kicker">People / Event Operations</div>
-              <h1 class="ep-page-title">Event Assignments</h1>
-              <p class="ep-page-description">Assign active Segment Managers and Volunteers to main events. Segment Managers automatically oversee the subsegments beneath their assigned main events.</p>
-            </div>
-            <button class="ep-btn ep-btn-primary" id="refreshButton">Refresh</button>
-          </div>
-
-          <div class="ep-command-strip">
-            <div class="ep-command-item"><div class="ep-command-label">Assignable staff</div><div class="ep-command-value" id="assignableCount">—</div><div class="ep-command-note">active operations staff</div></div>
-            <div class="ep-command-item"><div class="ep-command-label">Events</div><div class="ep-command-value" id="eventCount">—</div><div class="ep-command-note">configured main events</div></div>
-            <div class="ep-command-item"><div class="ep-command-label">Assignments</div><div class="ep-command-value" id="assignmentCount">—</div><div class="ep-command-note">active event links</div></div>
-            <div class="ep-command-item"><div class="ep-command-label">Uncovered events</div><div class="ep-command-value" id="uncoveredCount">—</div><div class="ep-command-note">no assigned operations staff</div></div>
-          </div>
-
-          <div class="assignment-toolbar">
-            <div><label class="field-label" for="searchInput">Search staff</label><input class="field-control" id="searchInput" type="search" placeholder="Name, phone, role..."></div>
-            <div><label class="field-label" for="roleFilter">Role</label><select class="field-control" id="roleFilter"><option value="all">All operations roles</option><option value="segment_executive">Segment Manager</option><option value="member">Volunteer</option></select></div>
-            <div style="align-self:end"><button class="ep-btn ep-btn-primary" id="assignNewButton">Assign staff</button></div>
-          </div>
-
-          <div class="assignment-grid">
-            <section class="ep-surface">
-              <div class="ep-surface-header"><div><div class="ep-surface-heading">Staff assignment roster</div><div class="ep-surface-subheading">Active operations staff and their current event coverage</div></div></div>
-              <div class="assignment-table-wrap">
-                <table class="assignment-table">
-                  <thead><tr><th>Staff</th><th>Role</th><th>Status</th><th>Assigned events</th><th>Action</th></tr></thead>
-                  <tbody id="staffTableBody"></tbody>
-                </table>
-              </div>
-            </section>
-
-            <section class="ep-surface">
-              <div class="ep-surface-header"><div><div class="ep-surface-heading">Event coverage</div><div class="ep-surface-subheading">Operational staff attached to each main event</div></div></div>
-              <div class="ep-surface-body"><div class="coverage-list" id="coverageList"></div></div>
-            </section>
-          </div>
-
-          <div class="assignment-note"><strong>Access model:</strong> assignment changes are protected by Supabase. Only higher-level executive accounts can create or remove event assignments, and only active Segment Managers or Volunteers can be assigned.</div>
+          <div class="ep-page-intro"><div><div class="ep-kicker">People / Event Operations</div><h1 class="ep-page-title">Event Assignments</h1><p class="ep-page-description">Assign active Segment Managers and Volunteers to main events.</p></div><button class="ep-btn ep-btn-primary" id="refreshButton">Refresh</button></div>
+          <div class="ep-command-strip"><div class="ep-command-item"><div class="ep-command-label">Assignable staff</div><div class="ep-command-value" id="assignableCount">—</div></div><div class="ep-command-item"><div class="ep-command-label">Events</div><div class="ep-command-value" id="eventCount">—</div></div><div class="ep-command-item"><div class="ep-command-label">Assignments</div><div class="ep-command-value" id="assignmentCount">—</div></div><div class="ep-command-item"><div class="ep-command-label">Uncovered events</div><div class="ep-command-value" id="uncoveredCount">—</div></div></div>
+          <div class="assignment-toolbar"><div><label class="field-label" for="searchInput">Search staff</label><input class="field-control" id="searchInput" type="search" placeholder="Name, phone, role..."></div><div><label class="field-label" for="roleFilter">Role</label><select class="field-control" id="roleFilter"><option value="all">All operations roles</option><option value="segment_executive">Segment Manager</option><option value="member">Volunteer</option></select></div></div>
+          <div class="assignment-grid"><section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Staff assignment roster</div><div class="ep-surface-subheading">Active operations staff and their current event coverage</div></div></div><div class="assignment-table-wrap"><table class="assignment-table"><thead><tr><th>Staff</th><th>Role</th><th>Status</th><th>Assigned events</th></tr></thead><tbody id="staffTableBody"></tbody></table></div></section><section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Event coverage</div><div class="ep-surface-subheading">Operational staff attached to each main event</div></div></div><div class="ep-surface-body"><div class="coverage-list" id="coverageList"></div></div></section></div>
+          <div class="assignment-note"><strong>Access model:</strong> assignment changes remain protected by Supabase. Only active Segment Managers and Volunteers are assignable.</div>
         </div>
       </section>
     </main>
   </div>
-
-  <div class="modal-overlay" id="assignModal" aria-hidden="true">
-    <section class="assign-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-head">
-        <div><div class="ep-kicker">Assignment change</div><div class="modal-title" id="modalTitle">Assign staff to events</div><div class="modal-subtitle" id="modalSubtitle">Select one or more main events.</div></div>
-        <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
-      </div>
-      <div class="modal-body">
-        <div style="margin-bottom:14px"><label class="field-label">Staff member</label><input class="field-control" id="modalStaffName" readonly></div>
-        <div><label class="field-label">Main events</label><div class="event-picker" id="eventPicker"></div><div class="selection-note" id="selectionNote">0 events selected</div></div>
-      </div>
-      <div class="modal-footer"><button class="ep-btn" id="modalCancel" type="button">Cancel</button><button class="ep-btn ep-btn-primary" id="modalSave" type="button">Save assignments</button></div>
-    </section>
-  </div>
-
   <script>
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-    const $ = id => document.getElementById(id);
-    const state = { profile:null, staff:[], events:[], assignments:[], currentStaff:null };
-    const ROLE_LABELS = { segment_executive:'Segment Manager', member:'Volunteer' };
-    const safeRoutes = new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
-
-    function navigate(route){ if(safeRoutes.has(route)) window.location.href=route; }
-    document.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.route)));
-    function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
-    function roleLabel(role){return ROLE_LABELS[role]||role||'Staff';}
-    function initials(name){if(!name)return'EX';const p=name.trim().split(/\s+/).filter(Boolean);return p.length===1?p[0].slice(0,2).toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase();}
-    function statusChip(status){return `<span class="status-chip ${status==='active'?'active':'inactive'}">${esc(status||'—')}</span>`;}
-    function roleChip(role){return `<span class="role-chip ${role==='segment_executive'?'manager':'volunteer'}">${esc(roleLabel(role))}</span>`;}
-    function showError(msg){$('errorBox').textContent=msg;$('errorBox').style.display='block';}
-
-    async function loadProfile(){
-      const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
-      if(sessionError||!sessionData?.session){window.location.href='login.html';return false;}
-      const {data,error}=await supabaseClient.rpc('get_my_staff_profile');
-      if(error)throw error;
-      const p=data?.[0];
-      if(!p)throw new Error('No staff profile was found for this account.');
-      if(p.account_status!=='active')throw new Error('Your staff account is not active.');
-      if(!['supreme_executive','higher_executive'].includes(p.role))throw new Error('Only executive administrators can manage event assignments.');
-      state.profile=p;$('sideUserName').textContent=p.full_name||'Executive';$('sideUserRole').textContent=p.role==='supreme_executive'?'Core Executive':'Higher Executive';$('avatar').textContent=initials(p.full_name);return true;
-    }
-
-    async function loadData(){
-      const [{data:staff,error:staffError},{data:events,error:eventError},{data:assignments,error:assignmentError}]=await Promise.all([
-        supabaseClient.from('staff_profiles').select('id,full_name,phone,role,account_status,requested_role'),
-        supabaseClient.from('events').select('id,name,slug,sort_order,has_subsegments').order('sort_order',{ascending:true}),
-        supabaseClient.from('event_assignments').select('id,staff_id,event_id,assigned_by,created_at')
-      ]);
-      if(staffError)throw staffError;if(eventError)throw eventError;if(assignmentError)throw assignmentError;
-      state.staff=(staff||[]).filter(s=>['segment_executive','member'].includes(s.role)).sort((a,b)=>String(a.full_name).localeCompare(String(b.full_name)));
-      state.events=events||[];state.assignments=assignments||[];render();
-    }
-
-    function assignmentsForStaff(staffId){return state.assignments.filter(a=>a.staff_id===staffId);}
-    function assignedStaffForEvent(eventId){return state.assignments.filter(a=>a.event_id===eventId);}
-    function filteredStaff(){const q=$('searchInput').value.trim().toLowerCase(),role=$('roleFilter').value;return state.staff.filter(s=>(role==='all'||s.role===role)&&(!q||[s.full_name,s.phone,s.role,s.account_status].some(v=>String(v||'').toLowerCase().includes(q))));}
-    function render(){updateCounts();renderStaff();renderCoverage();}
-    function updateCounts(){const assignable=state.staff.filter(s=>s.account_status==='active'),covered=new Set(state.assignments.map(a=>a.event_id));$('assignableCount').textContent=assignable.length;$('eventCount').textContent=state.events.length;$('assignmentCount').textContent=state.assignments.length;$('uncoveredCount').textContent=state.events.filter(e=>!covered.has(e.id)).length;}
-
-    function renderStaff(){
-      const body=$('staffTableBody'),rows=filteredStaff();
-      if(!rows.length){body.innerHTML='<tr><td colspan="5"><div class="empty-block"><div class="empty-title">No matching staff</div><div class="empty-copy">Change the search or role filter, or approve an operations account first.</div></div></td></tr>';return;}
-      body.innerHTML=rows.map(s=>{const links=assignmentsForStaff(s.id);const names=links.map(a=>state.events.find(e=>e.id===a.event_id)?.name).filter(Boolean);return `<tr><td><div class="staff-primary">${esc(s.full_name||'Unnamed')}</div><div class="staff-meta">${esc(s.phone||'No phone provided')}</div></td><td>${roleChip(s.role)}</td><td>${statusChip(s.account_status)}</td><td><span class="row-meta">${names.length?esc(names.slice(0,3).join(' · '))+(names.length>3?' · +'+(names.length-3):'No events assigned')}</span></td><td><div class="staff-actions">${s.account_status==='active'?`<button class="assign-btn" data-assign-staff="${esc(s.id)}">Manage</button>`:'<span class="muted-action">Inactive</span>'}</div></td></tr>`;}).join('');
-      body.querySelectorAll('[data-assign-staff]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.assignStaff)));
-    }
-
-    function renderCoverage(){
-      const list=$('coverageList');
-      if(!state.events.length){list.innerHTML='<div class="empty-block"><div class="empty-title">No events configured</div><div class="empty-copy">Assignment coverage will appear once main events are available.</div></div>';return;}
-      list.innerHTML=state.events.map((e,i)=>{const links=assignedStaffForEvent(e.id);return `<article class="coverage-event"><div class="coverage-head"><div class="coverage-index">${String(i+1).padStart(2,'0')}</div><div><div class="coverage-name">${esc(e.name)}</div><div class="coverage-meta">${esc(e.slug||'event')} · ${e.has_subsegments?'subsegments enabled':'main event'}</div></div><div class="coverage-count">${links.length}</div></div><div class="coverage-staff">${links.length?links.map(a=>{const s=state.staff.find(x=>x.id===a.staff_id);return s?`<div class="assignment-line"><div class="assignment-person"><div class="assignment-name">${esc(s.full_name)}</div><div class="assignment-role">${esc(roleLabel(s.role))}</div></div><button class="remove-assignment" data-remove-staff="${esc(s.id)}" data-remove-event="${esc(e.id)}">Remove</button></div>`:''}).join(''):'<div class="empty-copy" style="margin:0">No operations staff assigned yet.</div>'}</div></article>`;}).join('');
-      list.querySelectorAll('[data-remove-staff]').forEach(b=>b.addEventListener('click',()=>removeAssignment(b.dataset.removeStaff,b.dataset.removeEvent)));
-    }
-
-    function openModal(staffId){
-      const staff=state.staff.find(s=>s.id===staffId);if(!staff)return;state.currentStaff=staff;
-      $('modalStaffName').value=staff.full_name||'Unnamed';$('modalSubtitle').textContent=`${roleLabel(staff.role)} · choose the main events for this person.`;
-      const current=new Set(assignmentsForStaff(staff.id).map(a=>a.event_id));
-      $('eventPicker').innerHTML=state.events.map(e=>`<div class="picker-row"><input type="checkbox" id="evt-${e.id}" value="${esc(e.id)}" ${current.has(e.id)?'checked':''}><label for="evt-${e.id}"><div class="picker-name">${esc(e.name)}</div><div class="picker-meta">${esc(e.slug||'event')} · ${e.has_subsegments?'subsegments included':''}</div></label></div>`).join('');
-      updateSelectionNote();$('assignModal').classList.add('open');$('assignModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('eventPicker').querySelectorAll('input').forEach(c=>c.addEventListener('change',updateSelectionNote));
-    }
-    function updateSelectionNote(){const count=$('eventPicker').querySelectorAll('input:checked').length;$('selectionNote').textContent=`${count} event${count===1?'':'s'} selected`;}
-    function closeModal(){state.currentStaff=null;$('assignModal').classList.remove('open');$('assignModal').setAttribute('aria-hidden','true');document.body.style.overflow='';}
-
-    async function saveAssignments(){
-      const staff=state.currentStaff;if(!staff)return;const ids=[...$('eventPicker').querySelectorAll('input:checked')].map(c=>c.value);
-      if(staff.account_status!=='active'){alert('Only active staff members can receive assignments.');return;}
-      if(!ids.length){alert('Select at least one event. To remove all assignments, use Remove from each event in the coverage panel.');return;}
-      const btn=$('modalSave');btn.disabled=true;btn.textContent='Saving…';
-      try{const {error}=await supabaseClient.rpc('assign_staff_to_events',{p_staff_id:staff.id,p_event_ids:ids});if(error)throw error;closeModal();await loadData();}
-      catch(e){console.error(e);alert(e.message||'Unable to save assignments.');}
-      finally{btn.disabled=false;btn.textContent='Save assignments';}
-    }
-
-    async function removeAssignment(staffId,eventId){
-      const staff=state.staff.find(s=>s.id===staffId),event=state.events.find(e=>e.id===eventId);if(!staff||!event)return;
-      if(!confirm(`Remove ${staff.full_name} from ${event.name}?`))return;
-      try{const {error}=await supabaseClient.rpc('remove_staff_from_event',{p_staff_id:staffId,p_event_id:eventId});if(error)throw error;await loadData();}catch(e){console.error(e);alert(e.message||'Unable to remove assignment.');}
-    }
-
-    $('searchInput').addEventListener('input',renderStaff);$('roleFilter').addEventListener('change',renderStaff);
-    $('refreshButton').addEventListener('click',async()=>{try{await loadData();}catch(e){showError(e.message||'Unable to refresh assignments.');}});
-    $('assignNewButton').addEventListener('click',()=>{const first=state.staff.find(s=>s.account_status==='active');if(!first){alert('No active Segment Managers or Volunteers are currently available.');return;}openModal(first.id);});
-    $('modalClose').addEventListener('click',closeModal);$('modalCancel').addEventListener('click',closeModal);$('modalSave').addEventListener('click',saveAssignments);$('assignModal').addEventListener('click',e=>{if(e.target===$('assignModal'))closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-    $('logoutButton').addEventListener('click',async()=>{await supabaseClient.auth.signOut();window.location.href='login.html';});
-
-    (async()=>{try{const ok=await loadProfile();if(!ok)return;await loadData();$('loading').style.display='none';$('pageContent').style.display='block';}catch(e){console.error(e);$('loading').style.display='none';showError(e.message||'Unable to load assignments.');}})();
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);const state={staff:[],events:[],assignments:[]};
+    const labels={segment_executive:'Segment Manager',member:'Volunteer'};const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+    const role=v=>labels[v]||v||'Staff';
+    async function start(){try{const s=await client.auth.getSession();if(!s.data?.session){location.href='login.html';return}const p=await client.rpc('get_my_staff_profile');if(p.error)throw p.error;const me=p.data?.[0];if(!me)throw new Error('No staff profile was found for this account.');if(me.account_status!=='active')throw new Error('Your staff account is not active.');if(!['supreme_executive','higher_executive'].includes(me.role))throw new Error('Only executive administrators can manage event assignments.');$('sideUserName').textContent=me.full_name||'Executive';$('sideUserRole').textContent=me.role==='supreme_executive'?'Core Executive':'Higher Executive';$('avatar').textContent=(me.full_name||'EX').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();await load();$('loading').style.display='none';$('pageContent').style.display='block'}catch(e){console.error(e);$('loading').style.display='none';$('errorBox').textContent=e.message||'Unable to load assignments.';$('errorBox').style.display='block'}}
+    async function load(){const [a,b,c]=await Promise.all([client.from('staff_profiles').select('id,full_name,phone,role,account_status').in('role',['segment_executive','member']),client.from('events').select('id,name,slug,sort_order,has_subsegments').order('sort_order'),client.from('event_assignments').select('id,staff_id,event_id')]);if(a.error)throw a.error;if(b.error)throw b.error;if(c.error)throw c.error;state.staff=(a.data||[]).sort((x,y)=>String(x.full_name).localeCompare(String(y.full_name)));state.events=b.data||[];state.assignments=c.data||[];render()}
+    function render(){const q=$('searchInput').value.trim().toLowerCase(),rf=$('roleFilter').value;const rows=state.staff.filter(s=>(rf==='all'||s.role===rf)&&(!q||[s.full_name,s.phone,s.role,s.account_status].some(v=>String(v||'').toLowerCase().includes(q))));$('staffTableBody').innerHTML=rows.length?rows.map(s=>{const names=state.assignments.filter(a=>a.staff_id===s.id).map(a=>state.events.find(e=>e.id===a.event_id)?.name).filter(Boolean);return `<tr><td><div class="staff-primary">${esc(s.full_name||'Unnamed')}</div><div class="staff-meta">${esc(s.phone||'No phone provided')}</div></td><td><span class="role-chip ${s.role==='segment_executive'?'manager':'volunteer'}">${role(s.role)}</span></td><td><span class="status-chip ${s.account_status==='active'?'active':'inactive'}">${esc(s.account_status)}</span></td><td>${esc(names.join(' · ')||'No events assigned')}</td></tr>`}).join(''):'<tr><td colspan="4"><div class="empty-block"><div class="empty-title">No matching staff</div><div class="empty-copy">No staff match the current filters.</div></div></td></tr>';$('assignableCount').textContent=state.staff.filter(s=>s.account_status==='active').length;$('eventCount').textContent=state.events.length;$('assignmentCount').textContent=state.assignments.length;const covered=new Set(state.assignments.map(a=>a.event_id));$('uncoveredCount').textContent=state.events.filter(e=>!covered.has(e.id)).length;$('coverageList').innerHTML=state.events.map((e,i)=>{const links=state.assignments.filter(a=>a.event_id===e.id);return `<article class="coverage-event"><div class="coverage-head"><div class="coverage-index">${String(i+1).padStart(2,'0')}</div><div><div class="coverage-name">${esc(e.name)}</div><div class="coverage-meta">${esc(e.slug||'event')}</div></div><div class="coverage-count">${links.length}</div></div><div class="coverage-staff">${links.length?links.map(a=>{const s=state.staff.find(x=>x.id===a.staff_id);return s?`<div class="assignment-line"><div class="assignment-person"><div class="assignment-name">${esc(s.full_name)}</div><div class="assignment-role">${role(s.role)}</div></div></div>`:''}).join(''):'<div class="empty-copy">No operations staff assigned yet.</div>'}</div></article>`}).join('')}
+    $('searchInput').addEventListener('input',render);$('roleFilter').addEventListener('change',render);$('refreshButton').addEventListener('click',load);$('logoutButton').addEventListener('click',async()=>{await client.auth.signOut();location.href='login.html'});start();
   </script>
 </body>
 </html>
