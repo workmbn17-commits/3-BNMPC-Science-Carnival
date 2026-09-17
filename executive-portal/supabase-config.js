@@ -1,29 +1,36 @@
 const SUPABASE_URL = "https://tbwrjorqzumjyiptglkf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG";
 
-// Staff role controls are mounted here so the Staff page can use the protected
-// Supabase role-change RPC without exposing privileged role details in the UI.
 (function mountStaffRoleControls(){
   if(!/\/staff(?:\.html)?$/.test(window.location.pathname)) return;
 
-  const mount = async () => {
+  const start = () => {
     if(!window.supabase?.createClient) return;
     const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-    const { data: profileRows, error: profileError } = await client.rpc('get_my_staff_profile');
-    if(profileError || !profileRows?.[0]) return;
 
-    const actor = profileRows[0];
-    if(!['supreme_executive','higher_executive'].includes(actor.role)) return;
+    let actorRole = null;
+    let current = null;
 
-    const eligible = role => actor.role === 'supreme_executive'
-      ? ['higher_executive','segment_executive','member'].includes(role)
-      : ['segment_executive','member'].includes(role);
-
-    const label = role => ({
+    const roleLabel = role => ({
       higher_executive:'Core Executive',
       segment_executive:'Segment Manager',
-      member:'Volunteer'
+      member:'Volunteer',
+      supreme_executive:'Core Executive'
     }[role] || 'Staff');
+
+    const roleFromLabel = text => {
+      const value = String(text || '').toLowerCase();
+      if(value.includes('segment manager')) return 'segment_executive';
+      if(value.includes('volunteer')) return 'member';
+      if(value.includes('core executive')) return 'higher_executive';
+      return null;
+    };
+
+    const canChange = targetRole => actorRole === 'supreme_executive'
+      ? ['higher_executive','segment_executive','member'].includes(targetRole)
+      : actorRole === 'higher_executive'
+        ? ['segment_executive','member'].includes(targetRole)
+        : false;
 
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
@@ -52,7 +59,7 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
               <option value="member">Volunteer</option>
             </select>
           </div>
-          <div class="confirm-note">Role changes are validated by the protected Supabase function. Higher Executives can manage Volunteers and Segment Managers; only the protected top-level account can alter an existing Higher Executive.</div>
+          <div class="confirm-note">Higher Executives can change Volunteers and Segment Managers. Changes to an existing Higher Executive are restricted to the protected top-level account.</div>
         </div>
         <footer class="modal-footer">
           <button class="modal-action" id="cancelRoleControl" type="button">Cancel</button>
@@ -61,21 +68,22 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
       </article>`;
     document.body.appendChild(modal);
 
-    let current = null;
-    const open = person => {
-      current = person;
-      document.getElementById('roleControlName').value = person.full_name || 'Unnamed';
-      document.getElementById('roleControlSubtitle').textContent = `${label(person.role)} · current role`;
-      document.getElementById('roleControlSelect').value = person.role === 'higher_executive' ? 'higher_executive' : person.role === 'segment_executive' ? 'segment_executive' : 'member';
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden','false');
-      document.body.style.overflow='hidden';
-    };
     const close = () => {
       current = null;
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden','true');
       document.body.style.overflow='';
+    };
+
+    const open = person => {
+      current = person;
+      document.getElementById('roleControlName').value = person.name || 'Staff member';
+      document.getElementById('roleControlSubtitle').textContent = `${roleLabel(person.role)} · current role`;
+      document.getElementById('roleControlSelect').value = person.role;
+      document.getElementById('roleControlSelect').querySelector('option[value="higher_executive"]').hidden = actorRole !== 'supreme_executive';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
     };
 
     document.getElementById('closeRoleControl').addEventListener('click', close);
@@ -84,13 +92,13 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
 
     document.getElementById('saveRoleControl').addEventListener('click', async () => {
       if(!current) return;
-      const button = document.getElementById('saveRoleControl');
       const newRole = document.getElementById('roleControlSelect').value;
-      if(!eligible(current.role)){
-        alert('This account cannot be changed by the current executive level.');
+      if(!canChange(current.role)){
+        alert('This staff member cannot be changed by your executive level.');
         return;
       }
       if(newRole === current.role){ close(); return; }
+      const button = document.getElementById('saveRoleControl');
       button.disabled = true;
       button.textContent = 'Saving…';
       try{
@@ -99,7 +107,6 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
           p_new_role: newRole
         });
         if(error) throw error;
-        close();
         window.location.reload();
       }catch(error){
         console.error(error);
@@ -118,38 +125,43 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
         if(!actionCell) return;
         const statusButton = actionCell.querySelector('[data-status-id]');
         if(!statusButton) return;
-        const staffId = statusButton.getAttribute('data-status-id');
-        const person = window.__staffRoleDirectory?.find(item => String(item.id) === String(staffId));
-        if(!person || !eligible(person.role) || ['pending','rejected'].includes(person.account_status)) return;
+
+        const roleText = row.children[1]?.textContent || '';
+        const targetRole = roleFromLabel(roleText);
+        if(!targetRole || !canChange(targetRole)) return;
+
+        const personName = row.children[0]?.textContent?.trim() || 'Staff member';
         const roleButton = document.createElement('button');
         roleButton.className = 'table-action';
         roleButton.type = 'button';
         roleButton.textContent = 'Change Role';
-        roleButton.dataset.roleControl = staffId;
+        roleButton.dataset.roleControl = statusButton.getAttribute('data-status-id');
         roleButton.style.marginLeft = '6px';
-        roleButton.addEventListener('click', () => open(person));
+        roleButton.addEventListener('click', () => open({
+          id: statusButton.getAttribute('data-status-id'),
+          name: personName,
+          role: targetRole
+        }));
         actionCell.appendChild(roleButton);
       });
     };
 
-    const captureDirectory = async () => {
-      const table = document.querySelector('#staffTableBody');
-      if(!table) return;
-      const { data, error } = await client
-        .from('staff_management_directory')
-        .select('id,full_name,role,account_status');
-      if(error) return;
-      window.__staffRoleDirectory = data || [];
+    const loadActor = async () => {
+      const { data, error } = await client.rpc('get_my_staff_profile');
+      if(error || !data?.[0]) return;
+      actorRole = data[0].role;
       decorate();
     };
 
     const table = document.getElementById('staffTableBody');
     if(table){
-      new MutationObserver(() => setTimeout(() => { captureDirectory(); }, 0)).observe(table, {childList:true, subtree:true});
-      setTimeout(() => { captureDirectory(); }, 300);
+      new MutationObserver(decorate).observe(table, {childList:true, subtree:true});
+      loadActor();
+      setTimeout(decorate, 250);
+      setTimeout(decorate, 1000);
     }
   };
 
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, {once:true});
-  else mount();
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+  else start();
 })();
