@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070909" />
+  <meta name="description" content="System settings for the 3rd BNMPC National Science Carnival executive panel" />
+  <title>Settings — 3ʳᵈ BNMPC National Science Carnival</title>
+
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/executive-shell.css" />
+  <link rel="stylesheet" href="assets/css/settings-theme.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body class="ep-app-body">
+  <div class="ep-app">
+    <aside class="ep-sidebar">
+      <div class="ep-brand">
+        <div class="ep-brand-mark">B</div>
+        <div class="ep-brand-copy">
+          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
+          <div class="ep-brand-subtitle">National Science Carnival</div>
+        </div>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Control</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="dashboard.html"><span class="ep-nav-symbol">▦</span><span>Dashboard</span></button>
+          <button class="ep-nav-button" data-route="events.html"><span class="ep-nav-symbol">≡</span><span>Events</span></button>
+          <button class="ep-nav-button" data-route="registrations.html"><span class="ep-nav-symbol">□</span><span>Registrations</span></button>
+          <button class="ep-nav-button" data-route="payments.html"><span class="ep-nav-symbol">¤</span><span>Payments</span></button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">People</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="staff.html"><span class="ep-nav-symbol">◎</span><span>Staff</span></button>
+          <button class="ep-nav-button" data-route="assignments.html"><span class="ep-nav-symbol">↔</span><span>Assignments</span></button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Operations</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="checkin.html"><span class="ep-nav-symbol">⌗</span><span>QR Check-in</span><span class="ep-nav-meta">DAY</span></button>
+          <button class="ep-nav-button" data-route="reports.html"><span class="ep-nav-symbol">▥</span><span>Reports</span></button>
+          <button class="ep-nav-button active" data-route="settings.html"><span class="ep-nav-symbol">⚙</span><span>Settings</span></button>
+        </nav>
+      </div>
+
+      <div class="ep-sidebar-bottom">
+        <div class="ep-user-card">
+          <div class="ep-avatar" id="avatar">EX</div>
+          <div class="ep-user-copy">
+            <div class="ep-user-name" id="sideUserName">Executive</div>
+            <div class="ep-user-role" id="sideUserRole">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="ep-main">
+      <header class="ep-header">
+        <div class="ep-header-title">
+          <span class="ep-header-kicker">Executive Control</span>
+          <span class="ep-header-divider"></span>
+          <span class="ep-header-name">Settings</span>
+        </div>
+        <div class="ep-header-right">
+          <div class="ep-system-state"><span class="ep-system-dot"></span><span id="headerState">Loading settings</span></div>
+          <button class="ep-signout" id="logoutButton">Sign out</button>
+        </div>
+      </header>
+
+      <section class="ep-page">
+        <div id="loading" class="ep-loading-wrap"><div class="ep-loading"><span class="ep-loader"></span>Loading executive settings</div></div>
+        <div id="errorBox" class="ep-error"></div>
+        <div id="toast" class="settings-toast" role="status" aria-live="polite"></div>
+
+        <div id="pageContent" style="display:none;">
+          <div class="ep-page-intro">
+            <div>
+              <div class="ep-kicker">System / Governance</div>
+              <h1 class="ep-page-title">Settings</h1>
+              <p class="ep-page-description">Control the registration system, fest identity, and payment channels. Event-specific configuration stays in Events.</p>
+            </div>
+            <div class="settings-access-badge"><span class="settings-dot"></span><span>Core Executive only</span></div>
+          </div>
+
+          <div class="settings-grid">
+            <section class="ep-surface settings-panel settings-panel-wide">
+              <div class="ep-surface-header">
+                <div>
+                  <div class="ep-surface-heading">Registration system</div>
+                  <div class="ep-surface-subheading">Master switch for participant registration</div>
+                </div>
+                <div class="settings-state-chip" id="registrationStateChip">DISABLED</div>
+              </div>
+              <div class="ep-surface-body">
+                <div class="master-switch-row">
+                  <div>
+                    <div class="setting-title">Accept new registrations</div>
+                    <div class="setting-copy">When disabled, the participant website should stop accepting new submissions. Existing records remain unchanged.</div>
+                  </div>
+                  <label class="switch" aria-label="Accept new registrations">
+                    <input type="checkbox" id="registrationToggle" />
+                    <span class="switch-track"><span class="switch-thumb"></span></span>
+                  </label>
+                </div>
+
+                <div class="warning-box" id="registrationWarning" style="display:none;">
+                  <div class="warning-title">Opening registration changes the public system state.</div>
+                  <div class="warning-copy">Save only when the event setup, fees, payment channels, and registration windows are ready.</div>
+                </div>
+
+                <div class="settings-actions">
+                  <button class="ep-btn ep-btn-primary" id="saveRegistrationButton" type="button">Save registration state</button>
+                  <span class="save-note" id="registrationSavedAt">Not saved in this session</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="ep-surface settings-panel">
+              <div class="ep-surface-header">
+                <div>
+                  <div class="ep-surface-heading">Fest identity</div>
+                  <div class="ep-surface-subheading">Displayed throughout the participant system</div>
+                </div>
+              </div>
+              <div class="ep-surface-body">
+                <label class="setting-field">
+                  <span class="setting-label">Official fest name</span>
+                  <input class="setting-input" id="festNameInput" type="text" maxlength="180" placeholder="3ʳᵈ BNMPC National Science Carnival" />
+                  <span class="setting-help">This value is stored centrally and can be consumed by the participant website.</span>
+                </label>
+                <div class="settings-actions">
+                  <button class="ep-btn ep-btn-primary" id="saveFestNameButton" type="button">Save fest name</button>
+                  <span class="save-note" id="festNameSavedAt">Not saved in this session</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="ep-surface settings-panel settings-panel-wide">
+              <div class="ep-surface-header">
+                <div>
+                  <div class="ep-surface-heading">Payment channels</div>
+                  <div class="ep-surface-subheading">Configure which payment methods are exposed to participants</div>
+                </div>
+                <div class="settings-state-chip neutral" id="paymentChannelCount">0 configured</div>
+              </div>
+              <div class="ep-surface-body no-pad-mobile">
+                <div id="paymentMethods" class="payment-methods"></div>
+              </div>
+            </section>
+
+            <section class="ep-surface settings-panel">
+              <div class="ep-surface-header">
+                <div>
+                  <div class="ep-surface-heading">System snapshot</div>
+                  <div class="ep-surface-subheading">Current database-backed state</div>
+                </div>
+              </div>
+              <div class="ep-surface-body">
+                <div class="snapshot-list">
+                  <div class="snapshot-row"><span>Fest name</span><strong id="snapshotFestName">—</strong></div>
+                  <div class="snapshot-row"><span>Registration system</span><strong id="snapshotRegistrationState">—</strong></div>
+                  <div class="snapshot-row"><span>Payment methods</span><strong id="snapshotPaymentCount">0</strong></div>
+                  <div class="snapshot-row"><span>Database</span><strong class="green">CONNECTED</strong></div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="ep-surface settings-panel security-panel">
+            <div class="ep-surface-header">
+              <div>
+                <div class="ep-surface-heading">Administrative notes</div>
+                <div class="ep-surface-subheading">Boundaries between system-wide and event-specific configuration</div>
+              </div>
+            </div>
+            <div class="ep-surface-body">
+              <div class="note-grid">
+                <div class="note-item"><span class="note-index">01</span><div><strong>System switch</strong><p>The master registration switch is separate from each event's own registration_enabled setting.</p></div></div>
+                <div class="note-item"><span class="note-index">02</span><div><strong>Payment safety</strong><p>Payment channels are restricted to Core Executives. Event fees and payment_required remain under Events.</p></div></div>
+                <div class="note-item"><span class="note-index">03</span><div><strong>Live data</strong><p>Every value shown here is read from Supabase. No demo registrations or fabricated totals are used.</p></div></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="settings-modal-backdrop" id="confirmBackdrop" aria-hidden="true">
+    <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="settings-modal-kicker">SYSTEM CHANGE</div>
+      <h2 id="confirmTitle">Enable participant registration?</h2>
+      <p id="confirmText">This changes the master registration switch. Confirm that events, fees, payment channels, and registration windows are ready.</p>
+      <div class="settings-modal-actions"><button class="ep-btn" id="cancelConfirm" type="button">Cancel</button><button class="ep-btn ep-btn-primary" id="approveConfirm" type="button">Confirm change</button></div>
+    </section>
+  </div>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const $ = id => document.getElementById(id);
+    const state = { profile:null, settings:new Map(), paymentMethods:[] };
+    const ROLE_LABELS = { supreme_executive:'Core Executive', higher_executive:'Core Executive', segment_executive:'Segment Manager', member:'Volunteer' };
+    const CORE_ROLES = ['supreme_executive','higher_executive'];
+
+    const routes = new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
+    document.querySelectorAll('[data-route]').forEach(button => button.addEventListener('click', () => { if(routes.has(button.dataset.route)) window.location.href = button.dataset.route; }));
+    $('logoutButton').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.href='login.html'; });
+
+    function esc(value){ return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function roleLabel(role){ return ROLE_LABELS[role] || 'Staff'; }
+    function initials(name){ if(!name) return 'EX'; const parts=name.trim().split(/\s+/).filter(Boolean); return parts.length===1 ? parts[0].slice(0,2).toUpperCase() : (parts[0][0]+parts[parts.length-1][0]).toUpperCase(); }
+    function nowLabel(){ return new Date().toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }
+    function showError(message){ $('errorBox').textContent=message; $('errorBox').style.display='block'; }
+    function clearError(){ $('errorBox').style.display='none'; $('errorBox').textContent=''; }
+    function showToast(message, kind='success'){ const el=$('toast'); el.textContent=message; el.className='settings-toast show '+kind; window.clearTimeout(showToast.timer); showToast.timer=window.setTimeout(()=>el.className='settings-toast',3200); }
+
+    async function loadProfile(){
+      const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+      if(sessionError || !sessionData?.session){ window.location.href='login.html'; return false; }
+      const {data,error}=await supabaseClient.rpc('get_my_staff_profile');
+      if(error) throw error;
+      const profile=data?.[0];
+      if(!profile) throw new Error('No staff profile was found for this account.');
+      if(profile.account_status!=='active') throw new Error('Your staff account is not active.');
+      if(!CORE_ROLES.includes(profile.role)) throw new Error('Settings are available to Core Executives only.');
+      state.profile=profile;
+      $('sideUserName').textContent=profile.full_name || 'Executive';
+      $('sideUserRole').textContent=roleLabel(profile.role);
+      $('avatar').textContent=initials(profile.full_name);
+      $('headerState').textContent='Settings live';
+      return true;
+    }
+
+    async function loadSettings(){
+      const [{data:settings,error:settingsError},{data:methods,error:methodsError}]=await Promise.all([
+        supabaseClient.from('system_settings').select('key,value,description,updated_at').order('key'),
+        supabaseClient.from('payment_methods').select('id,name,enabled,payment_number,account_number,payment_link,qr_code_url,qr_image_url,instructions,updated_at').order('name')
+      ]);
+      if(settingsError) throw settingsError;
+      if(methodsError) throw methodsError;
+      state.settings.clear();
+      (settings||[]).forEach(item=>state.settings.set(item.key,item));
+      state.paymentMethods=methods||[];
+      renderSettings();
+    }
+
+    function renderSettings(){
+      const festName=state.settings.get('fest_name')?.value || '';
+      const enabled=String(state.settings.get('registration_system_enabled')?.value || 'false').toLowerCase()==='true';
+      $('festNameInput').value=festName;
+      $('registrationToggle').checked=enabled;
+      $('registrationStateChip').textContent=enabled?'ENABLED':'DISABLED';
+      $('registrationStateChip').className='settings-state-chip '+(enabled?'green':'neutral');
+      $('snapshotFestName').textContent=festName || 'Not configured';
+      $('snapshotRegistrationState').textContent=enabled?'ENABLED':'DISABLED';
+      $('snapshotRegistrationState').className=enabled?'green':'';
+      $('snapshotPaymentCount').textContent=state.paymentMethods.length;
+      $('paymentChannelCount').textContent=state.paymentMethods.filter(item=>item.enabled).length+' enabled';
+      $('registrationWarning').style.display=enabled?'none':'block';
+      renderPaymentMethods();
+    }
+
+    function renderPaymentMethods(){
+      const container=$('paymentMethods');
+      if(!state.paymentMethods.length){ container.innerHTML='<div class="report-empty">No payment methods are configured.</div>'; return; }
+      container.innerHTML=state.paymentMethods.map(method=>`
+        <article class="payment-card" data-method-id="${esc(method.id)}">
+          <div class="payment-card-main">
+            <div class="payment-card-title-row"><div><div class="payment-name">${esc(method.name)}</div><div class="payment-subcopy">Payment channel</div></div><label class="switch small"><input type="checkbox" class="payment-enabled" ${method.enabled?'checked':''}><span class="switch-track"><span class="switch-thumb"></span></span></label></div>
+            <div class="payment-fields">
+              <label class="setting-field"><span class="setting-label">Payment number</span><input class="setting-input payment-number" type="text" value="${esc(method.payment_number)}" placeholder="e.g. 01XXXXXXXXX"></label>
+              <label class="setting-field"><span class="setting-label">Account number</span><input class="setting-input account-number" type="text" value="${esc(method.account_number)}" placeholder="Account number"></label>
+              <label class="setting-field"><span class="setting-label">Payment link</span><input class="setting-input payment-link" type="url" value="${esc(method.payment_link)}" placeholder="https://..."></label>
+              <label class="setting-field"><span class="setting-label">QR code URL</span><input class="setting-input qr-code-url" type="url" value="${esc(method.qr_code_url || method.qr_image_url)}" placeholder="https://..."></label>
+            </div>
+            <label class="setting-field"><span class="setting-label">Participant instructions</span><textarea class="setting-input setting-textarea payment-instructions" rows="3" placeholder="Tell participants how to complete this payment.">${esc(method.instructions)}</textarea></label>
+          </div>
+          <div class="payment-card-footer"><span class="save-note">Last update: ${method.updated_at ? new Date(method.updated_at).toLocaleString() : '—'}</span><button class="ep-btn ep-btn-primary save-payment-button" type="button">Save ${esc(method.name)}</button></div>
+        </article>`).join('');
+      container.querySelectorAll('.save-payment-button').forEach(button=>button.addEventListener('click',()=>savePaymentMethod(button.closest('.payment-card'))));
+    }
+
+    async function saveSystemSetting(key,value){
+      clearError();
+      const {error}=await supabaseClient.rpc('update_system_setting',{p_key:key,p_value:value});
+      if(error) throw error;
+      await loadSettings();
+    }
+
+    async function saveFestName(){
+      const value=$('festNameInput').value.trim();
+      if(!value){ showError('Fest name cannot be empty.'); return; }
+      const button=$('saveFestNameButton'); button.disabled=true;
+      try{ await saveSystemSetting('fest_name',value); $('festNameSavedAt').textContent='Saved '+nowLabel(); showToast('Fest name updated.'); }
+      catch(error){ showError(error.message || 'Unable to save fest name.'); }
+      finally{ button.disabled=false; }
+    }
+
+    async function saveRegistrationState(nextValue){
+      const button=$('saveRegistrationButton'); button.disabled=true;
+      try{ await saveSystemSetting('registration_system_enabled',String(nextValue)); $('registrationSavedAt').textContent='Saved '+nowLabel(); showToast(nextValue?'Registration system enabled.':'Registration system disabled.'); }
+      catch(error){ $('registrationToggle').checked=!nextValue; showError(error.message || 'Unable to save registration state.'); }
+      finally{ button.disabled=false; }
+    }
+
+    async function savePaymentMethod(card){
+      const id=card.dataset.methodId;
+      const button=card.querySelector('.save-payment-button');
+      button.disabled=true;
+      try{
+        const payload={
+          p_payment_method_id:id,
+          p_enabled:card.querySelector('.payment-enabled').checked,
+          p_payment_number:card.querySelector('.payment-number').value.trim() || null,
+          p_account_number:card.querySelector('.account-number').value.trim() || null,
+          p_payment_link:card.querySelector('.payment-link').value.trim() || null,
+          p_qr_code_url:card.querySelector('.qr-code-url').value.trim() || null,
+          p_qr_image_url:card.querySelector('.qr-code-url').value.trim() || null,
+          p_instructions:card.querySelector('.payment-instructions').value.trim() || null
+        };
+        const {error}=await supabaseClient.rpc('update_payment_method',payload);
+        if(error) throw error;
+        await loadSettings();
+        showToast('Payment channel updated.');
+      }catch(error){ showError(error.message || 'Unable to save payment channel.'); }
+      finally{ button.disabled=false; }
+    }
+
+    let pendingRegistrationValue=null;
+    function openConfirm(nextValue){
+      pendingRegistrationValue=nextValue;
+      $('confirmTitle').textContent=nextValue?'Enable participant registration?':'Disable participant registration?';
+      $('confirmText').textContent=nextValue?'This changes the master registration switch. Confirm that events, fees, payment channels, and registration windows are ready.':'This stops the participant system from accepting new registrations. Existing records are not deleted or rejected.';
+      $('approveConfirm').textContent=nextValue?'Confirm enable':'Confirm disable';
+      $('confirmBackdrop').classList.add('show');
+      $('confirmBackdrop').setAttribute('aria-hidden','false');
+    }
+    function closeConfirm(){ pendingRegistrationValue=null; $('confirmBackdrop').classList.remove('show'); $('confirmBackdrop').setAttribute('aria-hidden','true'); }
+
+    $('registrationToggle').addEventListener('change',()=>{
+      const current=String(state.settings.get('registration_system_enabled')?.value || 'false').toLowerCase()==='true';
+      if($('registrationToggle').checked!==current) openConfirm($('registrationToggle').checked); else $('registrationToggle').checked=current;
+    });
+    $('saveRegistrationButton').addEventListener('click',()=>{ const current=String(state.settings.get('registration_system_enabled')?.value || 'false').toLowerCase()==='true'; if($('registrationToggle').checked===current){ showToast('No registration state change to save.','neutral'); return; } openConfirm($('registrationToggle').checked); });
+    $('saveFestNameButton').addEventListener('click',saveFestName);
+    $('cancelConfirm').addEventListener('click',()=>{ $('registrationToggle').checked=String(state.settings.get('registration_system_enabled')?.value || 'false').toLowerCase()==='true'; closeConfirm(); });
+    $('approveConfirm').addEventListener('click',async()=>{ const value=pendingRegistrationValue; closeConfirm(); if(value!==null) await saveRegistrationState(value); });
+    $('confirmBackdrop').addEventListener('click',(event)=>{ if(event.target===$('confirmBackdrop')){ $('registrationToggle').checked=String(state.settings.get('registration_system_enabled')?.value || 'false').toLowerCase()==='true'; closeConfirm(); } });
+
+    async function init(){
+      try{
+        if(!(await loadProfile())) return;
+        await loadSettings();
+        $('loading').style.display='none';
+        $('pageContent').style.display='block';
+      }catch(error){
+        $('loading').style.display='none';
+        showError(error.message || 'Unable to load settings.');
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
