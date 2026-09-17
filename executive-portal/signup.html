@@ -1,77 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070909" />
   <title>Executive Signup — 3ʳᵈ BNMPC Science Carnival</title>
 
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 </head>
 
-<body>
+<body class="auth-body">
+  <main class="auth-page">
+    <section class="auth-frame" aria-label="Executive account application">
+      <div class="auth-brand-panel">
+        <div class="auth-brand-top">
+          <div class="auth-brand-mark" aria-hidden="true">BN</div>
+          <div>
+            <div class="auth-brand-name">3ʳᵈ BNMPC Science Carnival</div>
+            <div class="auth-brand-subtitle">Executive Control Panel</div>
+          </div>
+        </div>
 
-  <h1>Executive Account Application</h1>
-  <p>3ʳᵈ BNMPC Science Carnival</p>
+        <div class="auth-brand-main">
+          <div class="auth-kicker">Staff application / 01</div>
+          <h1 class="auth-title">Join the<br /><span>control room.</span></h1>
+          <p class="auth-description">
+            Submit a staff account application for the Executive Panel. A Core Executive will review your request and assign the final role before access is activated.
+          </p>
 
-  <form id="signupForm">
+          <div class="auth-system-grid">
+            <div class="auth-system-item">
+              <div class="auth-system-label">Review</div>
+              <div class="auth-system-value">Core Executive</div>
+            </div>
+            <div class="auth-system-item">
+              <div class="auth-system-label">Roles</div>
+              <div class="auth-system-value">3 operational levels</div>
+            </div>
+            <div class="auth-system-item">
+              <div class="auth-system-label">Access</div>
+              <div class="auth-system-value green">Approval required</div>
+            </div>
+          </div>
+        </div>
 
-    <label for="fullName">Full Name</label><br>
-    <input
-      type="text"
-      id="fullName"
-      required
-      autocomplete="name"
-    >
+        <div class="auth-footnote">
+          BNMPC / NATIONAL SCIENCE CARNIVAL<br />Applications are reviewed by authorized staff
+        </div>
+      </div>
 
-    <br><br>
+      <div class="auth-form-panel">
+        <div class="auth-form-wrap">
+          <div class="auth-form-header">
+            <div class="auth-kicker">Application</div>
+            <h2 class="auth-form-title">Request staff access</h2>
+            <p class="auth-form-subtitle">Create your account and submit it for executive approval.</p>
+          </div>
 
-    <label for="phone">Phone Number</label><br>
-    <input
-      type="tel"
-      id="phone"
-      autocomplete="tel"
-    >
+          <form id="signupForm" class="auth-form" novalidate>
+            <div class="auth-field">
+              <label class="auth-label" for="fullName">Full name</label>
+              <input class="auth-input" type="text" id="fullName" required autocomplete="name" placeholder="Your full name" />
+            </div>
 
-    <br><br>
+            <div class="auth-field">
+              <label class="auth-label" for="phone">Phone number</label>
+              <input class="auth-input" type="tel" id="phone" autocomplete="tel" placeholder="01XXXXXXXXX" />
+            </div>
 
-    <label for="email">Email</label><br>
-    <input
-      type="email"
-      id="email"
-      required
-      autocomplete="email"
-    >
+            <div class="auth-field">
+              <label class="auth-label" for="email">Email</label>
+              <input class="auth-input" type="email" id="email" required autocomplete="email" placeholder="name@example.com" />
+            </div>
 
-    <br><br>
+            <div class="auth-field">
+              <label class="auth-label" for="password">Password</label>
+              <input class="auth-input" type="password" id="password" required minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters" />
+            </div>
 
-    <label for="password">Password</label><br>
-    <input
-      type="password"
-      id="password"
-      required
-      minlength="8"
-      autocomplete="new-password"
-    >
+            <div class="auth-field">
+              <label class="auth-label" for="requestedRole">Requested role</label>
+              <select class="auth-select" id="requestedRole" required>
+                <option value="volunteer">Volunteer</option>
+                <option value="segment_manager">Segment Manager</option>
+                <option value="core_executive">Core Executive</option>
+              </select>
+            </div>
 
-    <br><br>
+            <button class="auth-primary" id="signupButton" type="submit">Submit staff application</button>
 
-    <label for="requestedRole">Requested Role</label><br>
-    <select id="requestedRole" required>
-      <option value="member">Member</option>
-      <option value="segment_executive">Segment Executive</option>
-      <option value="higher_executive">Higher Executive</option>
-    </select>
+            <div class="auth-meta-row">
+              <div class="auth-status">
+                <span class="auth-status-dot" aria-hidden="true"></span>
+                Approval workflow active
+              </div>
+              <a class="auth-link" href="login.html">Back to sign in</a>
+            </div>
 
-    <br><br>
+            <div id="message" class="auth-message" role="status" aria-live="polite"></div>
+          </form>
 
-    <button type="submit">Submit Application</button>
-
-  </form>
-
-  <p id="message"></p>
-
-  <script src="supabase-config.js"></script>
+          <div class="auth-divider">BNMPC</div>
+          <p class="auth-note">
+            Your requested role is not automatically granted. A Core Executive reviews the application and activates the appropriate account role.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
     const supabaseClient = window.supabase.createClient(
@@ -81,42 +121,63 @@
 
     const signupForm = document.getElementById("signupForm");
     const message = document.getElementById("message");
+    const signupButton = document.getElementById("signupButton");
+
+    function showMessage(text, type = "") {
+      message.textContent = text;
+      message.className = "auth-message show" + (type ? ` ${type}` : "");
+    }
 
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-
-      message.textContent = "Submitting application...";
 
       const fullName = document.getElementById("fullName").value.trim();
       const phone = document.getElementById("phone").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
-      const requestedRole =
-        document.getElementById("requestedRole").value;
+      const requestedRole = document.getElementById("requestedRole").value;
 
-      const { error } = await supabaseClient.auth.signUp({
+      if (!fullName || !email || password.length < 8) {
+        showMessage("Complete the required fields and use a password with at least 8 characters.", "error");
+        return;
+      }
+
+      signupButton.disabled = true;
+      signupButton.textContent = "Submitting application...";
+      showMessage("Creating your staff account...", "");
+
+      const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName,
-            phone: phone,
+            phone,
             requested_role: requestedRole
           }
         }
       });
 
       if (error) {
-        message.textContent = error.message;
+        showMessage(error.message, "error");
+        signupButton.disabled = false;
+        signupButton.textContent = "Submit staff application";
         return;
       }
 
-      message.textContent =
-        "Application submitted. Your account must be approved before you can access the Executive Portal.";
-      
+      if (data?.session) {
+        await supabaseClient.auth.signOut();
+      }
+
+      showMessage(
+        "Application submitted. Your account is pending Core Executive approval before portal access is activated.",
+        "success"
+      );
+
       signupForm.reset();
+      signupButton.disabled = false;
+      signupButton.textContent = "Submit staff application";
     });
   </script>
-
 </body>
 </html>
