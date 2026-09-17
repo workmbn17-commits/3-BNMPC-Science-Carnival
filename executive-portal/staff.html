@@ -1,2869 +1,479 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-    Staff & Executives — 3ʳᵈ BNMPC National Science Carnival
-  </title>
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-  ></script>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: #f4f7fb;
-      color: #172033;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font-family: inherit;
-    }
-
-    .app {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* ========================= */
-    /* SIDEBAR */
-    /* ========================= */
-
-    .sidebar {
-      width: 260px;
-      background: #111827;
-      color: white;
-      padding: 24px 16px;
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      overflow-y: auto;
-    }
-
-    .brand {
-      padding: 4px 12px 28px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 22px;
-    }
-
-    .brand-title {
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .brand-subtitle {
-      margin-top: 7px;
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .nav-section {
-      margin: 20px 12px 8px;
-      color: #6b7280;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .nav-button {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: #d1d5db;
-      text-align: left;
-      padding: 12px;
-      border-radius: 9px;
-      margin-bottom: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .nav-button:hover {
-      background: #1f2937;
-      color: white;
-    }
-
-    .nav-button.active {
-      background: #2563eb;
-      color: white;
-    }
-
-    .sidebar-bottom {
-      margin-top: 30px;
-      padding-bottom: 10px;
-    }
-
-    .logout-button {
-      width: 100%;
-      border: 1px solid #374151;
-      background: transparent;
-      color: #d1d5db;
-      padding: 11px;
-      border-radius: 9px;
-      cursor: pointer;
-    }
-
-    .logout-button:hover {
-      background: #1f2937;
-      color: white;
-    }
-
-    /* ========================= */
-    /* MAIN */
-    /* ========================= */
-
-    .main {
-      margin-left: 260px;
-      width: calc(100% - 260px);
-      min-height: 100vh;
-    }
-
-    .topbar {
-      height: 72px;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-    }
-
-    .page-title {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-info {
-      text-align: right;
-    }
-
-    .user-name {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .user-role {
-      margin-top: 3px;
-      font-size: 11px;
-      color: #6b7280;
-    }
-
-    .user-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #2563eb;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-    }
-
-    /* ========================= */
-    /* CONTENT */
-    /* ========================= */
-
-    .content {
-      padding: 30px 32px 50px;
-    }
-
-    .page-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .page-heading h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .page-heading p {
-      margin: 7px 0 0;
-      color: #6b7280;
-      font-size: 13px;
-    }
-
-    .refresh-button {
-      border: 1px solid #d1d5db;
-      background: white;
-      color: #374151;
-      padding: 9px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .refresh-button:hover {
-      background: #f9fafb;
-    }
-
-    /* ========================= */
-    /* SUMMARY */
-    /* ========================= */
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .summary-card {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(15,23,42,0.04);
-    }
-
-    .summary-label {
-      color: #6b7280;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .summary-value {
-      margin-top: 8px;
-      font-size: 28px;
-      font-weight: 700;
-    }
-
-    /* ========================= */
-    /* PANELS */
-    /* ========================= */
-
-    .panel {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      overflow: hidden;
-      margin-bottom: 24px;
-      box-shadow: 0 2px 8px rgba(15,23,42,0.04);
-    }
-
-    .panel-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .panel-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .panel-subtitle {
-      margin-top: 4px;
-      color: #9ca3af;
-      font-size: 12px;
-    }
-
-    .panel-body {
-      padding: 22px;
-    }
-
-    /* ========================= */
-    /* ALERT */
-    /* ========================= */
-
-    .notice {
-      padding: 14px 16px;
-      border-radius: 10px;
-      margin-bottom: 18px;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .notice-blue {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e40af;
-    }
-
-    .notice-yellow {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      color: #92400e;
-    }
-
-    /* ========================= */
-    /* FILTERS */
-    /* ========================= */
-
-    .filters {
-      display: grid;
-      grid-template-columns: 1fr 190px 190px;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      width: 100%;
-      border: 1px solid #d1d5db;
-      background: white;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-
-    /* ========================= */
-    /* TABLE */
-    /* ========================= */
-
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 900px;
-    }
-
-    th {
-      background: #f8fafc;
-      color: #6b7280;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      text-align: left;
-      padding: 14px 16px;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 15px 16px;
-      border-bottom: 1px solid #eef2f7;
-      font-size: 13px;
-      vertical-align: middle;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .person-name {
-      font-weight: 700;
-      color: #172033;
-    }
-
-    .person-phone {
-      margin-top: 4px;
-      color: #9ca3af;
-      font-size: 11px;
-    }
-
-    /* ========================= */
-    /* BADGES */
-    /* ========================= */
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .badge-active {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .badge-pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .badge-rejected {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .badge-suspended {
-      background: #f3e8ff;
-      color: #6b21a8;
-    }
-
-    .badge-deactivated {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .badge-supreme {
-      background: #ede9fe;
-      color: #5b21b6;
-    }
-
-    .badge-higher {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    .badge-segment {
-      background: #e0f2fe;
-      color: #075985;
-    }
-
-    .badge-member {
-      background: #f1f5f9;
-      color: #475569;
-    }
-
-    /* ========================= */
-    /* ACTIONS */
-    /* ========================= */
-
-    .action-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-    }
-
-    .action-button {
-      border: 0;
-      padding: 8px 11px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .approve-button {
-      background: #16a34a;
-      color: white;
-    }
-
-    .approve-button:hover {
-      background: #15803d;
-    }
-
-    .reject-button {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .reject-button:hover {
-      background: #fecaca;
-    }
-
-    .status-button {
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-
-    .status-button:hover {
-      background: #dbeafe;
-    }
-
-    /* ========================= */
-    /* EMPTY / LOADING */
-    /* ========================= */
-
-    .loading {
-      padding: 60px 30px;
-      text-align: center;
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .empty {
-      padding: 45px 25px;
-      text-align: center;
-      color: #6b7280;
-      font-size: 13px;
-    }
-
-    .empty-title {
-      color: #172033;
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .error {
-      margin: 30px;
-      padding: 20px;
-      background: #fee2e2;
-      border: 1px solid #fecaca;
-      border-radius: 10px;
-      color: #991b1b;
-      font-size: 13px;
-    }
-
-    /* ========================= */
-    /* MODAL */
-    /* ========================= */
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-    }
-
-    .modal-overlay.show {
-      display: flex;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 20px 60px rgba(15,23,42,0.25);
-    }
-
-    .modal-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .modal-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .modal-subtitle {
-      margin-top: 5px;
-      color: #6b7280;
-      font-size: 12px;
-    }
-
-    .close-button {
-      border: 0;
-      background: transparent;
-      color: #6b7280;
-      font-size: 25px;
-      line-height: 1;
-      cursor: pointer;
-    }
-
-    .modal-body {
-      padding: 22px;
-    }
-
-    .form-group {
-      margin-bottom: 17px;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #374151;
-    }
-
-    .modal-footer {
-      padding: 16px 22px;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .cancel-button {
-      border: 1px solid #d1d5db;
-      background: white;
-      color: #374151;
-      padding: 10px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .primary-button {
-      border: 0;
-      background: #2563eb;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .primary-button:hover {
-      background: #1d4ed8;
-    }
-
-    .danger-button {
-      border: 0;
-      background: #dc2626;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    /* ========================= */
-    /* RESPONSIVE */
-    /* ========================= */
-
-    @media (max-width: 1050px) {
-
-      .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .filters {
-        grid-template-columns: 1fr;
-      }
-
-    }
-
-    @media (max-width: 800px) {
-
-      .sidebar {
-        width: 210px;
-      }
-
-      .main {
-        margin-left: 210px;
-        width: calc(100% - 210px);
-      }
-
-      .content {
-        padding: 20px;
-      }
-
-      .topbar {
-        padding: 0 20px;
-      }
-
-      .user-info {
-        display: none;
-      }
-
-    }
-
-    @media (max-width: 600px) {
-
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
-
-    }
-
-  </style>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <meta name="description" content="Staff management console for the 3ʳᵈ BNMPC National Science Carnival">
+  <title>Staff — 3ʳᵈ BNMPC National Science Carnival</title>
+
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="assets/css/executive-shell.css">
+  <link rel="stylesheet" href="assets/css/staff-theme.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 </head>
-
-<body>
-
-<div class="app">
-
-  <!-- ========================= -->
-  <!-- SIDEBAR -->
-  <!-- ========================= -->
-
-  <aside class="sidebar">
-
-    <div class="brand">
-
-      <div class="brand-title">
-        3ʳᵈ BNMPC<br>
-        National Science Carnival
+<body class="ep-app-body">
+  <div class="ep-app">
+    <aside class="ep-sidebar">
+      <div class="ep-brand">
+        <div class="ep-brand-mark">B</div>
+        <div class="ep-brand-copy">
+          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
+          <div class="ep-brand-subtitle">National Science Carnival</div>
+        </div>
       </div>
 
-      <div class="brand-subtitle">
-        Executive Management Portal
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Control</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="dashboard.html"><span class="ep-nav-icon">▦</span><span>Dashboard</span></button>
+          <button class="ep-nav-button" data-route="events.html"><span class="ep-nav-icon">≡</span><span>Events</span></button>
+          <button class="ep-nav-button" data-route="registrations.html"><span class="ep-nav-icon">□</span><span>Registrations</span></button>
+          <button class="ep-nav-button" data-route="payments.html"><span class="ep-nav-icon">¤</span><span>Payments</span></button>
+        </nav>
       </div>
 
-    </div>
-
-
-    <div class="nav-section">
-      Overview
-    </div>
-
-    <button
-      class="nav-button"
-      onclick="window.location.href='dashboard.html'"
-    >
-      Dashboard
-    </button>
-
-
-    <div class="nav-section">
-      Management
-    </div>
-
-    <button
-      class="nav-button"
-      onclick="window.location.href='events.html'"
-    >
-      Events
-    </button>
-
-    <button class="nav-button">
-      Registrations
-    </button>
-
-    <button class="nav-button">
-      Payments
-    </button>
-
-
-    <div class="nav-section">
-      People
-    </div>
-
-    <button class="nav-button active">
-      Staff & Executives
-    </button>
-
-    <button class="nav-button" onclick="window.location.href='assignments.html'">
-      Event Assignments
-    </button>
-
-
-    <div class="nav-section">
-      System
-    </div>
-
-    <button class="nav-button">
-      Reports
-    </button>
-
-    <button class="nav-button">
-      Settings
-    </button>
-
-
-    <div class="sidebar-bottom">
-
-      <button
-        class="logout-button"
-        id="logoutButton"
-      >
-        Log Out
-      </button>
-
-    </div>
-
-  </aside>
-
-
-  <!-- ========================= -->
-  <!-- MAIN -->
-  <!-- ========================= -->
-
-  <main class="main">
-
-    <header class="topbar">
-
-      <div class="page-title">
-        Staff & Executives
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">People</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button active" data-route="staff.html"><span class="ep-nav-icon">◎</span><span>Staff</span></button>
+          <button class="ep-nav-button" data-route="assignments.html"><span class="ep-nav-icon">↔</span><span>Assignments</span></button>
+        </nav>
       </div>
 
-      <div class="user-area">
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Operations</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="checkin.html"><span class="ep-nav-icon">⌗</span><span>QR Check-in</span><span class="ep-nav-meta">DAY</span></button>
+          <button class="ep-nav-button" data-route="reports.html"><span class="ep-nav-icon">▥</span><span>Reports</span></button>
+          <button class="ep-nav-button" data-route="settings.html"><span class="ep-nav-icon">⚙</span><span>Settings</span></button>
+        </nav>
+      </div>
 
-        <div class="user-info">
+      <div class="ep-sidebar-bottom">
+        <div class="ep-user-card">
+          <div class="ep-avatar" id="sideAvatar">EX</div>
+          <div class="ep-user-copy">
+            <div class="ep-user-name" id="sideUserName">Executive</div>
+            <div class="ep-user-role" id="sideUserRole">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-          <div
-            class="user-name"
-            id="topUserName"
-          >
-            Loading...
+    <main class="ep-main">
+      <header class="ep-header">
+        <div class="ep-header-title">
+          <span class="ep-header-kicker">Executive Control</span>
+          <span class="ep-header-divider"></span>
+          <span class="ep-header-name">Staff</span>
+        </div>
+        <div class="ep-header-right">
+          <div class="ep-system-state"><span class="ep-system-dot"></span><span id="headerState">Live staff data</span></div>
+          <button class="ep-signout" id="logoutButton">Sign out</button>
+        </div>
+      </header>
+
+      <section class="ep-page">
+        <div id="loading" class="ep-loading-wrap"><div class="ep-loading"><span class="ep-loader"></span>Loading staff workspace</div></div>
+        <div id="errorBox" class="ep-error"></div>
+
+        <div id="pageContent" style="display:none;">
+          <div class="ep-page-intro">
+            <div>
+              <div class="ep-kicker">People / Access Control</div>
+              <h1 class="ep-page-title">Staff Management</h1>
+              <p class="ep-page-description" id="pageDescription">Approve staff applications, monitor account status, and keep operational access under executive control.</p>
+            </div>
+            <button class="ep-btn ep-btn-primary" id="refreshButton">Refresh</button>
           </div>
 
-          <div
-            class="user-role"
-            id="topUserRole"
-          >
-            Loading...
+          <div class="staff-command-grid">
+            <div class="staff-command"><div class="staff-command-label">Staff accounts</div><div class="staff-command-value" id="totalStaff">0</div><div class="staff-command-note">all visible profiles</div></div>
+            <div class="staff-command"><div class="staff-command-label">Pending applications</div><div class="staff-command-value" id="pendingStaff">0</div><div class="staff-command-note">awaiting review</div></div>
+            <div class="staff-command"><div class="staff-command-label">Active accounts</div><div class="staff-command-value" id="activeStaff">0</div><div class="staff-command-note">currently enabled</div></div>
+            <div class="staff-command"><div class="staff-command-label">Restricted accounts</div><div class="staff-command-value" id="inactiveStaff">0</div><div class="staff-command-note">suspended / deactivated</div></div>
           </div>
 
+          <div class="staff-layout">
+            <section class="staff-surface">
+              <div class="staff-surface-head">
+                <div>
+                  <div class="staff-surface-title">Staff directory</div>
+                  <div class="staff-surface-subtitle">Live account inventory. Role labels use the carnival's finalized operational terminology.</div>
+                </div>
+                <div class="staff-surface-subtitle" id="directorySummary">0 records</div>
+              </div>
+              <div class="staff-surface-body">
+                <div class="staff-toolbar">
+                  <input class="staff-input" id="searchInput" type="search" placeholder="Search name or phone...">
+                  <select class="staff-select" id="roleFilter">
+                    <option value="">All roles</option>
+                    <option value="supreme_executive">Core Executive</option>
+                    <option value="higher_executive">Core Executive (legacy tier)</option>
+                    <option value="segment_executive">Segment Manager</option>
+                    <option value="member">Volunteer</option>
+                  </select>
+                  <select class="staff-select" id="statusFilter">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="deactivated">Deactivated</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+
+                <div class="staff-table-wrap">
+                  <table class="staff-table">
+                    <thead>
+                      <tr>
+                        <th>Person</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Requested</th>
+                        <th>Approved</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="staffTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <div class="ep-panel-stack">
+              <section class="staff-surface">
+                <div class="staff-surface-head">
+                  <div>
+                    <div class="staff-surface-title">Application queue</div>
+                    <div class="staff-surface-subtitle">New accounts remain pending until an authorized executive reviews them.</div>
+                  </div>
+                </div>
+                <div class="staff-surface-body">
+                  <div class="queue-list" id="pendingContainer"></div>
+                </div>
+              </section>
+
+              <section class="staff-surface">
+                <div class="staff-surface-head">
+                  <div>
+                    <div class="staff-surface-title">Access model</div>
+                    <div class="staff-surface-subtitle">Operational roles exposed in this console.</div>
+                  </div>
+                </div>
+                <div class="staff-surface-body" style="padding-top:0;">
+                  <div class="info-list">
+                    <div class="info-row"><div class="info-label">Core Executive</div><div class="info-value">Full control over event, staff, registration, payment, assignment, and operational workflows.</div></div>
+                    <div class="info-row"><div class="info-label">Segment Manager</div><div class="info-value">Works within assigned main events and automatically oversees their subsegments.</div></div>
+                    <div class="info-row"><div class="info-label">Volunteer</div><div class="info-value">Operational role focused on event-day QR check-in and assigned support work.</div></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div class="staff-note"><strong>Security boundary:</strong> account approval and status changes are executed by protected Supabase functions. The browser interface does not directly write sensitive staff access fields.</div>
         </div>
+      </section>
+    </main>
 
-        <div
-          class="user-avatar"
-          id="userAvatar"
-        >
-          ?
-        </div>
+    <nav class="ep-mobile-bar" aria-label="Mobile navigation">
+      <button data-route="dashboard.html">Home</button>
+      <button data-route="staff.html" class="active">Staff</button>
+      <button data-route="assignments.html">Assignments</button>
+      <button data-route="checkin.html">Check-in</button>
+    </nav>
+  </div>
 
-      </div>
-
-    </header>
-
-
-    <div
-      id="loading"
-      class="loading"
-    >
-      Loading staff management...
-    </div>
-
-
-    <section
-      id="staffContent"
-      class="content"
-      style="display:none;"
-    >
-
-      <div class="page-heading">
-
+  <div class="modal-overlay" id="reviewModal" aria-hidden="true">
+    <article class="staff-modal" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+      <header class="modal-head">
         <div>
-
-          <h1>
-            Staff & Executives
-          </h1>
-
-          <p>
-            Manage executive applications, staff accounts, and operational access.
-          </p>
-
+          <div class="modal-kicker">Staff Application</div>
+          <div class="modal-title" id="reviewModalTitle">Review applicant</div>
+          <div class="modal-subtitle" id="reviewModalSubtitle">—</div>
         </div>
-
-        <button
-          class="refresh-button"
-          id="refreshButton"
-        >
-          Refresh
-        </button>
-
+        <button class="modal-close" id="closeReviewModal" type="button" aria-label="Close">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="info-list" style="margin-bottom:14px;">
+          <div class="info-row"><div class="info-label">Applicant</div><div class="info-value" id="reviewApplicantName">—</div></div>
+          <div class="info-row"><div class="info-label">Phone</div><div class="info-value" id="reviewApplicantPhone">—</div></div>
+          <div class="info-row"><div class="info-label">Requested</div><div class="info-value" id="reviewRequestedRole">—</div></div>
+          <div class="info-row"><div class="info-label">Submitted</div><div class="info-value" id="reviewCreatedAt">—</div></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="assignedRole">Assign operational role</label>
+          <select class="form-control" id="assignedRole">
+            <option value="higher_executive">Core Executive</option>
+            <option value="segment_executive">Segment Manager</option>
+            <option value="member">Volunteer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reviewReason">Rejection reason</label>
+          <textarea class="form-textarea" id="reviewReason" rows="4" placeholder="Required only when rejecting the application."></textarea>
+        </div>
+        <div class="confirm-note">Approval activates the account with the selected operational role. Rejection permanently marks this application rejected.</div>
       </div>
-
-
-      <!-- ========================= -->
-      <!-- SUMMARY -->
-      <!-- ========================= -->
-
-      <div class="summary-grid">
-
-        <div class="summary-card">
-
-          <div class="summary-label">
-            Total Staff
-          </div>
-
-          <div
-            class="summary-value"
-            id="totalStaff"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="summary-card">
-
-          <div class="summary-label">
-            Pending Applications
-          </div>
-
-          <div
-            class="summary-value"
-            id="pendingStaff"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="summary-card">
-
-          <div class="summary-label">
-            Active Accounts
-          </div>
-
-          <div
-            class="summary-value"
-            id="activeStaff"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="summary-card">
-
-          <div class="summary-label">
-            Suspended / Deactivated
-          </div>
-
-          <div
-            class="summary-value"
-            id="inactiveStaff"
-          >
-            0
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- ========================= -->
-      <!-- PENDING APPLICATIONS -->
-      <!-- ========================= -->
-
-      <div class="panel">
-
-        <div class="panel-header">
-
-          <div>
-
-            <div class="panel-title">
-              Pending Applications
-            </div>
-
-            <div class="panel-subtitle">
-              New executive/staff accounts awaiting authorization.
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="panel-body">
-
-          <div class="notice notice-yellow">
-
-            New accounts do not receive management access automatically.
-            An authorized executive must review and activate each application.
-
-          </div>
-
-
-          <div
-            id="pendingContainer"
-          ></div>
-
-        </div>
-
-      </div>
-
-
-      <!-- ========================= -->
-      <!-- STAFF DIRECTORY -->
-      <!-- ========================= -->
-
-      <div class="panel">
-
-        <div class="panel-header">
-
-          <div>
-
-            <div class="panel-title">
-              Staff Directory
-            </div>
-
-            <div class="panel-subtitle">
-              Active and inactive staff accounts currently registered in the system.
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="panel-body">
-
-          <div class="filters">
-
-            <input
-              class="form-input"
-              id="searchInput"
-              type="text"
-              placeholder="Search by name or phone..."
-            >
-
-
-            <select
-              class="form-select"
-              id="roleFilter"
-            >
-
-              <option value="">
-                All Roles
-              </option>
-
-              <option value="supreme_executive">
-                Supreme Executive
-              </option>
-
-              <option value="higher_executive">
-                Higher Executive
-              </option>
-
-              <option value="segment_executive">
-                Segment Executive
-              </option>
-
-              <option value="member">
-                Member
-              </option>
-
-            </select>
-
-
-            <select
-              class="form-select"
-              id="statusFilter"
-            >
-
-              <option value="">
-                All Statuses
-              </option>
-
-              <option value="active">
-                Active
-              </option>
-
-              <option value="pending">
-                Pending
-              </option>
-
-              <option value="suspended">
-                Suspended
-              </option>
-
-              <option value="deactivated">
-                Deactivated
-              </option>
-
-              <option value="rejected">
-                Rejected
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <div
-            class="table-wrapper"
-          >
-
-            <table>
-
-              <thead>
-
-                <tr>
-
-                  <th>
-                    Person
-                  </th>
-
-                  <th>
-                    Role
-                  </th>
-
-                  <th>
-                    Requested Role
-                  </th>
-
-                  <th>
-                    Status
-                  </th>
-
-                  <th>
-                    Approved
-                  </th>
-
-                  <th>
-                    Action
-                  </th>
-
-                </tr>
-
-              </thead>
-
-
-              <tbody
-                id="staffTableBody"
-              ></tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- ========================= -->
-      <!-- ACCESS NOTICE -->
-      <!-- ========================= -->
-
-      <div class="notice notice-blue">
-
-        <strong>Access control:</strong>
-        account actions are enforced by the Supabase database.
-        The interface only exposes actions appropriate to the currently signed-in executive.
-
-      </div>
-
-    </section>
-
-  </main>
-
-</div>
-
-
-<!-- ========================= -->
-<!-- APPLICATION REVIEW MODAL -->
-<!-- ========================= -->
-
-<div
-  class="modal-overlay"
-  id="reviewModal"
->
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <div>
-
-        <div
-          class="modal-title"
-          id="reviewModalTitle"
-        >
-          Review Application
-        </div>
-
-        <div
-          class="modal-subtitle"
-          id="reviewModalSubtitle"
-        >
-          Application review
-        </div>
-
-      </div>
-
-      <button
-        class="close-button"
-        id="closeReviewModal"
-        type="button"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <div class="modal-body">
-
-      <div class="form-group">
-
-        <label class="form-label">
-          Applicant
-        </label>
-
-        <input
-          class="form-input"
-          id="reviewApplicantName"
-          type="text"
-          readonly
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="assignedRole"
-        >
-          Assign Role
-        </label>
-
-        <select
-          class="form-select"
-          id="assignedRole"
-        >
-
-          <option value="member">
-            Member
-          </option>
-
-          <option value="segment_executive">
-            Segment Executive
-          </option>
-
-          <option value="higher_executive">
-            Higher Executive
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="reviewReason"
-        >
-          Rejection Reason
-        </label>
-
-        <textarea
-          class="form-textarea"
-          id="reviewReason"
-          rows="4"
-          placeholder="Only required when rejecting an application."
-        ></textarea>
-
-      </div>
-
-    </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="cancel-button"
-        id="cancelReviewButton"
-        type="button"
-      >
-        Cancel
-      </button>
-
-      <button
-        class="danger-button"
-        id="rejectApplicationButton"
-        type="button"
-      >
-        Reject
-      </button>
-
-      <button
-        class="primary-button"
-        id="approveApplicationButton"
-        type="button"
-      >
-        Approve & Activate
-      </button>
-
-    </div>
-
+      <footer class="modal-footer">
+        <button class="modal-action" id="cancelReviewButton" type="button">Cancel</button>
+        <button class="modal-action danger" id="rejectApplicationButton" type="button">Reject</button>
+        <button class="modal-action primary" id="approveApplicationButton" type="button">Approve &amp; Activate</button>
+      </footer>
+    </article>
   </div>
 
-</div>
-
-
-<!-- ========================= -->
-<!-- STATUS MODAL -->
-<!-- ========================= -->
-
-<div
-  class="modal-overlay"
-  id="statusModal"
->
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <div>
-
-        <div class="modal-title">
-          Account Status
+  <div class="modal-overlay" id="statusModal" aria-hidden="true">
+    <article class="staff-modal" role="dialog" aria-modal="true" aria-labelledby="statusModalTitle">
+      <header class="modal-head">
+        <div>
+          <div class="modal-kicker">Account Controls</div>
+          <div class="modal-title" id="statusModalTitle">Manage account status</div>
+          <div class="modal-subtitle" id="statusModalSubtitle">—</div>
         </div>
-
-        <div
-          class="modal-subtitle"
-          id="statusModalSubtitle"
-        >
-          Change account status
+        <button class="modal-close" id="closeStatusModal" type="button" aria-label="Close">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="statusStaffName">Staff member</label>
+          <input class="form-control" id="statusStaffName" type="text" readonly>
         </div>
-
+        <div class="form-group">
+          <label class="form-label" for="newAccountStatus">New account status</label>
+          <select class="form-control" id="newAccountStatus">
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="deactivated">Deactivated</option>
+          </select>
+        </div>
       </div>
-
-      <button
-        class="close-button"
-        id="closeStatusModal"
-        type="button"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <div class="modal-body">
-
-      <div class="form-group">
-
-        <label class="form-label">
-          Staff Member
-        </label>
-
-        <input
-          class="form-input"
-          id="statusStaffName"
-          type="text"
-          readonly
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label
-          class="form-label"
-          for="newAccountStatus"
-        >
-          New Status
-        </label>
-
-        <select
-          class="form-select"
-          id="newAccountStatus"
-        >
-
-          <option value="active">
-            Active
-          </option>
-
-          <option value="deactivated">
-            Deactivated
-          </option>
-
-          <option value="suspended">
-            Suspended
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="cancel-button"
-        id="cancelStatusButton"
-        type="button"
-      >
-        Cancel
-      </button>
-
-      <button
-        class="primary-button"
-        id="saveStatusButton"
-        type="button"
-      >
-        Save Status
-      </button>
-
-    </div>
-
+      <footer class="modal-footer">
+        <button class="modal-action" id="cancelStatusButton" type="button">Cancel</button>
+        <button class="modal-action primary" id="saveStatusButton" type="button">Save Status</button>
+      </footer>
+    </article>
   </div>
 
-</div>
+  <script>
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const $ = id => document.getElementById(id);
+    const state = { profile:null, staff:[], pending:[], currentReview:null, currentStatus:null };
 
+    const ROLE_LABELS = {
+      supreme_executive: 'Core Executive',
+      higher_executive: 'Core Executive',
+      segment_executive: 'Segment Manager',
+      member: 'Volunteer'
+    };
 
-<script src="supabase-config.js"></script>
+    const ROLE_TONES = {
+      supreme_executive: 'core',
+      higher_executive: 'legacy',
+      segment_executive: 'manager',
+      member: 'volunteer'
+    };
 
-<script>
+    function normalized(value){ return String(value ?? '').trim().toLowerCase(); }
+    function escapeHtml(value){ return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function roleLabel(role){ return ROLE_LABELS[role] || 'Staff'; }
+    function statusLabel(status){ if(!status) return '—'; return status.charAt(0).toUpperCase()+status.slice(1); }
+    function formatDate(value){ if(!value) return '—'; const d=new Date(value); return Number.isNaN(d.getTime())?String(value):d.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'}); }
+    function initials(name){ if(!name) return 'EX'; const parts=String(name).trim().split(/\s+/).filter(Boolean); return parts.length===1?parts[0].slice(0,2).toUpperCase():(parts[0][0]+parts.at(-1)[0]).toUpperCase(); }
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+    function roleChip(role){ const tone=ROLE_TONES[role] || 'volunteer'; return `<span class="role-chip ${tone}">${escapeHtml(roleLabel(role))}</span>`; }
+    function statusChip(status){ const tone=['active','pending','suspended','deactivated','rejected'].includes(normalized(status))?normalized(status):'deactivated'; return `<span class="status-chip ${tone}">${escapeHtml(statusLabel(status))}</span>`; }
 
+    function navigate(route){ const routes=['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']; if(routes.includes(route)) window.location.href=route; }
+    document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>navigate(button.dataset.route)));
 
-  let currentProfile = null;
+    function showError(message){ $('errorBox').textContent=message; $('errorBox').style.display='block'; }
 
-  let allStaff = [];
-
-  let pendingApplications = [];
-
-  let currentReviewStaff = null;
-
-  let currentStatusStaff = null;
-
-
-  /* ========================================= */
-  /* HELPERS */
-  /* ========================================= */
-
-  function escapeHtml(value) {
-
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-
-  }
-
-
-  function formatRole(role) {
-
-    if (!role) {
-      return "Unknown";
+    async function loadProfile(){
+      const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+      if(sessionError||!sessionData?.session){window.location.href='login.html';return false;}
+      const {data,error}=await supabaseClient.rpc('get_my_staff_profile');
+      if(error) throw error;
+      const profile=data?.[0];
+      if(!profile) throw new Error('No staff profile was found for this account.');
+      if(profile.account_status!=='active') throw new Error('Your staff account is not active.');
+      const management=['supreme_executive','higher_executive'].includes(profile.role);
+      if(!management) throw new Error('Staff management requires Core Executive access.');
+      state.profile=profile;
+      $('sideUserName').textContent=profile.full_name||'Executive';
+      $('sideUserRole').textContent=roleLabel(profile.role);
+      $('sideAvatar').textContent=initials(profile.full_name);
+      return true;
     }
 
-    return role
-      .split("_")
-      .map(
-        word =>
-          word.charAt(0).toUpperCase() +
-          word.slice(1)
-      )
-      .join(" ");
-
-  }
-
-
-  function formatStatus(status) {
-
-    if (!status) {
-      return "Unknown";
+    async function loadStaff(){
+      const {data,error}=await supabaseClient.from('staff_management_directory').select('*');
+      if(error) throw error;
+      state.staff=(data||[]).sort((a,b)=>String(a.full_name||'').localeCompare(String(b.full_name||'')));
     }
 
-    return status
-      .charAt(0)
-      .toUpperCase() +
-      status.slice(1);
-
-  }
-
-
-  function statusBadge(status) {
-
-    const safeStatus =
-      String(status || "")
-        .toLowerCase();
-
-    let className =
-      "badge-deactivated";
-
-    if (safeStatus === "active") {
-      className = "badge-active";
+    async function loadPending(){
+      const {data,error}=await supabaseClient.from('staff_application_queue').select('*');
+      if(error) throw error;
+      state.pending=(data||[]).sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
     }
 
-    if (safeStatus === "pending") {
-      className = "badge-pending";
+    function filteredStaff(){
+      const search=normalized($('searchInput').value);
+      const role=$('roleFilter').value;
+      const status=$('statusFilter').value;
+      return state.staff.filter(person=>{
+        const hay=[person.full_name,person.phone,person.role,person.requested_role].map(normalized).join(' ');
+        return (!search||hay.includes(search)) && (!role||person.role===role) && (!status||person.account_status===status);
+      });
     }
 
-    if (safeStatus === "rejected") {
-      className = "badge-rejected";
+    function renderSummary(){
+      $('totalStaff').textContent=state.staff.length;
+      $('pendingStaff').textContent=state.staff.filter(s=>s.account_status==='pending').length;
+      $('activeStaff').textContent=state.staff.filter(s=>s.account_status==='active').length;
+      $('inactiveStaff').textContent=state.staff.filter(s=>['suspended','deactivated'].includes(s.account_status)).length;
     }
 
-    if (safeStatus === "suspended") {
-      className = "badge-suspended";
-    }
-
-    return `
-      <span class="badge ${className}">
-        ${escapeHtml(formatStatus(status))}
-      </span>
-    `;
-
-  }
-
-
-  function roleBadge(role) {
-
-    const safeRole =
-      String(role || "")
-        .toLowerCase();
-
-    let className =
-      "badge-member";
-
-    if (safeRole === "supreme_executive") {
-      className = "badge-supreme";
-    }
-
-    if (safeRole === "higher_executive") {
-      className = "badge-higher";
-    }
-
-    if (safeRole === "segment_executive") {
-      className = "badge-segment";
-    }
-
-    return `
-      <span class="badge ${className}">
-        ${escapeHtml(formatRole(role))}
-      </span>
-    `;
-
-  }
-
-
-  function isManagementRole(role) {
-
-    return (
-      role === "supreme_executive" ||
-      role === "higher_executive"
-    );
-
-  }
-
-
-  /* ========================================= */
-  /* PROFILE */
-  /* ========================================= */
-
-  async function loadProfile() {
-
-    const {
-      data: {
-        session
+    function renderDirectory(){
+      const body=$('staffTableBody');
+      const staff=filteredStaff();
+      $('directorySummary').textContent=`${staff.length} visible record${staff.length===1?'':'s'}`;
+      if(!staff.length){
+        body.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">No staff records match</div><div class="empty-state-copy">Try changing the search or filters.</div></div></td></tr>';
+        return;
       }
-    } =
-      await supabaseClient.auth.getSession();
-
-
-    if (!session) {
-
-      window.location.href =
-        "login.html";
-
-      return null;
-
+      body.innerHTML=staff.map(person=>{
+        const self=state.profile?.id===person.id;
+        const higherActor=state.profile?.role==='higher_executive';
+        const canManage=!self && !['pending','rejected'].includes(person.account_status) && (state.profile?.role==='supreme_executive' || (higherActor && ['segment_executive','member'].includes(person.role)));
+        return `<tr class="staff-row">
+          <td><div class="person-primary">${escapeHtml(person.full_name||'Unnamed')}</div><div class="person-secondary">${escapeHtml(person.phone||'No phone')} · ${escapeHtml(person.email||'No email')}</div></td>
+          <td>${roleChip(person.role)}</td>
+          <td>${statusChip(person.account_status)}</td>
+          <td>${person.requested_role?roleChip(person.requested_role):'<span class="ep-muted">—</span>'}</td>
+          <td><div class="person-secondary">${escapeHtml(formatDate(person.approved_at))}</div></td>
+          <td>${canManage?`<button class="table-action" data-status-id="${escapeHtml(person.id)}">Manage Status</button>`:'<span class="ep-muted">—</span>'}</td>
+        </tr>`;
+      }).join('');
+      body.querySelectorAll('[data-status-id]').forEach(btn=>btn.addEventListener('click',()=>openStatusModal(btn.dataset.statusId)));
     }
 
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.rpc(
-        "get_my_staff_profile"
-      );
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    if (!data || data.length === 0) {
-
-      throw new Error(
-        "No staff profile was found for this account."
-      );
-
-    }
-
-
-    const profile =
-      data[0];
-
-
-    document.getElementById(
-      "topUserName"
-    ).textContent =
-      profile.full_name || "Executive";
-
-
-    document.getElementById(
-      "topUserRole"
-    ).textContent =
-      formatRole(profile.role);
-
-
-    document.getElementById(
-      "userAvatar"
-    ).textContent =
-      profile.full_name
-        ? profile.full_name
-            .trim()
-            .charAt(0)
-            .toUpperCase()
-        : "?";
-
-
-    if (
-      profile.account_status !== "active" ||
-      !isManagementRole(profile.role)
-    ) {
-
-      throw new Error(
-        "Management access is required to view this page."
-      );
-
-    }
-
-
-    currentProfile =
-      profile;
-
-
-    return profile;
-
-  }
-
-
-  /* ========================================= */
-  /* LOAD STAFF */
-  /* ========================================= */
-
-  async function loadStaff() {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("staff_management_directory")
-        .select("*");
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    allStaff =
-      data || [];
-
-
-    renderStaff();
-
-    updateSummary();
-
-  }
-
-
-  /* ========================================= */
-  /* LOAD PENDING */
-  /* ========================================= */
-
-  async function loadPendingApplications() {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("staff_application_queue")
-        .select("*");
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    pendingApplications =
-      data || [];
-
-
-    renderPendingApplications();
-
-    updateSummary();
-
-  }
-
-
-  /* ========================================= */
-  /* SUMMARY */
-  /* ========================================= */
-
-  function updateSummary() {
-
-    const total =
-      allStaff.length;
-
-
-    const pending =
-      allStaff.filter(
-        staff =>
-          staff.account_status ===
-          "pending"
-      ).length;
-
-
-    const active =
-      allStaff.filter(
-        staff =>
-          staff.account_status ===
-          "active"
-      ).length;
-
-
-    const inactive =
-      allStaff.filter(
-        staff =>
-          staff.account_status ===
-            "suspended" ||
-          staff.account_status ===
-            "deactivated"
-      ).length;
-
-
-    document.getElementById(
-      "totalStaff"
-    ).textContent =
-      total;
-
-
-    document.getElementById(
-      "pendingStaff"
-    ).textContent =
-      pending;
-
-
-    document.getElementById(
-      "activeStaff"
-    ).textContent =
-      active;
-
-
-    document.getElementById(
-      "inactiveStaff"
-    ).textContent =
-      inactive;
-
-  }
-
-
-  /* ========================================= */
-  /* PENDING APPLICATIONS */
-  /* ========================================= */
-
-  function renderPendingApplications() {
-
-    const container =
-      document.getElementById(
-        "pendingContainer"
-      );
-
-
-    if (
-      !pendingApplications ||
-      pendingApplications.length === 0
-    ) {
-
-      container.innerHTML = `
-        <div class="empty">
-
-          <div class="empty-title">
-            No pending applications
-          </div>
-
-          There are currently no staff applications waiting for review.
-
+    function renderPending(){
+      const container=$('pendingContainer');
+      if(!state.pending.length){
+        container.innerHTML='<div class="empty-state"><div class="empty-state-title">Queue clear</div><div class="empty-state-copy">There are currently no pending staff applications.</div></div>';
+        return;
+      }
+      container.innerHTML=state.pending.map(app=>`<article class="queue-card">
+        <div class="queue-top"><div><div class="queue-name">${escapeHtml(app.full_name||'New Applicant')}</div><div class="queue-meta">${escapeHtml(app.phone||'No phone')} · ${escapeHtml(app.email||'No email')}</div></div>${statusChip(app.account_status)}</div>
+        <div class="queue-grid">
+          <div class="queue-field"><div class="queue-label">Requested</div><div class="queue-value">${escapeHtml(roleLabel(app.requested_role||'member'))}</div></div>
+          <div class="queue-field"><div class="queue-label">Submitted</div><div class="queue-value">${escapeHtml(formatDate(app.created_at))}</div></div>
         </div>
-      `;
-
-      return;
-
+        <div class="queue-actions"><button class="table-action primary" data-review-id="${escapeHtml(app.id)}">Review application</button></div>
+      </article>`).join('');
+      container.querySelectorAll('[data-review-id]').forEach(btn=>btn.addEventListener('click',()=>openReviewModal(btn.dataset.reviewId)));
     }
 
-
-    let html = `
-
-      <div class="table-wrapper">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Applicant
-              </th>
-
-              <th>
-                Requested Role
-              </th>
-
-              <th>
-                Submitted
-              </th>
-
-              <th>
-                Action
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-    `;
-
-
-    pendingApplications.forEach(
-      staff => {
-
-        html += `
-
-          <tr>
-
-            <td>
-
-              <div class="person-name">
-                ${escapeHtml(
-                  staff.full_name ||
-                  "New Applicant"
-                )}
-              </div>
-
-              <div class="person-phone">
-                ${escapeHtml(
-                  staff.phone ||
-                  "No phone provided"
-                )}
-              </div>
-
-            </td>
-
-
-            <td>
-              ${roleBadge(
-                staff.requested_role ||
-                "member"
-              )}
-            </td>
-
-
-            <td>
-
-              ${staff.created_at
-                ? escapeHtml(
-                    new Date(
-                      staff.created_at
-                    ).toLocaleString()
-                  )
-                : "—"}
-
-            </td>
-
-
-            <td>
-
-              <div class="action-group">
-
-                <button
-                  class="action-button approve-button"
-                  onclick="openReviewModal('${escapeHtml(staff.id)}')"
-                >
-                  Review
-                </button>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-        `;
-
-      }
-    );
-
-
-    html += `
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    `;
-
-
-    container.innerHTML =
-      html;
-
-  }
-
-
-  /* ========================================= */
-  /* STAFF FILTERING */
-  /* ========================================= */
-
-  function getFilteredStaff() {
-
-    const search =
-      document.getElementById(
-        "searchInput"
-      ).value
-        .trim()
-        .toLowerCase();
-
-
-    const role =
-      document.getElementById(
-        "roleFilter"
-      ).value;
-
-
-    const status =
-      document.getElementById(
-        "statusFilter"
-      ).value;
-
-
-    return allStaff.filter(
-      staff => {
-
-        const name =
-          String(
-            staff.full_name || ""
-          ).toLowerCase();
-
-
-        const phone =
-          String(
-            staff.phone || ""
-          ).toLowerCase();
-
-
-        const matchesSearch =
-          !search ||
-          name.includes(search) ||
-          phone.includes(search);
-
-
-        const matchesRole =
-          !role ||
-          staff.role === role;
-
-
-        const matchesStatus =
-          !status ||
-          staff.account_status ===
-            status;
-
-
-        return (
-          matchesSearch &&
-          matchesRole &&
-          matchesStatus
-        );
-
-      }
-    );
-
-  }
-
-
-  /* ========================================= */
-  /* STAFF DIRECTORY */
-  /* ========================================= */
-
-  function renderStaff() {
-
-    const body =
-      document.getElementById(
-        "staffTableBody"
-      );
-
-
-    const staff =
-      getFilteredStaff();
-
-
-    if (
-      !staff ||
-      staff.length === 0
-    ) {
-
-      body.innerHTML = `
-
-        <tr>
-
-          <td
-            colspan="6"
-            class="empty"
-          >
-
-            <div class="empty-title">
-              No staff found
-            </div>
-
-            Try changing the search or filters.
-
-          </td>
-
-        </tr>
-
-      `;
-
-      return;
-
+    function renderAll(){ renderSummary(); renderDirectory(); renderPending(); }
+
+    function openReviewModal(staffId){
+      const app=state.pending.find(item=>String(item.id)===String(staffId));
+      if(!app){alert('This application could not be found.');return;}
+      state.currentReview=app;
+      $('reviewApplicantName').textContent=app.full_name||'New Applicant';
+      $('reviewApplicantPhone').textContent=app.phone||'—';
+      $('reviewRequestedRole').textContent=roleLabel(app.requested_role||'member');
+      $('reviewCreatedAt').textContent=formatDate(app.created_at);
+      $('reviewModalSubtitle').textContent=app.email||'Application review';
+      $('assignedRole').value=app.requested_role==='segment_executive'?'segment_executive':app.requested_role==='member'?'member':'higher_executive';
+      $('reviewReason').value='';
+      $('reviewModal').classList.add('open'); $('reviewModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
     }
 
+    function closeReviewModal(){ state.currentReview=null; $('reviewModal').classList.remove('open'); $('reviewModal').setAttribute('aria-hidden','true'); if(!$('statusModal').classList.contains('open')) document.body.style.overflow=''; }
 
-    body.innerHTML =
-      staff.map(
-        person => {
-
-          const isSelf =
-            currentProfile &&
-            person.id ===
-              currentProfile.id;
-
-
-          let action =
-            "—";
-
-
-          if (
-            !isSelf &&
-            person.account_status !==
-              "pending" &&
-            (
-              currentProfile.role ===
-                "supreme_executive" ||
-              (
-                currentProfile.role ===
-                  "higher_executive" &&
-                (
-                  person.role ===
-                    "segment_executive" ||
-                  person.role ===
-                    "member"
-                )
-              )
-            )
-          ) {
-
-            action = `
-
-              <button
-                class="action-button status-button"
-                onclick="openStatusModal('${escapeHtml(person.id)}')"
-              >
-                Manage Status
-              </button>
-
-            `;
-
-          }
-
-
-          return `
-
-            <tr>
-
-              <td>
-
-                <div class="person-name">
-
-                  ${escapeHtml(
-                    person.full_name ||
-                    "Unnamed"
-                  )}
-
-                </div>
-
-                <div class="person-phone">
-
-                  ${escapeHtml(
-                    person.phone ||
-                    "No phone provided"
-                  )}
-
-                </div>
-
-              </td>
-
-
-              <td>
-
-                ${roleBadge(
-                  person.role
-                )}
-
-              </td>
-
-
-              <td>
-
-                ${person.requested_role
-                  ? roleBadge(
-                      person.requested_role
-                    )
-                  : "—"}
-
-              </td>
-
-
-              <td>
-
-                ${statusBadge(
-                  person.account_status
-                )}
-
-              </td>
-
-
-              <td>
-
-                ${
-                  person.approved_at
-                    ? escapeHtml(
-                        new Date(
-                          person.approved_at
-                        ).toLocaleDateString()
-                      )
-                    : "—"
-                }
-
-              </td>
-
-
-              <td>
-
-                <div class="action-group">
-
-                  ${action}
-
-                </div>
-
-              </td>
-
-            </tr>
-
-          `;
-
-        }
-      ).join("");
-
-  }
-
-
-  /* ========================================= */
-  /* REVIEW MODAL */
-  /* ========================================= */
-
-  function openReviewModal(staffId) {
-
-    const staff =
-      pendingApplications.find(
-        item =>
-          item.id === staffId
-      );
-
-
-    if (!staff) {
-
-      alert(
-        "This application could not be found."
-      );
-
-      return;
-
+    async function approveApplication(){
+      if(!state.currentReview)return;
+      const button=$('approveApplicationButton');
+      button.disabled=true; button.textContent='Activating…';
+      try{
+        const {error}=await supabaseClient.rpc('review_staff_application',{p_staff_id:state.currentReview.id,p_new_status:'active',p_assigned_role:$('assignedRole').value,p_rejection_reason:null});
+        if(error)throw error;
+        closeReviewModal(); await loadStaff(); await loadPending(); renderAll(); alert('Application approved and account activated.');
+      }catch(error){console.error(error);alert(`Unable to approve application.\n\n${error.message||error}`);}finally{button.disabled=false;button.textContent='Approve & Activate';}
     }
 
-
-    currentReviewStaff =
-      staff;
-
-
-    document.getElementById(
-      "reviewApplicantName"
-    ).value =
-      staff.full_name ||
-      "New Applicant";
-
-
-    document.getElementById(
-      "assignedRole"
-    ).value =
-      staff.requested_role ||
-      "member";
-
-
-    document.getElementById(
-      "reviewReason"
-    ).value =
-      "";
-
-
-    document.getElementById(
-      "reviewModal"
-    ).classList.add("show");
-
-  }
-
-
-  function closeReviewModal() {
-
-    currentReviewStaff =
-      null;
-
-    document.getElementById(
-      "reviewModal"
-    ).classList.remove("show");
-
-  }
-
-
-  /* ========================================= */
-  /* APPROVE APPLICATION */
-  /* ========================================= */
-
-  async function approveApplication() {
-
-    if (!currentReviewStaff) {
-      return;
+    async function rejectApplication(){
+      if(!state.currentReview)return;
+      const reason=$('reviewReason').value.trim();
+      if(!reason){alert('Please enter a rejection reason.');return;}
+      const button=$('rejectApplicationButton');
+      button.disabled=true; button.textContent='Rejecting…';
+      try{
+        const {error}=await supabaseClient.rpc('review_staff_application',{p_staff_id:state.currentReview.id,p_new_status:'rejected',p_assigned_role:null,p_rejection_reason:reason});
+        if(error)throw error;
+        closeReviewModal(); await loadStaff(); await loadPending(); renderAll(); alert('Application rejected.');
+      }catch(error){console.error(error);alert(`Unable to reject application.\n\n${error.message||error}`);}finally{button.disabled=false;button.textContent='Reject';}
     }
 
-
-    const role =
-      document.getElementById(
-        "assignedRole"
-      ).value;
-
-
-    const button =
-      document.getElementById(
-        "approveApplicationButton"
-      );
-
-
-    button.disabled = true;
-
-    button.textContent =
-      "Activating...";
-
-
-    try {
-
-      const {
-        error
-      } =
-        await supabaseClient.rpc(
-          "review_staff_application",
-          {
-            p_staff_id:
-              currentReviewStaff.id,
-
-            p_new_status:
-              "active",
-
-            p_assigned_role:
-              role,
-
-            p_rejection_reason:
-              null
-          }
-        );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      closeReviewModal();
-
-
-      await loadStaff();
-
-      await loadPendingApplications();
-
-
-      alert(
-        "Application approved and account activated successfully."
-      );
-
-    }
-    catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Unable to approve application.\n\n" +
-        error.message
-      );
-
-    }
-    finally {
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Approve & Activate";
-
+    function openStatusModal(staffId){
+      const staff=state.staff.find(item=>String(item.id)===String(staffId));
+      if(!staff){alert('Staff member could not be found.');return;}
+      state.currentStatus=staff;
+      $('statusStaffName').value=staff.full_name||'Unnamed';
+      $('statusModalSubtitle').textContent=`${roleLabel(staff.role)} · current status: ${statusLabel(staff.account_status)}`;
+      $('newAccountStatus').value=staff.account_status==='active'?'suspended':staff.account_status==='suspended'?'active':'active';
+      $('statusModal').classList.add('open'); $('statusModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
     }
 
-  }
+    function closeStatusModal(){ state.currentStatus=null; $('statusModal').classList.remove('open'); $('statusModal').setAttribute('aria-hidden','true'); if(!$('reviewModal').classList.contains('open')) document.body.style.overflow=''; }
 
-
-  /* ========================================= */
-  /* REJECT APPLICATION */
-  /* ========================================= */
-
-  async function rejectApplication() {
-
-    if (!currentReviewStaff) {
-      return;
+    async function saveAccountStatus(){
+      if(!state.currentStatus)return;
+      const button=$('saveStatusButton'); button.disabled=true; button.textContent='Saving…';
+      try{
+        const {error}=await supabaseClient.rpc('set_staff_account_status',{p_staff_id:state.currentStatus.id,p_new_status:$('newAccountStatus').value});
+        if(error)throw error;
+        closeStatusModal(); await loadStaff(); await loadPending(); renderAll(); alert('Account status updated successfully.');
+      }catch(error){console.error(error);alert(`Unable to update account status.\n\n${error.message||error}`);}finally{button.disabled=false;button.textContent='Save Status';}
     }
 
-
-    const reason =
-      document.getElementById(
-        "reviewReason"
-      ).value.trim();
-
-
-    if (!reason) {
-
-      alert(
-        "Please enter a rejection reason."
-      );
-
-      return;
-
+    async function refreshPage(){
+      const button=$('refreshButton'); button.disabled=true; button.textContent='Refreshing…'; $('headerState').textContent='Refreshing staff data';
+      try{ await loadStaff(); await loadPending(); renderAll(); $('headerState').textContent='Live staff data'; }
+      catch(error){console.error(error);showError(error?.message||'Unable to refresh staff data.');$('headerState').textContent='Data error';}
+      finally{button.disabled=false;button.textContent='Refresh';}
     }
 
+    $('refreshButton').addEventListener('click',refreshPage);
+    $('searchInput').addEventListener('input',renderDirectory);
+    $('roleFilter').addEventListener('change',renderDirectory);
+    $('statusFilter').addEventListener('change',renderDirectory);
+    $('closeReviewModal').addEventListener('click',closeReviewModal);
+    $('cancelReviewButton').addEventListener('click',closeReviewModal);
+    $('approveApplicationButton').addEventListener('click',approveApplication);
+    $('rejectApplicationButton').addEventListener('click',rejectApplication);
+    $('closeStatusModal').addEventListener('click',closeStatusModal);
+    $('cancelStatusButton').addEventListener('click',closeStatusModal);
+    $('saveStatusButton').addEventListener('click',saveAccountStatus);
+    $('reviewModal').addEventListener('click',event=>{if(event.target===$('reviewModal'))closeReviewModal();});
+    $('statusModal').addEventListener('click',event=>{if(event.target===$('statusModal'))closeStatusModal();});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeReviewModal();closeStatusModal();}});
+    $('logoutButton').addEventListener('click',async()=>{const {error}=await supabaseClient.auth.signOut();if(error){alert('Unable to sign out. Please try again.');return;}window.location.href='login.html';});
 
-    const button =
-      document.getElementById(
-        "rejectApplicationButton"
-      );
-
-
-    button.disabled = true;
-
-    button.textContent =
-      "Rejecting...";
-
-
-    try {
-
-      const {
-        error
-      } =
-        await supabaseClient.rpc(
-          "review_staff_application",
-          {
-            p_staff_id:
-              currentReviewStaff.id,
-
-            p_new_status:
-              "rejected",
-
-            p_assigned_role:
-              null,
-
-            p_rejection_reason:
-              reason
-          }
-        );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      closeReviewModal();
-
-
-      await loadStaff();
-
-      await loadPendingApplications();
-
-
-      alert(
-        "Application rejected."
-      );
-
+    async function initializePage(){
+      try{
+        const allowed=await loadProfile(); if(!allowed)return;
+        await loadStaff(); await loadPending(); renderAll();
+        $('loading').style.display='none'; $('pageContent').style.display='block';
+      }catch(error){console.error(error);$('loading').style.display='none';showError(error?.message||'Unable to load staff management.');}
     }
-    catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Unable to reject application.\n\n" +
-        error.message
-      );
-
-    }
-    finally {
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Reject";
-
-    }
-
-  }
-
-
-  /* ========================================= */
-  /* STATUS MODAL */
-  /* ========================================= */
-
-  function openStatusModal(staffId) {
-
-    const staff =
-      allStaff.find(
-        item =>
-          item.id === staffId
-      );
-
-
-    if (!staff) {
-
-      alert(
-        "Staff member could not be found."
-      );
-
-      return;
-
-    }
-
-
-    currentStatusStaff =
-      staff;
-
-
-    document.getElementById(
-      "statusStaffName"
-    ).value =
-      staff.full_name ||
-      "Unnamed";
-
-
-    document.getElementById(
-      "newAccountStatus"
-    ).value =
-      staff.account_status ===
-        "active"
-        ? "deactivated"
-        : "active";
-
-
-    document.getElementById(
-      "statusModal"
-    ).classList.add("show");
-
-  }
-
-
-  function closeStatusModal() {
-
-    currentStatusStaff =
-      null;
-
-    document.getElementById(
-      "statusModal"
-    ).classList.remove("show");
-
-  }
-
-
-  /* ========================================= */
-  /* SAVE ACCOUNT STATUS */
-  /* ========================================= */
-
-  async function saveAccountStatus() {
-
-    if (!currentStatusStaff) {
-      return;
-    }
-
-
-    const newStatus =
-      document.getElementById(
-        "newAccountStatus"
-      ).value;
-
-
-    const button =
-      document.getElementById(
-        "saveStatusButton"
-      );
-
-
-    button.disabled = true;
-
-    button.textContent =
-      "Saving...";
-
-
-    try {
-
-      const {
-        error
-      } =
-        await supabaseClient.rpc(
-          "set_staff_account_status",
-          {
-            p_staff_id:
-              currentStatusStaff.id,
-
-            p_new_status:
-              newStatus
-          }
-        );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      closeStatusModal();
-
-
-      await loadStaff();
-
-      await loadPendingApplications();
-
-
-      alert(
-        "Account status updated successfully."
-      );
-
-    }
-    catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Unable to update account status.\n\n" +
-        error.message
-      );
-
-    }
-    finally {
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Save Status";
-
-    }
-
-  }
-
-
-  /* ========================================= */
-  /* REFRESH */
-  /* ========================================= */
-
-  async function refreshPage() {
-
-    const button =
-      document.getElementById(
-        "refreshButton"
-      );
-
-
-    button.disabled = true;
-
-    button.textContent =
-      "Refreshing...";
-
-
-    try {
-
-      await loadStaff();
-
-      await loadPendingApplications();
-
-    }
-    catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Unable to refresh staff data.\n\n" +
-        error.message
-      );
-
-    }
-    finally {
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Refresh";
-
-    }
-
-  }
-
-
-  /* ========================================= */
-  /* EVENT LISTENERS */
-  /* ========================================= */
-
-  document.getElementById(
-    "refreshButton"
-  ).addEventListener(
-    "click",
-    refreshPage
-  );
-
-
-  document.getElementById(
-    "searchInput"
-  ).addEventListener(
-    "input",
-    renderStaff
-  );
-
-
-  document.getElementById(
-    "roleFilter"
-  ).addEventListener(
-    "change",
-    renderStaff
-  );
-
-
-  document.getElementById(
-    "statusFilter"
-  ).addEventListener(
-    "change",
-    renderStaff
-  );
-
-
-  document.getElementById(
-    "closeReviewModal"
-  ).addEventListener(
-    "click",
-    closeReviewModal
-  );
-
-
-  document.getElementById(
-    "cancelReviewButton"
-  ).addEventListener(
-    "click",
-    closeReviewModal
-  );
-
-
-  document.getElementById(
-    "approveApplicationButton"
-  ).addEventListener(
-    "click",
-    approveApplication
-  );
-
-
-  document.getElementById(
-    "rejectApplicationButton"
-  ).addEventListener(
-    "click",
-    rejectApplication
-  );
-
-
-  document.getElementById(
-    "closeStatusModal"
-  ).addEventListener(
-    "click",
-    closeStatusModal
-  );
-
-
-  document.getElementById(
-    "cancelStatusButton"
-  ).addEventListener(
-    "click",
-    closeStatusModal
-  );
-
-
-  document.getElementById(
-    "saveStatusButton"
-  ).addEventListener(
-    "click",
-    saveAccountStatus
-  );
-
-
-  document.getElementById(
-    "reviewModal"
-  ).addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target.id ===
-        "reviewModal"
-      ) {
-        closeReviewModal();
-      }
-
-    }
-  );
-
-
-  document.getElementById(
-    "statusModal"
-  ).addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target.id ===
-        "statusModal"
-      ) {
-        closeStatusModal();
-      }
-
-    }
-  );
-
-
-  document.getElementById(
-    "logoutButton"
-  ).addEventListener(
-    "click",
-    async () => {
-
-      await supabaseClient.auth.signOut();
-
-      window.location.href =
-        "login.html";
-
-    }
-  );
-
-
-  /* ========================================= */
-  /* INITIALIZATION */
-  /* ========================================= */
-
-  async function initializePage() {
-
-    try {
-
-      await loadProfile();
-
-      await loadStaff();
-
-      await loadPendingApplications();
-
-
-      document.getElementById(
-        "loading"
-      ).style.display =
-        "none";
-
-
-      document.getElementById(
-        "staffContent"
-      ).style.display =
-        "block";
-
-    }
-    catch (error) {
-
-      console.error(error);
-
-
-      document.getElementById(
-        "loading"
-      ).innerHTML = `
-
-        <div class="error">
-
-          <strong>
-            Unable to load Staff & Executives Management.
-          </strong>
-
-          <br><br>
-
-          ${escapeHtml(
-            error.message
-          )}
-
-        </div>
-
-      `;
-
-    }
-
-  }
-
-
-  initializePage();
-
-</script>
-
+    initializePage();
+  </script>
 </body>
-
 </html>
