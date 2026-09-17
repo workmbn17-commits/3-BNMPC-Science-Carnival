@@ -1,6 +1,19 @@
 const SUPABASE_URL = "https://tbwrjorqzumjyiptglkf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG";
 
+/* Global navigation: keep the executive sidebar usable even if a page-specific data script fails. */
+(function mountGlobalNavigation(){
+  const safeRoutes = new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-route]');
+    if(!button) return;
+    const route = button.dataset.route;
+    if(!safeRoutes.has(route)) return;
+    event.preventDefault();
+    window.location.assign(new URL(route, window.location.href).href);
+  });
+})();
+
 /* Readability pass: make the smallest operational labels easier to read without enlarging the main UI excessively. */
 (function improveSmallTextReadability(){
   const style = document.createElement('style');
