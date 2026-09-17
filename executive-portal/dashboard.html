@@ -5,804 +5,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#070909" />
   <meta name="description" content="Executive control panel for the 3rd BNMPC National Science Carnival" />
-
-  <title>Executive Dashboard — 3ʳᵈ BNMPC Science Carnival</title>
-
+  <title>Executive Dashboard — 3ʳᵈ BNMPC National Science Carnival</title>
   <link rel="stylesheet" href="assets/css/design-system.css" />
   <link rel="stylesheet" href="assets/css/executive-shell.css" />
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-
   <style>
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.82fr);
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .dashboard-grid-wide {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .event-table-wrap {
-      overflow-x: auto;
-    }
-
-    .event-table {
-      width: 100%;
-      min-width: 760px;
-      border-collapse: collapse;
-    }
-
-    .event-table th,
-    .event-table td {
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border-subtle);
-      text-align: left;
-    }
-
-    .event-table th {
-      color: var(--gray-500);
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .event-table td {
-      color: var(--text-secondary);
-      font-size: 10px;
-      vertical-align: middle;
-    }
-
-    .event-table tr:hover td {
-      background: rgba(255, 255, 255, 0.012);
-    }
-
-    .event-name {
-      color: var(--text-primary) !important;
-      font-size: 11px !important;
-      font-weight: 740;
-    }
-
-    .event-meta {
-      margin-top: 3px;
-      color: var(--gray-500);
-      font-family: var(--font-mono);
-      font-size: 8px;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .status-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      min-height: 23px;
-      padding: 0 7px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-raised);
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 8px;
-      font-weight: 760;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .status-chip.open {
-      border-color: rgba(27, 189, 120, 0.32);
-      background: rgba(27, 189, 120, 0.06);
-      color: var(--brand-green-300);
-    }
-
-    .status-chip.full {
-      border-color: rgba(214, 166, 58, 0.34);
-      background: rgba(214, 166, 58, 0.05);
-      color: #e8c96d;
-    }
-
-    .status-dot {
-      width: 5px;
-      height: 5px;
-      background: currentColor;
-    }
-
-    .capacity {
-      min-width: 118px;
-    }
-
-    .capacity-track {
-      width: 112px;
-      height: 4px;
-      background: var(--surface-raised);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .capacity-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--brand-green-500);
-      transition: width 180ms ease;
-    }
-
-    .capacity-fill.warn {
-      background: #d6a63a;
-    }
-
-    .capacity-fill.full {
-      background: #d95d5d;
-    }
-
-    .capacity-label {
-      margin-top: 5px;
-      color: var(--gray-500);
-      font-family: var(--font-mono);
-      font-size: 8px;
-    }
-
-    .signal-list {
-      display: grid;
-    }
-
-    .signal-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      min-height: 48px;
-      gap: 16px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .signal-row:last-child {
-      border-bottom: 0;
-    }
-
-    .signal-name {
-      color: var(--text-secondary);
-      font-size: 11px;
-      font-weight: 650;
-    }
-
-    .signal-value {
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 800;
-    }
-
-    .signal-value.green {
-      color: var(--brand-green-300);
-    }
-
-    .queue-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .queue-item {
-      display: grid;
-      grid-template-columns: 30px 1fr auto;
-      gap: 10px;
-      align-items: center;
-      min-height: 58px;
-      padding: 9px 10px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-input);
-    }
-
-    .queue-index {
-      width: 30px;
-      height: 30px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--border-default);
-      background: var(--surface-raised);
-      color: var(--brand-green-300);
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 800;
-    }
-
-    .queue-title {
-      color: var(--text-primary);
-      font-size: 10px;
-      font-weight: 720;
-    }
-
-    .queue-copy {
-      margin-top: 3px;
-      color: var(--text-muted);
-      font-size: 8px;
-      line-height: 1.5;
-    }
-
-    .queue-link {
-      border: 0;
-      background: transparent;
-      color: var(--brand-green-500);
-      font-family: var(--font-mono);
-      font-size: 8px;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .queue-link:hover {
-      color: var(--brand-green-300);
-    }
-
-    .dashboard-note {
-      margin-top: 18px;
-      padding: 11px 13px;
-      border: 1px solid var(--border-default);
-      background: linear-gradient(90deg, rgba(27, 189, 120, 0.06), rgba(27, 189, 120, 0.015));
-      color: var(--text-muted);
-      font-size: 9px;
-      line-height: 1.55;
-    }
-
-    .dashboard-note strong {
-      color: var(--brand-green-300);
-      font-weight: 760;
-    }
-
-    .empty-line {
-      padding: 25px 16px;
-      color: var(--gray-500);
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.06em;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    @media (max-width: 1120px) {
-      .dashboard-grid,
-      .dashboard-grid-wide {
-        grid-template-columns: 1fr;
-      }
-    }
+    .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px;margin-top:18px}
+    .dashboard-grid-wide{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:18px}
+    .event-table-wrap{overflow-x:auto}.event-table{width:100%;min-width:760px;border-collapse:collapse}
+    .event-table th,.event-table td{padding:11px 14px;border-bottom:1px solid var(--border-subtle);text-align:left}
+    .event-table th{color:var(--gray-500);font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    .event-table td{color:var(--text-secondary);font-size:10px;vertical-align:middle}.event-table tr:hover td{background:rgba(255,255,255,.012)}
+    .event-name{color:var(--text-primary)!important;font-size:11px!important;font-weight:740}.event-meta{margin-top:3px;color:var(--gray-500);font-family:var(--font-mono);font-size:8px;letter-spacing:.03em;text-transform:uppercase}
+    .status-chip{display:inline-flex;align-items:center;gap:6px;min-height:23px;padding:0 7px;border:1px solid var(--border-default);background:var(--surface-raised);color:var(--text-muted);font-family:var(--font-mono);font-size:8px;font-weight:760;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+    .status-chip.open{border-color:rgba(27,189,120,.32);background:rgba(27,189,120,.06);color:var(--brand-green-300)}
+    .status-chip.full{border-color:rgba(214,166,58,.34);background:rgba(214,166,58,.05);color:#e8c96d}
+    .status-chip.closed{border-color:rgba(217,93,93,.25);color:#ef9b9b}.status-dot{width:5px;height:5px;background:currentColor}
+    .capacity{min-width:118px}.capacity-track{width:112px;height:4px;background:var(--surface-raised);border:1px solid var(--border-subtle)}
+    .capacity-fill{height:100%;width:0;background:var(--brand-green-500);transition:width 180ms ease}.capacity-fill.warn{background:#d6a63a}.capacity-fill.full{background:#d95d5d}
+    .capacity-label{margin-top:5px;color:var(--gray-500);font-family:var(--font-mono);font-size:8px}
+    .signal-list{display:grid}.signal-row{display:flex;justify-content:space-between;align-items:center;min-height:48px;gap:16px;border-bottom:1px solid var(--border-subtle)}.signal-row:last-child{border-bottom:0}
+    .signal-name{color:var(--text-secondary);font-size:11px;font-weight:650}.signal-value{color:var(--text-primary);font-family:var(--font-mono);font-size:10px;font-weight:800}.signal-value.green{color:var(--brand-green-300)}
+    .queue-list{display:grid;gap:8px}.queue-item{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;min-height:58px;padding:9px 10px;border:1px solid var(--border-default);background:var(--surface-input)}
+    .queue-index{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--border-default);background:var(--surface-raised);color:var(--brand-green-300);font-family:var(--font-mono);font-size:9px;font-weight:800}
+    .queue-title{color:var(--text-primary);font-size:10px;font-weight:720}.queue-copy{margin-top:3px;color:var(--text-muted);font-size:8px;line-height:1.5}
+    .queue-link{border:0;background:transparent;color:var(--brand-green-500);font-family:var(--font-mono);font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.queue-link:hover{color:var(--brand-green-300)}
+    .dashboard-note{margin-top:18px;padding:11px 13px;border:1px solid var(--border-default);background:linear-gradient(90deg,rgba(27,189,120,.06),rgba(27,189,120,.015));color:var(--text-muted);font-size:9px;line-height:1.55}
+    .dashboard-note strong{color:var(--brand-green-300);font-weight:760}.empty-line{padding:25px 16px;color:var(--gray-500);font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;text-align:center;text-transform:uppercase}
+    .scope-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:8px 10px;border:1px solid var(--border-subtle);background:var(--surface-input);font-family:var(--font-mono);font-size:8px;color:var(--gray-500);letter-spacing:.04em;text-transform:uppercase}
+    .scope-bar strong{color:var(--brand-green-300)}
+    @media(max-width:1120px){.dashboard-grid,.dashboard-grid-wide{grid-template-columns:1fr}}
+    @media(max-width:720px){.ep-page{padding:20px 16px}.ep-header{padding:0 16px}.ep-system-state{display:none}.queue-item{grid-template-columns:30px 1fr}.queue-link{justify-self:start;padding-left:40px}.scope-bar{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
-
 <body class="ep-app-body">
-  <div class="ep-app">
-    <aside class="ep-sidebar">
-      <div class="ep-brand">
-        <div class="ep-brand-mark">B</div>
-        <div class="ep-brand-copy">
-          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
-          <div class="ep-brand-subtitle">National Science Carnival</div>
+<div class="ep-app">
+  <aside class="ep-sidebar">
+    <div class="ep-brand"><div class="ep-brand-mark">B</div><div class="ep-brand-copy"><div class="ep-brand-title">3ʳᵈ BNMPC</div><div class="ep-brand-subtitle">National Science Carnival</div></div></div>
+    <div class="ep-sidebar-section"><div class="ep-sidebar-label">Control</div><nav class="ep-nav">
+      <button class="ep-nav-button active" data-route="dashboard.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></button>
+      <button class="ep-nav-button" data-route="events.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Events</span></button>
+      <button class="ep-nav-button" data-route="registrations.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v4h4M9 11h6M9 15h6"/></svg><span>Registrations</span></button>
+      <button class="ep-nav-button" data-route="payments.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14"/><path d="M3 10h18M7 15h4"/></svg><span>Payments</span></button>
+    </nav></div>
+    <div class="ep-sidebar-section"><div class="ep-sidebar-label">People</div><nav class="ep-nav">
+      <button class="ep-nav-button" data-route="staff.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c.5-3.5 2.4-5 6-5s5.5 1.5 6 5M15 15c2.9 0 4.7 1.3 5 4"/></svg><span>Staff</span></button>
+      <button class="ep-nav-button" data-route="assignments.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M9 8.5l6 6M15 8.5l-6 6"/></svg><span>Assignments</span></button>
+    </nav></div>
+    <div class="ep-sidebar-section"><div class="ep-sidebar-label">Operations</div><nav class="ep-nav">
+      <button class="ep-nav-button" data-route="checkin.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 5h4M5 5v4M19 5h-4M19 5v4M5 19h4M5 19v-4M19 19h-4M19 19v-4"/><path d="M8 12h8"/></svg><span>QR Check-in</span><span class="ep-nav-meta">DAY</span></button>
+      <button class="ep-nav-button" data-route="reports.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 20V9M12 20V4M19 20v-7"/><path d="M3 20h18"/></svg><span>Reports</span></button>
+      <button class="ep-nav-button" data-route="settings.html"><svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2.1-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2.1 1.2L5.1 5.9l-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2.1 1.2L10 21h4l.5-2.6a7 7 0 0 0 2.1-1.2l2.3.9 2 3.4-2 1.5A7 7 0 0 0 19 12Z"/></svg><span>Settings</span></button>
+    </nav></div>
+    <div class="ep-sidebar-bottom"><div class="ep-user-card"><div class="ep-avatar" id="avatar">EX</div><div class="ep-user-copy"><div class="ep-user-name" id="sideUserName">Executive</div><div class="ep-user-role" id="sideUserRole">Loading...</div></div></div></div>
+  </aside>
+
+  <main class="ep-main">
+    <header class="ep-header"><div class="ep-header-title"><span class="ep-header-kicker">Executive Control</span><span class="ep-header-divider"></span><span class="ep-header-name">Dashboard</span></div><div class="ep-header-right"><div class="ep-system-state"><span class="ep-system-dot"></span><span id="headerSystemText">Checking system</span></div><button class="ep-signout" id="logoutButton">Sign out</button></div></header>
+    <section class="ep-page">
+      <div class="ep-loading-wrap" id="loading"><div class="ep-loading"><span class="ep-loader"></span>Loading executive console</div></div>
+      <div class="ep-error" id="errorBox"></div>
+
+      <div id="dashboardContent" style="display:none;">
+        <div class="ep-page-intro"><div><div class="ep-kicker">Operations / Overview</div><h1 class="ep-page-title" id="welcomeTitle">Welcome back</h1><p class="ep-page-description">Central control for the 3ʳᵈ BNMPC National Science Carnival. This dashboard uses live Supabase data and contains no demo registrations.</p><div class="scope-bar"><span>Access scope</span><strong>Core Executive</strong><span id="refreshStamp">LIVE</span></div></div></div>
+
+        <div class="ep-command-strip">
+          <div class="ep-command-item"><div class="ep-command-label">Events</div><div class="ep-command-value" id="eventCount">—</div><div class="ep-command-note">configured events</div></div>
+          <div class="ep-command-item"><div class="ep-command-label">Registrations</div><div class="ep-command-value" id="registrationCount">—</div><div class="ep-command-note">submitted records</div></div>
+          <div class="ep-command-item"><div class="ep-command-label">Pending review</div><div class="ep-command-value" id="pendingCount">—</div><div class="ep-command-note">action required</div></div>
+          <div class="ep-command-item"><div class="ep-command-label">Staff</div><div class="ep-command-value" id="staffCount">—</div><div class="ep-command-note">staff accounts</div></div>
         </div>
+
+        <div class="dashboard-grid">
+          <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Event operations</div><div class="ep-surface-subheading">Registration state and capacity across configured events</div></div><button class="ep-btn ep-btn-primary" data-route="events.html">Manage events</button></div><div class="event-table-wrap"><table class="event-table"><thead><tr><th>Event</th><th>State</th><th>Registrations</th><th>Capacity</th></tr></thead><tbody id="eventTableBody"><tr><td colspan="4"><div class="empty-line">Loading event operations</div></td></tr></tbody></table></div></section>
+          <div class="ep-panel-stack">
+            <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Operational signal</div><div class="ep-surface-subheading">Live counts requiring attention</div></div></div><div class="ep-surface-body" style="padding-top:8px;padding-bottom:8px"><div class="signal-list"><div class="signal-row"><span class="signal-name">Pending payments</span><span class="signal-value" id="pendingPaymentCount">0</span></div><div class="signal-row"><span class="signal-name">Checked in</span><span class="signal-value green" id="checkedInCount">0</span></div><div class="signal-row"><span class="signal-name">Open events</span><span class="signal-value green" id="openEventCount">0</span></div><div class="signal-row"><span class="signal-name">Events at capacity</span><span class="signal-value" id="fullEventCount">0</span></div></div></div></section>
+            <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">System status</div><div class="ep-surface-subheading">Core services reachable from the panel</div></div></div><div class="ep-surface-body" style="padding-top:8px;padding-bottom:8px"><div class="ep-status-list"><div class="ep-status-row"><span class="ep-status-copy">Supabase database</span><span class="ep-status-meta"><span class="ep-status-dot"></span>Online</span></div><div class="ep-status-row"><span class="ep-status-copy">Authentication</span><span class="ep-status-meta"><span class="ep-status-dot"></span>Online</span></div><div class="ep-status-row"><span class="ep-status-copy">Registration system</span><span class="ep-status-meta" id="registrationSystemStatus"><span class="ep-status-dot"></span>Checking</span></div><div class="ep-status-row"><span class="ep-status-copy">Executive portal</span><span class="ep-status-meta"><span class="ep-status-dot"></span>Online</span></div></div></div></section>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-wide">
+          <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Quick actions</div><div class="ep-surface-subheading">Direct access to primary control operations</div></div></div><div class="ep-surface-body"><div class="ep-action-grid"><button class="ep-action" data-route="events.html"><div class="ep-action-title"><span>Manage events</span><span class="ep-action-arrow">→</span></div><div class="ep-action-description">Configure event settings, fees, capacities, eligible classes, and subsegments.</div></button><button class="ep-action" data-route="registrations.html"><div class="ep-action-title"><span>Review registrations</span><span class="ep-action-arrow">→</span></div><div class="ep-action-description">Inspect participant and team registrations as submissions arrive.</div></button><button class="ep-action" data-route="payments.html"><div class="ep-action-title"><span>Payment center</span><span class="ep-action-arrow">→</span></div><div class="ep-action-description">Verify transaction details for paid-event registrations.</div></button><button class="ep-action" data-route="reports.html"><div class="ep-action-title"><span>Reports</span><span class="ep-action-arrow">→</span></div><div class="ep-action-description">Open live analytics, event performance, and CSV export.</div></button></div></div></section>
+          <section class="ep-surface"><div class="ep-surface-header"><div><div class="ep-surface-heading">Management queue</div><div class="ep-surface-subheading">Primary workflows for the registration cycle and event day</div></div></div><div class="ep-surface-body"><div class="queue-list"><div class="queue-item"><div class="queue-index">01</div><div><div class="queue-title">Registration review</div><div class="queue-copy">Process new participant and team registrations.</div></div><button class="queue-link" data-route="registrations.html">Open</button></div><div class="queue-item"><div class="queue-index">02</div><div><div class="queue-title">Payment verification</div><div class="queue-copy">Verify transactions for paid events before approval.</div></div><button class="queue-link" data-route="payments.html">Open</button></div><div class="queue-item"><div class="queue-index">03</div><div><div class="queue-title">QR check-in</div><div class="queue-copy">Verify approved and confirmed participants on event day.</div></div><button class="queue-link" data-route="checkin.html">Open</button></div></div></div></section>
+        </div>
+
+        <div class="dashboard-note"><strong>Operational state:</strong> dashboard metrics are calculated from live database records. With zero registrations, the console correctly shows zero operational activity rather than fabricated sample numbers.</div>
       </div>
 
-      <div class="ep-sidebar-section">
-        <div class="ep-sidebar-label">Control</div>
-        <nav class="ep-nav">
-          <button class="ep-nav-button active" data-route="dashboard.html">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            <span>Dashboard</span>
-          </button>
-          <button class="ep-nav-button" data-route="events.html">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 4v4M16 10v4M10 16v4"/></svg>
-            <span>Events</span>
-          </button>
-          <button class="ep-nav-button" data-route="registrations.html">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v4h4M9 11h6M9 15h6M9 19h4"/></svg>
-            <span>Registrations</span>
-          </button>
-          <button class="ep-nav-button" data-route="payments.html" data-coming-soon="Payment Center">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14"/><path d="M3 10h18M7 15h4"/></svg>
-            <span>Payments</span>
-          </button>
-        </nav>
-      </div>
-
-      <div class="ep-sidebar-section">
-        <div class="ep-sidebar-label">People</div>
-        <nav class="ep-nav">
-          <button class="ep-nav-button" data-route="staff.html">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c.5-3.5 2.4-5 6-5s5.5 1.5 6 5M15 15c2.9 0 4.7 1.3 5 4"/></svg>
-            <span>Staff</span>
-          </button>
-          <button class="ep-nav-button" data-route="assignments.html">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M9 8.5l6 6M15 8.5l-6 6"/></svg>
-            <span>Assignments</span>
-          </button>
-        </nav>
-      </div>
-
-      <div class="ep-sidebar-section">
-        <div class="ep-sidebar-label">Operations</div>
-        <nav class="ep-nav">
-          <button class="ep-nav-button" data-route="checkin.html" data-coming-soon="QR Check-in">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 5h4M5 5v4M19 5h-4M19 5v4M5 19h4M5 19v-4M19 19h-4M19 19v-4"/><path d="M8 12h8"/></svg>
-            <span>QR Check-in</span>
-            <span class="ep-nav-meta">DAY</span>
-          </button>
-          <button class="ep-nav-button" data-route="reports.html" data-coming-soon="Reports">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 20V9M12 20V4M19 20v-7"/><path d="M3 20h18"/></svg>
-            <span>Reports</span>
-          </button>
-          <button class="ep-nav-button" data-route="settings.html" data-coming-soon="Settings">
-            <svg class="ep-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2.1-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2.1 1.2L5.1 5.9l-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2.1 1.2L10 21h4l.5-2.6a7 7 0 0 0 2.1-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg>
-            <span>Settings</span>
-          </button>
-        </nav>
-      </div>
-
-      <div class="ep-sidebar-bottom">
-        <div class="ep-user-card">
-          <div class="ep-avatar" id="avatar">EX</div>
-          <div class="ep-user-copy">
-            <div class="ep-user-name" id="sideUserName">Executive</div>
-            <div class="ep-user-role" id="sideUserRole">Loading...</div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <main class="ep-main">
-      <header class="ep-header">
-        <div class="ep-header-title">
-          <span class="ep-header-kicker">Executive Control</span>
-          <span class="ep-header-divider"></span>
-          <span class="ep-header-name">Dashboard</span>
-        </div>
-        <div class="ep-header-right">
-          <div class="ep-system-state">
-            <span class="ep-system-dot"></span>
-            <span id="headerSystemText">Checking system</span>
-          </div>
-          <button class="ep-signout" id="logoutButton">Sign out</button>
-        </div>
-      </header>
-
-      <section class="ep-page">
-        <div class="ep-loading-wrap" id="loading">
-          <div class="ep-loading"><span class="ep-loader"></span>Loading executive console</div>
-        </div>
-
-        <div class="ep-error" id="errorBox"></div>
-
-        <div id="dashboardContent" style="display:none;">
-          <div class="ep-page-intro">
-            <div>
-              <div class="ep-kicker">Operations / Overview</div>
-              <h1 class="ep-page-title" id="welcomeTitle">Welcome back</h1>
-              <p class="ep-page-description">Central control for the 3ʳᵈ BNMPC National Science Carnival. Monitor event readiness, registration flow, capacity, staff, and check-in operations from one console.</p>
-            </div>
-          </div>
-
-          <div class="ep-command-strip">
-            <div class="ep-command-item">
-              <div class="ep-command-label">Events</div>
-              <div class="ep-command-value" id="eventCount">—</div>
-              <div class="ep-command-note">configured events</div>
-            </div>
-            <div class="ep-command-item">
-              <div class="ep-command-label">Registrations</div>
-              <div class="ep-command-value" id="registrationCount">—</div>
-              <div class="ep-command-note">submitted records</div>
-            </div>
-            <div class="ep-command-item">
-              <div class="ep-command-label">Pending review</div>
-              <div class="ep-command-value" id="pendingCount">—</div>
-              <div class="ep-command-note">action required</div>
-            </div>
-            <div class="ep-command-item">
-              <div class="ep-command-label">Staff</div>
-              <div class="ep-command-value" id="staffCount">—</div>
-              <div class="ep-command-note">staff accounts</div>
-            </div>
-          </div>
-
-          <div class="dashboard-grid">
-            <section class="ep-surface">
-              <div class="ep-surface-header">
-                <div>
-                  <div class="ep-surface-heading">Event operations</div>
-                  <div class="ep-surface-subheading">Registration state and capacity across configured events</div>
-                </div>
-                <button class="ep-btn ep-btn-primary" data-route="events.html">Manage events</button>
-              </div>
-              <div class="event-table-wrap">
-                <table class="event-table">
-                  <thead>
-                    <tr>
-                      <th>Event</th>
-                      <th>State</th>
-                      <th>Registrations</th>
-                      <th>Capacity</th>
-                    </tr>
-                  </thead>
-                  <tbody id="eventTableBody">
-                    <tr><td colspan="4"><div class="empty-line">Loading event operations</div></td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <div class="ep-panel-stack">
-              <section class="ep-surface">
-                <div class="ep-surface-header">
-                  <div>
-                    <div class="ep-surface-heading">Operational signal</div>
-                    <div class="ep-surface-subheading">Live counts requiring attention</div>
-                  </div>
-                </div>
-                <div class="ep-surface-body" style="padding-top:8px;padding-bottom:8px;">
-                  <div class="signal-list">
-                    <div class="signal-row"><span class="signal-name">Pending payments</span><span class="signal-value" id="pendingPaymentCount">0</span></div>
-                    <div class="signal-row"><span class="signal-name">Checked in</span><span class="signal-value green" id="checkedInCount">0</span></div>
-                    <div class="signal-row"><span class="signal-name">Open events</span><span class="signal-value green" id="openEventCount">0</span></div>
-                    <div class="signal-row"><span class="signal-name">Events at capacity</span><span class="signal-value" id="fullEventCount">0</span></div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="ep-surface">
-                <div class="ep-surface-header">
-                  <div>
-                    <div class="ep-surface-heading">System status</div>
-                    <div class="ep-surface-subheading">Core services reachable from the panel</div>
-                  </div>
-                </div>
-                <div class="ep-surface-body" style="padding-top:8px;padding-bottom:8px;">
-                  <div class="ep-status-list">
-                    <div class="ep-status-row"><span class="ep-status-copy">Supabase database</span><span class="ep-status-meta"><span class="ep-status-dot"></span>Online</span></div>
-                    <div class="ep-status-row"><span class="ep-status-copy">Authentication</span><span class="ep-status-meta"><span class="ep-status-dot"></span>Online</span></div>
-                    <div class="ep-status-row"><span class="ep-status-copy">Registration system</span><span class="ep-status-meta" id="registrationSystemStatus"><span class="ep-status-dot"></span>Checking</span></div>
-                    <div class="ep-status-row"><span class="ep-status-copy">Executive portal</span><span class="ep-status-meta"><span class="ep-status-dot"></span>Online</span></div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-
-          <div class="dashboard-grid-wide">
-            <section class="ep-surface">
-              <div class="ep-surface-header">
-                <div>
-                  <div class="ep-surface-heading">Quick actions</div>
-                  <div class="ep-surface-subheading">Direct access to primary control operations</div>
-                </div>
-              </div>
-              <div class="ep-surface-body">
-                <div class="ep-action-grid">
-                  <button class="ep-action" data-route="events.html">
-                    <div class="ep-action-title"><span>Manage events</span><span class="ep-action-arrow">→</span></div>
-                    <div class="ep-action-description">Configure event settings, fees, capacities, classes, and subsegments.</div>
-                  </button>
-                  <button class="ep-action" data-route="registrations.html">
-                    <div class="ep-action-title"><span>Review registrations</span><span class="ep-action-arrow">→</span></div>
-                    <div class="ep-action-description">Review participant and team registrations when submissions arrive.</div>
-                  </button>
-                  <button class="ep-action" data-route="staff.html">
-                    <div class="ep-action-title"><span>Manage staff</span><span class="ep-action-arrow">→</span></div>
-                    <div class="ep-action-description">Approve applications and control staff account status.</div>
-                  </button>
-                  <button class="ep-action" data-route="assignments.html">
-                    <div class="ep-action-title"><span>Event assignments</span><span class="ep-action-arrow">→</span></div>
-                    <div class="ep-action-description">Assign Segment Managers and Volunteers to event operations.</div>
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <section class="ep-surface">
-              <div class="ep-surface-header">
-                <div>
-                  <div class="ep-surface-heading">Management queue</div>
-                  <div class="ep-surface-subheading">Primary workflows for the registration cycle and event day</div>
-                </div>
-              </div>
-              <div class="ep-surface-body">
-                <div class="queue-list">
-                  <div class="queue-item"><div class="queue-index">01</div><div><div class="queue-title">Registration review</div><div class="queue-copy">Process new participant and team registrations.</div></div><button class="queue-link" data-route="registrations.html">Open</button></div>
-                  <div class="queue-item"><div class="queue-index">02</div><div><div class="queue-title">Payment verification</div><div class="queue-copy">Verify transactions for paid events before approval.</div></div><button class="queue-link" data-route="payments.html" data-coming-soon="Payment Center">Open</button></div>
-                  <div class="queue-item"><div class="queue-index">03</div><div><div class="queue-title">QR check-in</div><div class="queue-copy">Verify approved and confirmed participants on event day.</div></div><button class="queue-link" data-route="checkin.html" data-coming-soon="QR Check-in">Open</button></div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <div class="dashboard-note">
-            <strong>Console ready.</strong> The dashboard is now aligned with the BNMPC sharp-corner visual system. Live operational modules will be added one small project at a time without changing this core visual language.
-          </div>
-        </div>
-
-        <div class="ep-restricted" id="restrictedContent">
-          <div class="ep-kicker">Access control</div>
-          <div class="ep-restricted-title">Dashboard access is limited</div>
-          <div class="ep-restricted-copy">This dashboard is currently reserved for Core Executives. Segment Manager and Volunteer operational views will be added in later panel projects.</div>
-        </div>
-      </section>
-    </main>
-
-    <nav class="ep-mobile-bar" aria-label="Mobile navigation">
-      <button class="active" data-route="dashboard.html">Home</button>
-      <button data-route="events.html">Events</button>
-      <button data-route="registrations.html">Registrations</button>
-      <button data-route="checkin.html" data-coming-soon="QR Check-in">Check-in</button>
-    </nav>
-  </div>
-
-  <script>
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
-
-    const $ = (id) => document.getElementById(id);
-
-    function formatRole(role) {
-      const roles = {
-        core_executive: 'Core Executive',
-        segment_manager: 'Segment Manager',
-        volunteer: 'Volunteer'
-      };
-      return roles[role] || 'Staff';
-    }
-
-    function getInitials(name) {
-      if (!name) return 'EX';
-      const parts = name.trim().split(/\s+/).filter(Boolean);
-      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-
-    function showError(message) {
-      const box = $('errorBox');
-      box.textContent = message;
-      box.style.display = 'block';
-    }
-
-    function setRegistrationSystemStatus(label, tone = 'ok') {
-      const node = $('registrationSystemStatus');
-      if (!node) return;
-      node.textContent = '';
-      const dot = document.createElement('span');
-      dot.className = 'ep-status-dot';
-      node.appendChild(dot);
-      node.appendChild(document.createTextNode(label));
-      node.classList.remove('warn', 'error');
-      if (tone === 'warn') node.classList.add('warn');
-      if (tone === 'error') node.classList.add('error');
-    }
-
-    function navigate(route, button) {
-      if (!route) return;
-      const safeRoutes = new Set([
-        'dashboard.html',
-        'events.html',
-        'registrations.html',
-        'payments.html',
-        'staff.html',
-        'assignments.html',
-        'checkin.html',
-        'reports.html',
-        'settings.html'
-      ]);
-      if (!safeRoutes.has(route)) return;
-
-      if (button?.dataset.comingSoon) {
-        alert(button.dataset.comingSoon + ' is being built in the next project.');
-        return;
-      }
-
-      window.location.href = route;
-    }
-
-    document.querySelectorAll('[data-route]').forEach((button) => {
-      button.addEventListener('click', () => navigate(button.dataset.route, button));
-    });
-
-    async function loadDashboardStats() {
-      const { data, error } = await supabaseClient.rpc('get_dashboard_stats');
-      if (error) throw error;
-      const stats = data?.[0];
-      if (!stats) throw new Error('No dashboard statistics returned.');
-
-      $('eventCount').textContent = stats.total_events ?? 0;
-      $('registrationCount').textContent = stats.total_registrations ?? 0;
-      $('pendingCount').textContent = stats.pending_reviews ?? 0;
-      $('staffCount').textContent = stats.staff_accounts ?? 0;
-    }
-
-    async function loadRegistrationSignal() {
-      const { data, error } = await supabaseClient
-        .from('registrations')
-        .select('payment_required,payment_status,checked_in')
-        .limit(5000);
-
-      if (error) throw error;
-
-      const rows = data || [];
-      const pendingPayments = rows.filter((r) => r.payment_required === true && r.payment_status === 'pending').length;
-      const checkedIn = rows.filter((r) => r.checked_in === true).length;
-
-      $('pendingPaymentCount').textContent = pendingPayments;
-      $('checkedInCount').textContent = checkedIn;
-    }
-
-    async function loadEventOverview() {
-      const { data: events, error: eventError } = await supabaseClient
-        .from('events')
-        .select('id,name,slug,registration_enabled,hard_capacity,warning_capacity,has_subsegments')
-        .order('name', { ascending: true });
-
-      if (eventError) throw eventError;
-
-      const { data: registrations, error: registrationError } = await supabaseClient
-        .from('registrations')
-        .select('event_id,registration_status')
-        .limit(10000);
-
-      if (registrationError) throw registrationError;
-
-      const activeCounts = new Map();
-      (registrations || []).forEach((row) => {
-        if (row.registration_status === 'rejected' || row.registration_status === 'cancelled') return;
-        activeCounts.set(row.event_id, (activeCounts.get(row.event_id) || 0) + 1);
-      });
-
-      const body = $('eventTableBody');
-      body.innerHTML = '';
-
-      if (!events?.length) {
-        body.innerHTML = '<tr><td colspan="4"><div class="empty-line">No events configured</div></td></tr>';
-        $('openEventCount').textContent = '0';
-        $('fullEventCount').textContent = '0';
-        return;
-      }
-
-      let openCount = 0;
-      let fullCount = 0;
-
-      events.forEach((event) => {
-        const count = activeCounts.get(event.id) || 0;
-        const hasHardCap = Number(event.hard_capacity || 0) > 0;
-        const percentage = hasHardCap ? Math.min(100, Math.round((count / event.hard_capacity) * 100)) : 0;
-        const full = hasHardCap && count >= event.hard_capacity;
-        const open = event.registration_enabled === true && !full;
-
-        if (open) openCount += 1;
-        if (full) fullCount += 1;
-
-        const tr = document.createElement('tr');
-
-        const nameCell = document.createElement('td');
-        nameCell.className = 'event-name';
-        nameCell.textContent = event.name;
-        const meta = document.createElement('div');
-        meta.className = 'event-meta';
-        meta.textContent = event.has_subsegments ? 'Subsegments enabled' : 'Main event';
-        nameCell.appendChild(meta);
-
-        const statusCell = document.createElement('td');
-        const chip = document.createElement('span');
-        chip.className = 'status-chip ' + (full ? 'full' : (open ? 'open' : ''));
-        const dot = document.createElement('span');
-        dot.className = 'status-dot';
-        chip.appendChild(dot);
-        chip.appendChild(document.createTextNode(full ? 'Full' : (event.registration_enabled ? 'Open' : 'Closed')));
-        statusCell.appendChild(chip);
-
-        const registrationCell = document.createElement('td');
-        registrationCell.textContent = String(count);
-
-        const capacityCell = document.createElement('td');
-        capacityCell.className = 'capacity';
-        const track = document.createElement('div');
-        track.className = 'capacity-track';
-        const fill = document.createElement('div');
-        fill.className = 'capacity-fill' + (full ? ' full' : ((event.warning_capacity > 0 && count >= event.warning_capacity) ? ' warn' : ''));
-        fill.style.width = hasHardCap ? percentage + '%' : '0%';
-        track.appendChild(fill);
-
-        const label = document.createElement('div');
-        label.className = 'capacity-label';
-        label.textContent = hasHardCap ? count + ' / ' + event.hard_capacity : count + ' / ∞';
-
-        capacityCell.appendChild(track);
-        capacityCell.appendChild(label);
-
-        tr.appendChild(nameCell);
-        tr.appendChild(statusCell);
-        tr.appendChild(registrationCell);
-        tr.appendChild(capacityCell);
-        body.appendChild(tr);
-      });
-
-      $('openEventCount').textContent = openCount;
-      $('fullEventCount').textContent = fullCount;
-    }
-
-    async function loadRegistrationSystemStatus() {
-      const { data, error } = await supabaseClient
-        .from('system_settings')
-        .select('key,value')
-        .eq('key', 'registration_system_enabled')
-        .maybeSingle();
-
-      if (error) {
-        setRegistrationSystemStatus('Unavailable', 'error');
-        $('headerSystemText').textContent = 'Registration status unavailable';
-        return;
-      }
-
-      const enabled = data?.value === 'true';
-      setRegistrationSystemStatus(enabled ? 'Open' : 'Closed', enabled ? 'ok' : 'warn');
-      $('headerSystemText').textContent = enabled ? 'Registration open' : 'Registration closed';
-    }
-
-    async function loadDashboard() {
-      $('errorBox').style.display = 'none';
-      $('loading').style.display = 'grid';
-
-      try {
-        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
-        if (sessionError) throw new Error('Unable to verify your login session.');
-        if (!sessionData?.session) {
-          window.location.href = 'login.html';
-          return;
-        }
-
-        const { data: profileData, error: profileError } = await supabaseClient.rpc('get_my_staff_profile');
-        if (profileError) throw new Error('Unable to load your staff profile.');
-        const profile = profileData?.[0];
-        if (!profile) throw new Error('No staff profile was found for this account.');
-
-        const fullName = profile.full_name || 'Executive';
-        const role = profile.role || 'volunteer';
-
-        $('sideUserName').textContent = fullName;
-        $('sideUserRole').textContent = formatRole(role);
-        $('avatar').textContent = getInitials(fullName);
-        $('welcomeTitle').textContent = 'Welcome back, ' + fullName;
-
-        $('loading').style.display = 'none';
-
-        if (profile.account_status === 'active' && role === 'core_executive') {
-          $('dashboardContent').style.display = 'block';
-          $('restrictedContent').style.display = 'none';
-
-          await Promise.all([
-            loadDashboardStats(),
-            loadRegistrationSignal(),
-            loadEventOverview(),
-            loadRegistrationSystemStatus()
-          ]);
-        } else {
-          $('dashboardContent').style.display = 'none';
-          $('restrictedContent').style.display = 'block';
-        }
-      } catch (error) {
-        console.error(error);
-        $('loading').style.display = 'none';
-        showError(error?.message || 'An unexpected error occurred while loading the dashboard.');
-      }
-    }
-
-    $('logoutButton').addEventListener('click', async () => {
-      const { error } = await supabaseClient.auth.signOut();
-      if (error) {
-        alert('Unable to sign out. Please try again.');
-        return;
-      }
-      window.location.href = 'login.html';
-    });
-
-    loadDashboard();
-  </script>
+      <div class="ep-restricted" id="restrictedContent"><div class="ep-kicker">Access control</div><div class="ep-restricted-title">Dashboard access is limited</div><div class="ep-restricted-copy">This management dashboard is reserved for Core Executives. Segment Managers and Volunteers use their event-day and assigned-operation views.</div></div>
+    </section>
+  </main>
+  <nav class="ep-mobile-bar" aria-label="Mobile navigation"><button class="active" data-route="dashboard.html">Home</button><button data-route="events.html">Events</button><button data-route="registrations.html">Registrations</button><button data-route="checkin.html">Check-in</button></nav>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+  const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);
+  const ROLE_LABELS={supreme_executive:'Core Executive',higher_executive:'Core Executive',segment_executive:'Segment Manager',member:'Volunteer'};
+  const CORE_ROLES=['supreme_executive','higher_executive'];
+  const routes=new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
+  function roleLabel(r){return ROLE_LABELS[r]||'Staff'}
+  function initials(name){if(!name)return'EX';const p=name.trim().split(/\s+/).filter(Boolean);return p.length===1?p[0].slice(0,2).toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase()}
+  function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+  function navigate(route){if(routes.has(route))window.location.href=route}
+  document.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.route)));
+  function showError(message){$('errorBox').textContent=message;$('errorBox').style.display='block'}
+  function setRegistrationSystemStatus(label,tone='ok'){const n=$('registrationSystemStatus');n.textContent='';const d=document.createElement('span');d.className='ep-status-dot';n.appendChild(d);n.appendChild(document.createTextNode(label));n.classList.remove('warn','error');if(tone==='warn')n.classList.add('warn');if(tone==='error')n.classList.add('error')}
+  async function loadRegistrationSystemStatus(){const{data,error}=await supabaseClient.from('system_settings').select('key,value').eq('key','registration_system_enabled').maybeSingle();if(error){setRegistrationSystemStatus('Unavailable','error');$('headerSystemText').textContent='Status unavailable';return}const enabled=data?.value==='true';setRegistrationSystemStatus(enabled?'Open':'Closed',enabled?'ok':'warn');$('headerSystemText').textContent=enabled?'Registration open':'Registration closed'}
+  async function loadSignals(){const{data,error}=await supabaseClient.from('registrations').select('payment_required,payment_status,checked_in').limit(10000);if(error)throw error;const r=data||[];$('pendingPaymentCount').textContent=r.filter(x=>x.payment_required&&x.payment_status==='pending').length;$('checkedInCount').textContent=r.filter(x=>x.checked_in===true).length}
+  async function loadOverview(){const[{data:events,error:ee},{data:regs,error:re}]=await Promise.all([supabaseClient.from('events').select('id,name,registration_enabled,hard_capacity,warning_capacity,has_subsegments,sort_order').order('sort_order',{ascending:true}),supabaseClient.from('registrations').select('event_id,registration_status').limit(10000)]);if(ee)throw ee;if(re)throw re;const active=new Map();(regs||[]).forEach(r=>{if(!['rejected','cancelled'].includes(r.registration_status))active.set(r.event_id,(active.get(r.event_id)||0)+1)});const body=$('eventTableBody');body.innerHTML='';let open=0,full=0;if(!events?.length){body.innerHTML='<tr><td colspan="4"><div class="empty-line">No events configured</div></td></tr>'}else{events.forEach(e=>{const c=active.get(e.id)||0;const cap=Number(e.hard_capacity||0);const warn=Number(e.warning_capacity||0);const isFull=cap>0&&c>=cap;const isOpen=e.registration_enabled===true&&!isFull;const pct=cap>0?Math.min(100,Math.round(c/cap*100)):0;if(isOpen)open++;if(isFull)full++;const tr=document.createElement('tr');const n=document.createElement('td');n.className='event-name';n.textContent=e.name;const m=document.createElement('div');m.className='event-meta';m.textContent=e.has_subsegments?'Subsegments enabled':'Main event';n.appendChild(m);const s=document.createElement('td');const chip=document.createElement('span');chip.className='status-chip '+(isFull?'full':(isOpen?'open':'closed'));const dot=document.createElement('span');dot.className='status-dot';chip.appendChild(dot);chip.appendChild(document.createTextNode(isFull?'Full':(isOpen?'Open':'Closed')));s.appendChild(chip);const rc=document.createElement('td');rc.textContent=String(c);const cc=document.createElement('td');cc.className='capacity';const track=document.createElement('div');track.className='capacity-track';const fill=document.createElement('div');fill.className='capacity-fill'+(isFull?' full':(warn>0&&c>=warn?' warn':''));fill.style.width=cap>0?pct+'%':'0%';track.appendChild(fill);const lab=document.createElement('div');lab.className='capacity-label';lab.textContent=cap>0?c+' / '+cap:c+' / ∞';cc.append(track,lab);tr.append(n,s,rc,cc);body.appendChild(tr)})} $('eventCount').textContent=events?.length||0;$('openEventCount').textContent=open;$('fullEventCount').textContent=full}
+  async function loadDashboard(){try{$('errorBox').style.display='none';$('loading').style.display='grid';const{data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw new Error('Unable to verify your login session.');if(!sessionData?.session){window.location.href='login.html';return}const{data:profileData,error:profileError}=await supabaseClient.rpc('get_my_staff_profile');if(profileError)throw new Error('Unable to load your staff profile.');const p=profileData?.[0];if(!p)throw new Error('No staff profile was found for this account.');$('sideUserName').textContent=p.full_name||'Executive';$('sideUserRole').textContent=roleLabel(p.role);$('avatar').textContent=initials(p.full_name);$('welcomeTitle').textContent='Welcome back, '+(p.full_name||'Executive');$('loading').style.display='none';if(p.account_status==='active'&&CORE_ROLES.includes(p.role)){$('dashboardContent').style.display='block';$('restrictedContent').style.display='none';await Promise.all([loadStats(),loadSignals(),loadOverview(),loadRegistrationSystemStatus()]);$('refreshStamp').textContent='LIVE · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}else{$('dashboardContent').style.display='none';$('restrictedContent').style.display='block'}}catch(e){console.error(e);$('loading').style.display='none';showError(e?.message||'An unexpected error occurred while loading the dashboard.')}}
+  async function loadStats(){const{data,error}=await supabaseClient.rpc('get_dashboard_stats');if(error)throw error;const s=data?.[0];if(!s)throw new Error('No dashboard statistics returned.');$('registrationCount').textContent=s.total_registrations??0;$('pendingCount').textContent=s.pending_reviews??0;$('staffCount').textContent=s.staff_accounts??0}
+  $('logoutButton').addEventListener('click',async()=>{const{error}=await supabaseClient.auth.signOut();if(error){alert('Unable to sign out. Please try again.');return}window.location.href='login.html'});
+  loadDashboard();
+</script>
 </body>
 </html>
