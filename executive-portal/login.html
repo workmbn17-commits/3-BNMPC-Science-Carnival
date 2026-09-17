@@ -1,48 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070909" />
   <title>Executive Login — 3ʳᵈ BNMPC Science Carnival</title>
 
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 </head>
 
-<body>
+<body class="auth-body">
+  <main class="auth-page">
+    <section class="auth-frame" aria-label="Executive portal login">
+      <div class="auth-brand-panel">
+        <div class="auth-brand-top">
+          <div class="auth-brand-mark" aria-hidden="true">BN</div>
+          <div>
+            <div class="auth-brand-name">3ʳᵈ BNMPC Science Carnival</div>
+            <div class="auth-brand-subtitle">Executive Control Panel</div>
+          </div>
+        </div>
 
-  <h1>Executive Login</h1>
-  <p>3ʳᵈ BNMPC Science Carnival</p>
+        <div class="auth-brand-main">
+          <div class="auth-kicker">Executive access / 01</div>
+          <h1 class="auth-title">Control the<br /><span>carnival.</span></h1>
+          <p class="auth-description">
+            Secure operational access for Core Executives, Segment Managers, and Volunteers.
+            Registration operations, event management, staff coordination, and event-day check-in live here.
+          </p>
 
-  <form id="loginForm">
+          <div class="auth-system-grid">
+            <div class="auth-system-item">
+              <div class="auth-system-label">Identity</div>
+              <div class="auth-system-value green">Supabase Auth</div>
+            </div>
+            <div class="auth-system-item">
+              <div class="auth-system-label">Data</div>
+              <div class="auth-system-value">PostgreSQL</div>
+            </div>
+            <div class="auth-system-item">
+              <div class="auth-system-label">Access</div>
+              <div class="auth-system-value">Role controlled</div>
+            </div>
+          </div>
+        </div>
 
-    <label for="email">Email</label><br>
-    <input
-      type="email"
-      id="email"
-      required
-      autocomplete="email"
-    >
+        <div class="auth-footnote">
+          BNMPC / NATIONAL SCIENCE CARNIVAL<br />Authorized personnel only
+        </div>
+      </div>
 
-    <br><br>
+      <div class="auth-form-panel">
+        <div class="auth-form-wrap">
+          <div class="auth-form-header">
+            <div class="auth-kicker">Authentication</div>
+            <h2 class="auth-form-title">Sign in</h2>
+            <p class="auth-form-subtitle">Enter your approved staff account credentials.</p>
+          </div>
 
-    <label for="password">Password</label><br>
-    <input
-      type="password"
-      id="password"
-      required
-      autocomplete="current-password"
-    >
+          <form id="loginForm" class="auth-form" novalidate>
+            <div class="auth-field">
+              <label class="auth-label" for="email">Email</label>
+              <input
+                class="auth-input"
+                type="email"
+                id="email"
+                required
+                autocomplete="email"
+                placeholder="name@example.com"
+              />
+            </div>
 
-    <br><br>
+            <div class="auth-field">
+              <label class="auth-label" for="password">Password</label>
+              <input
+                class="auth-input"
+                type="password"
+                id="password"
+                required
+                autocomplete="current-password"
+                placeholder="Enter your password"
+              />
+            </div>
 
-    <button type="submit">Log In</button>
+            <button class="auth-primary" id="loginButton" type="submit">Sign in to Executive Panel</button>
 
-  </form>
+            <div class="auth-meta-row">
+              <div class="auth-status">
+                <span class="auth-status-dot" aria-hidden="true"></span>
+                Secure connection
+              </div>
+              <a class="auth-link" href="signup.html">Apply for access</a>
+            </div>
 
-  <p id="message"></p>
+            <div id="message" class="auth-message" role="status" aria-live="polite"></div>
+          </form>
 
-  <script src="supabase-config.js"></script>
+          <div class="auth-divider">BNMPC</div>
+          <p class="auth-note">
+            Staff accounts must be approved before administrative access is granted.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
     const supabaseClient = window.supabase.createClient(
@@ -52,30 +117,67 @@
 
     const loginForm = document.getElementById("loginForm");
     const message = document.getElementById("message");
+    const loginButton = document.getElementById("loginButton");
+
+    function showMessage(text, type = "") {
+      message.textContent = text;
+      message.className = "auth-message show" + (type ? ` ${type}` : "");
+    }
 
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      message.textContent = "Signing in...";
-
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
+      if (!email || !password) {
+        showMessage("Enter both your email and password.", "error");
+        return;
+      }
+
+      loginButton.disabled = true;
+      loginButton.textContent = "Authenticating...";
+      showMessage("Verifying your account...", "");
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
         email,
         password
       });
 
       if (error) {
-        message.textContent = error.message;
+        showMessage(error.message, "error");
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign in to Executive Panel";
         return;
       }
 
-      message.textContent = "Login successful.";
+      const { data: profileData, error: profileError } = await supabaseClient.rpc(
+        "get_my_staff_profile"
+      );
 
-      window.location.href = "dashboard.html";
+      if (profileError || !profileData || profileData.length === 0) {
+        await supabaseClient.auth.signOut();
+        showMessage("Your account is not connected to an approved staff profile.", "error");
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign in to Executive Panel";
+        return;
+      }
+
+      const profile = profileData[0];
+
+      if (profile.account_status !== "active") {
+        await supabaseClient.auth.signOut();
+        showMessage("Your staff account is not active yet. Please wait for approval.", "error");
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign in to Executive Panel";
+        return;
+      }
+
+      showMessage("Authentication successful. Opening Executive Panel...", "success");
+      window.setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 250);
     });
   </script>
-
 </body>
 </html>
