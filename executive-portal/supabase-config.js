@@ -63,25 +63,62 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true}); else start();
 })();
 
-/* Compatibility layer for legacy pages: on the registrations screen only, expose both database executive tiers as the UI role Core Executive. Backend authorization remains based on the real database role. */
-(function normalizeRegistrationsExecutiveRole(){
+/* Registration role compatibility: never rewrite the real database role. The registrations page already maps both executive tiers to Core Executive. */
+(function preserveRegistrationsExecutiveRole(){
   if(!/\/registrations(?:\.html)?$/.test(window.location.pathname)) return;
   if(!window.supabase?.createClient) return;
   const originalCreateClient = window.supabase.createClient.bind(window.supabase);
   window.supabase.createClient = function(...args){
     const client = originalCreateClient(...args);
-    const originalRpc = client.rpc.bind(client);
-    client.rpc = async function(functionName, rpcArgs, options){
-      const result = await originalRpc(functionName, rpcArgs, options);
-      if(functionName === 'get_my_staff_profile' && Array.isArray(result?.data)){
-        result.data = result.data.map(profile => ({
-          ...profile,
-          raw_role: profile.role,
-          role: ['supreme_executive','higher_executive'].includes(profile.role) ? 'core_executive' : profile.role
-        }));
-      }
-      return result;
-    };
     return client;
   };
+})();
+
+/* Registration directory completeness: show every event in the account's accessible event list, including events with zero registrations. */
+(function completeRegistrationEventDirectory(){
+  if(!/\/registrations(?:\.html)?$/.test(window.location.pathname)) return;
+  const start = () => {
+    if(!window.supabase?.createClient) return;
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    let busy = false;
+    const syncEvents = async () => {
+      const directory = document.getElementById('directory');
+      if(!directory || busy) return;
+      const page = document.getElementById('pageContent');
+      if(!page || page.style.display === 'none') return;
+      busy = true;
+      try {
+        const [{data: events, error: eventError}, {data: subs, error: subError}] = await Promise.all([
+          client.from('events').select('id,name,has_subsegments').order('name'),
+          client.from('subsegments').select('id,event_id,name').order('name')
+        ]);
+        if(eventError || subError) return;
+        const existingNames = new Set([...directory.querySelectorAll('.folder-name')].map(node => node.textContent.trim()));
+        (events || []).forEach(eventRow => {
+          if(existingNames.has(eventRow.name)) return;
+          const folder = document.createElement('section');
+          folder.className = 'folder';
+          const eventSubs = (subs || []).filter(s => s.event_id === eventRow.id);
+          const nested = eventSubs.length
+            ? eventSubs.map(s => `<section class="subfolder"><button class="subfolder-header" type="button"><span class="subfolder-icon">›</span><span><span class="subfolder-name">${escapeHtml(s.name)}</span><span class="subfolder-meta">Subsegment · 0 registrations</span></span><span class="subfolder-count">0</span><span class="tree-arrow">›</span></button><div class="subfolder-content"><div class="empty-state"><div class="empty-state-title">No registrations yet</div><div class="empty-state-copy">This subsegment is configured and currently has no registration records.</div></div></div></section>`).join('')
+            : `<section class="subfolder"><div class="subfolder-header" style="cursor:default"><span class="subfolder-icon">›</span><span><span class="subfolder-name">Registrations</span><span class="subfolder-meta">Main event · 0 registrations</span></span><span class="subfolder-count">0</span><span></span></section>`;
+          folder.innerHTML = `<button class="folder-header" type="button"><span class="folder-icon">▣</span><span><span class="folder-name">${escapeHtml(eventRow.name)}</span><span class="folder-meta">Main event · ${eventRow.has_subsegments ? 'subsegments enabled' : 'direct registrations'}</span></span><span class="folder-count">0</span><span class="tree-arrow">›</span></button><div class="folder-content">${nested}</div>`;
+          directory.appendChild(folder);
+          folder.querySelector('.folder-header').addEventListener('click', () => folder.classList.toggle('open'));
+          folder.querySelectorAll('.subfolder-header').forEach(button => button.addEventListener('click', () => button.parentElement.classList.toggle('open')));
+        });
+      } finally {
+        busy = false;
+      }
+    };
+    const escapeHtml = value => String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+    const directory = document.getElementById('directory');
+    if(directory){
+      new MutationObserver(() => syncEvents()).observe(directory,{childList:true,subtree:false});
+      setTimeout(syncEvents,500);
+      setTimeout(syncEvents,1500);
+      setTimeout(syncEvents,3000);
+    }
+  };
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true}); else start();
 })();
