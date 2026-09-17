@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="assets/css/executive-shell.css">
   <link rel="stylesheet" href="assets/css/assignments-theme.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
   <style>
     .segment-picker{display:grid;gap:8px;max-height:380px;overflow:auto;border:1px solid var(--border-default);background:var(--surface-input);padding:8px}
     .segment-option{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;align-items:start;padding:10px;border:1px solid var(--border-subtle);background:var(--surface-panel);cursor:pointer}
@@ -82,6 +81,8 @@
   </div>
 
   <script>
+    const SUPABASE_URL='https://tbwrjorqzumjyiptglkf.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY='sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG';
     const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
     const $=id=>document.getElementById(id);
     const state={profile:null,staff:[],segments:[],assignments:[],currentStaff:null};
