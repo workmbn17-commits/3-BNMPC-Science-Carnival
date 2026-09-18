@@ -111,7 +111,7 @@
                   <input class="staff-input" id="searchInput" type="search" placeholder="Search name or phone...">
                   <select class="staff-select" id="roleFilter">
                     <option value="">All roles</option>
-                    <option value="supreme_executive">Core Executive</option>
+                    <option value="core_executive">Core Executive</option>
                     <option value="segment_executive">Segment Manager</option>
                     <option value="member">Volunteer</option>
                   </select>
@@ -326,7 +326,10 @@
       const status=$('statusFilter').value;
       return state.staff.filter(person=>{
         const hay=[person.full_name,person.phone,person.role,person.requested_role].map(normalized).join(' ');
-        return (!search||hay.includes(search)) && (!role||person.role===role) && (!status||person.account_status===status);
+        const roleMatches = !role ||
+          (role==='core_executive' && ['supreme_executive','higher_executive'].includes(person.role)) ||
+          (role!=='core_executive' && person.role===role);
+        return (!search||hay.includes(search)) && roleMatches && (!status||person.account_status===status);
       });
     }
 
