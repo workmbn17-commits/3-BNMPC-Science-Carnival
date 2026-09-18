@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/css/design-system.css" />
   <link rel="stylesheet" href="assets/css/executive-shell.css" />
   <link rel="stylesheet" href="assets/css/reports-theme.css" />
+  <link rel="stylesheet" href="assets/css/mobile-responsive.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
@@ -258,5 +259,6 @@
     $('logoutButton').addEventListener('click',async()=>{await supabaseClient.auth.signOut();window.location.href='login.html';});
     init();
   </script>
+<script src="assets/js/mobile-nav.js" defer></script>
 </body>
 </html>
