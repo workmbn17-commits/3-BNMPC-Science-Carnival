@@ -415,24 +415,39 @@
 
     function openModal(id) {
       const modal = $(id);
-      if (!modal) return;
+      if (!modal) {
+        console.error('[BNMPC] Modal not found:', id);
+        showError('Unable to open the editor. The editor window is missing from this page.');
+        return false;
+      }
+      modal.removeAttribute('hidden');
       modal.classList.add('show');
-      modal.style.display = 'flex';
-      modal.style.visibility = 'visible';
-      modal.style.opacity = '1';
-      modal.style.pointerEvents = 'auto';
       modal.setAttribute('aria-hidden', 'false');
+      // Use !important here because the shared design system intentionally hides
+      // modal overlays with an !important display rule.
+      modal.style.setProperty('display', 'flex', 'important');
+      modal.style.setProperty('visibility', 'visible', 'important');
+      modal.style.setProperty('opacity', '1', 'important');
+      modal.style.setProperty('pointer-events', 'auto', 'important');
+      document.body.classList.add('ep-modal-open');
+      document.body.style.overflow = 'hidden';
+      return true;
     }
 
     function closeModal(id) {
       const modal = $(id);
       if (!modal) return;
       modal.classList.remove('show');
-      modal.style.display = 'none';
-      modal.style.visibility = 'hidden';
-      modal.style.opacity = '0';
-      modal.style.pointerEvents = 'none';
       modal.setAttribute('aria-hidden', 'true');
+      modal.setAttribute('hidden', '');
+      modal.style.setProperty('display', 'none', 'important');
+      modal.style.setProperty('visibility', 'hidden', 'important');
+      modal.style.setProperty('opacity', '0', 'important');
+      modal.style.setProperty('pointer-events', 'none', 'important');
+      if (!document.querySelector('.modal-overlay.show')) {
+        document.body.classList.remove('ep-modal-open');
+        document.body.style.overflow = '';
+      }
     }
 
     function escapeHtml(value) {
@@ -560,20 +575,30 @@
         if (tone === 'full') node.querySelector('.capacity-fill').style.background = 'var(--warning)';
       }
 
-      body.querySelectorAll('[data-edit-event]').forEach(button => {
-        button.addEventListener('click', event => {
+      // Button handling is delegated from the table body so it survives every
+      // table re-render and cannot be lost when the event list is refreshed.
+      body.onclick = event => {
+        const editButton = event.target.closest('[data-edit-event]');
+        if (editButton && body.contains(editButton)) {
           event.preventDefault();
           event.stopPropagation();
-          openEventEditor(button.dataset.editEvent);
-        });
-      });
-      body.querySelectorAll('[data-manage-subsegments]').forEach(button => {
-        button.addEventListener('click', event => {
+          const eventId = editButton.getAttribute('data-edit-event');
+          console.debug('[BNMPC] Opening event editor:', eventId);
+          void openEventEditor(eventId);
+          return;
+        }
+        const segmentButton = event.target.closest('[data-manage-subsegments]');
+        if (segmentButton && body.contains(segmentButton)) {
           event.preventDefault();
           event.stopPropagation();
-          openSubsegmentManager(button.dataset.manageSubsegments);
-        });
-      });
+          const eventId = segmentButton.getAttribute('data-manage-subsegments');
+          console.debug('[BNMPC] Opening segment manager:', eventId);
+          void openSubsegmentManager(eventId).catch(error => {
+            console.error(error);
+            showError(error?.message || 'Unable to open segment manager.');
+          });
+        }
+      };
     }
 
     function renderClassGroups(containerId, selectedIds = []) {
@@ -631,9 +656,10 @@
 
       updateTeamSizeFields();
 
-      // Open the editor immediately. A class-group read failure must never make
-      // the Edit button appear dead.
-      openModal('eventModalOverlay');
+      // Open the editor before any secondary database request. Even if
+      // class-group loading fails, the Edit window must still appear.
+      const opened = openModal('eventModalOverlay');
+      if (!opened) return;
 
       const classGroupList = $('classGroupList');
       classGroupList.innerHTML = '<div class="form-help">Loading eligible class groups…</div>';
@@ -782,9 +808,9 @@
       $('subsegmentRulesText').value = subsegment?.rules_text || '';
       $('subsegmentEditTitle').textContent = subsegment ? 'Edit segment' : 'Add segment';
 
-      // Open the editor immediately. Loading the class-group checklist should never prevent
-      // the edit window from appearing.
-      openModal('subsegmentEditOverlay');
+      // Open the editor before loading any secondary data.
+      const opened = openModal('subsegmentEditOverlay');
+      if (!opened) return;
 
       const classGroupList = $('subsegmentClassGroupList');
       classGroupList.innerHTML = '<div class="form-help">Loading eligible class groups…</div>';
@@ -957,6 +983,17 @@
         showError(error.message || 'Unable to load events management.');
       }
     }
+
+    // Wire the modal close controls immediately; these controls do not depend
+    // on event data being loaded.
+    ['eventModalOverlay','subsegmentModalOverlay','subsegmentEditOverlay'].forEach(id => {
+      const overlay = $(id);
+      if (overlay) {
+        overlay.setAttribute('hidden', '');
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.style.setProperty('display', 'none', 'important');
+      }
+    });
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init, { once: true });
