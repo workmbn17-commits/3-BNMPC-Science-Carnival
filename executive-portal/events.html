@@ -434,6 +434,87 @@
     }
   </style>
 
+  <style id="ep-subsegment-editor-horizontal">
+    /* Keep Add/Edit Segment consistent with the wide Event editor. */
+    #subsegmentEditOverlay {
+      box-sizing: border-box !important;
+      width: 100vw !important;
+      max-width: none !important;
+    }
+    #subsegmentEditOverlay > .modal {
+      box-sizing: border-box !important;
+      width: min(1120px, calc(100vw - 48px)) !important;
+      max-width: 1120px !important;
+      min-width: 0 !important;
+      flex: 0 1 1120px !important;
+      margin: 24px auto !important;
+    }
+    #subsegmentForm .modal-body {
+      display: block !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #subsegmentForm .form-row {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #subsegmentForm .form-row-3 {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #subsegmentForm .form-group {
+      min-width: 0 !important;
+      width: 100% !important;
+    }
+    #subsegmentForm .form-input,
+    #subsegmentForm .form-select {
+      width: 100% !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+    }
+    #subsegmentForm #subsegmentClassGroupList {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 10px 18px !important;
+      width: 100% !important;
+    }
+    #subsegmentForm .switch-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 24px !important;
+    }
+    #subsegmentForm .modal-footer {
+      display: flex !important;
+      justify-content: flex-end !important;
+      gap: 8px !important;
+    }
+    @media (max-width: 820px) {
+      #subsegmentEditOverlay > .modal {
+        width: calc(100vw - 24px) !important;
+        flex-basis: auto !important;
+      }
+      #subsegmentForm .form-row,
+      #subsegmentForm .form-row-3 {
+        grid-template-columns: 1fr !important;
+      }
+      #subsegmentForm #subsegmentClassGroupList {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+    }
+    @media (max-width: 520px) {
+      #subsegmentForm #subsegmentClassGroupList {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+
   <script>
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
