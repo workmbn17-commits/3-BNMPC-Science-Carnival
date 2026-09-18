@@ -362,6 +362,78 @@
     </div>
   </div>
 
+
+  <style id="ep-event-editor-horizontal">
+    /* Force the event editor to use the full desktop width. This intentionally
+       sits after all external CSS so shared modal rules cannot collapse it. */
+    #eventModalOverlay {
+      box-sizing: border-box !important;
+      width: 100vw !important;
+      max-width: none !important;
+    }
+    #eventModalOverlay > .modal.modal-large {
+      box-sizing: border-box !important;
+      width: min(1120px, calc(100vw - 48px)) !important;
+      max-width: 1120px !important;
+      min-width: 0 !important;
+      flex: 0 1 1120px !important;
+      margin: 24px auto !important;
+    }
+    #eventForm .modal-body {
+      display: block !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #eventForm .form-row {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #eventForm .form-row-3 {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #eventForm .form-group {
+      min-width: 0 !important;
+      width: 100% !important;
+    }
+    #eventForm .form-input,
+    #eventForm .form-select {
+      width: 100% !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+    }
+    #eventForm #classGroupList {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 10px 18px !important;
+      width: 100% !important;
+    }
+    @media (max-width: 820px) {
+      #eventModalOverlay > .modal.modal-large {
+        width: calc(100vw - 24px) !important;
+        flex-basis: auto !important;
+      }
+      #eventForm .form-row,
+      #eventForm .form-row-3 {
+        grid-template-columns: 1fr !important;
+      }
+      #eventForm #classGroupList {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+    }
+    @media (max-width: 520px) {
+      #eventForm #classGroupList {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+
   <script>
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
