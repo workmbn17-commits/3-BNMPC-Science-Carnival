@@ -1,0 +1,427 @@
+/* Mobile-only responsive layer.
+   Desktop styles are intentionally untouched above 820px.
+*/
+.ep-mobile-menu-button,
+.ep-mobile-close-button,
+.ep-mobile-backdrop {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body.ep-app-body.ep-mobile-nav-open {
+    overflow: hidden;
+  }
+
+  .ep-sidebar {
+    display: flex;
+    width: min(310px, 88vw);
+    max-width: 310px;
+    transform: translateX(-105%);
+    transition: transform 180ms ease;
+    box-shadow: 18px 0 48px rgba(0, 0, 0, 0.42);
+    will-change: transform;
+  }
+
+  .ep-sidebar.ep-mobile-open {
+    transform: translateX(0);
+  }
+
+  .ep-mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.62);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 180ms ease, visibility 180ms ease;
+  }
+
+  .ep-mobile-backdrop.ep-mobile-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .ep-mobile-menu-button {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 0 2px 0 -4px;
+    padding: 0;
+    border: 1px solid var(--border-default);
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .ep-mobile-menu-button span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .ep-mobile-menu-button:active {
+    background: var(--surface-hover);
+  }
+
+  .ep-mobile-close-button {
+    position: absolute;
+    top: 20px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--border-default);
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .ep-mobile-close-button span {
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .ep-mobile-close-button span:first-child {
+    transform: rotate(45deg);
+  }
+
+  .ep-mobile-close-button span:last-child {
+    transform: rotate(-45deg);
+  }
+
+  .ep-brand {
+    padding-right: 58px;
+  }
+
+  .ep-main {
+    width: 100%;
+    margin-left: 0;
+    padding-bottom: 0;
+  }
+
+  .ep-header {
+    min-height: 60px;
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .ep-header-title {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .ep-header-kicker {
+    display: none;
+  }
+
+  .ep-header-divider {
+    display: none;
+  }
+
+  .ep-header-name {
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ep-header-right {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .ep-signout {
+    min-height: 36px;
+    padding: 0 9px;
+  }
+
+  .ep-page {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 12px 28px;
+  }
+
+  .ep-page-intro {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ep-page-title {
+    font-size: clamp(21px, 7vw, 28px);
+    line-height: 1.08;
+  }
+
+  .ep-page-description {
+    max-width: none;
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .ep-surface,
+  .ep-panel,
+  .staff-surface,
+  .table-panel {
+    max-width: 100%;
+  }
+
+  .ep-surface-header,
+  .staff-surface-head,
+  .table-header,
+  .directory-header {
+    min-height: 54px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .ep-surface-header > .ep-btn,
+  .staff-surface-head > button,
+  .table-header > button {
+    width: 100%;
+  }
+
+  .ep-surface-body {
+    padding: 12px;
+  }
+
+  .ep-btn {
+    min-height: 42px;
+  }
+
+  .ep-command-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .ep-command-item {
+    min-height: 68px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .ep-command-item:last-child {
+    border-bottom: 0;
+  }
+
+  .ep-action-grid,
+  .dashboard-grid,
+  .dashboard-grid-wide,
+  .ep-panel-grid,
+  .staff-layout,
+  .assignment-grid,
+  .review-layout,
+  .settings-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ep-action {
+    min-height: 82px;
+  }
+
+  .ep-status-row,
+  .signal-row {
+    gap: 10px;
+    padding: 9px 0;
+  }
+
+  .event-table-wrap,
+  .staff-table-wrap,
+  .table-wrap,
+  .directory-table-wrap,
+  .report-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .event-table,
+  .staff-table,
+  .ep-table {
+    min-width: 680px;
+  }
+
+  .events-toolbar,
+  .registration-tools,
+  .assignment-toolbar,
+  .staff-toolbar,
+  .review-toolbar {
+    grid-template-columns: 1fr !important;
+    width: 100%;
+  }
+
+  .events-toolbar,
+  .assignment-toolbar,
+  .registration-tools,
+  .staff-toolbar,
+  .review-toolbar {
+    display: grid !important;
+    gap: 9px;
+    align-items: stretch !important;
+  }
+
+  .toolbar-actions,
+  .settings-actions,
+  .payment-card-footer,
+  .modal-footer,
+  .modal-action-row,
+  .review-action-group {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-actions > *,
+  .settings-actions > *,
+  .payment-card-footer > *,
+  .modal-footer > *,
+  .modal-action-row > *,
+  .review-action-group > * {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .review-summary,
+  .staff-command-grid,
+  .note-grid,
+  .payment-fields {
+    grid-template-columns: 1fr !important;
+  }
+
+  .review-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .review-list {
+    max-height: none;
+  }
+
+  .review-workspace {
+    min-width: 0;
+  }
+
+  .review-item {
+    grid-template-columns: 4px minmax(0, 1fr);
+  }
+
+  .review-state {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 5px;
+  }
+
+  .queue-grid,
+  .info-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-overlay,
+  .settings-modal-backdrop {
+    padding: 0 !important;
+  }
+
+  .staff-modal,
+  .modal,
+  .modal-large {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100dvh !important;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .modal-overlay {
+    align-items: stretch !important;
+  }
+
+  .modal,
+  .modal-large {
+    align-self: stretch;
+  }
+
+  .checkin-shell,
+  .checkin-layout,
+  .reports-grid,
+  .reports-layout,
+  .payments-grid,
+  .payments-layout {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ep-page img,
+  .ep-page video,
+  .ep-page canvas,
+  .ep-page iframe {
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
+
+  .ep-loading-wrap {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 560px) {
+  .ep-header {
+    padding: 0 10px;
+  }
+
+  .ep-header-name {
+    font-size: 11px;
+  }
+
+  .ep-page {
+    padding: 14px 10px 24px;
+  }
+
+  .ep-command-value {
+    font-size: 20px;
+  }
+
+  .ep-surface-header,
+  .ep-surface-body {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .ep-mobile-menu-button {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .ep-signout {
+    font-size: 8px;
+  }
+}
