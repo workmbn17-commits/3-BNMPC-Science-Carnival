@@ -396,9 +396,17 @@
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
 
+    function setText(id, value) {
+      const element = $(id);
+      if (element) element.textContent = String(value ?? '');
+      return !!element;
+    }
+
     function showError(message) {
-      $('errorBox').textContent = message;
-      $('errorBox').style.display = 'block';
+      const element = $('errorBox');
+      if (!element) return;
+      element.textContent = message;
+      element.style.display = 'block';
     }
 
     function clearError() {
@@ -448,13 +456,14 @@
       const profile = data?.[0];
       if (!profile) throw new Error('No staff profile found.');
       if (profile.account_status !== 'active') throw new Error('Your staff account is not active.');
-      if (!['supreme_executive', 'higher_executive'].includes(profile.role)) {
+      const coreRoles = ['supreme_executive', 'higher_executive'];
+      if (!coreRoles.includes(profile.role)) {
         throw new Error('Only Core Executives can manage the event catalog.');
       }
       state.profile = profile;
-      $('sideUserName').textContent = profile.full_name || 'Executive';
-      $('sideUserRole').textContent = formatRole(profile.role);
-      $('avatar').textContent = initials(profile.full_name);
+      setText('sideUserName', profile.full_name || 'Executive');
+      setText('sideUserRole', formatRole(profile.role));
+      setText('avatar', initials(profile.full_name));
     }
 
     async function loadClassGroups() {
@@ -476,10 +485,10 @@
 
     function renderSummary() {
       const events = state.events;
-      $('totalEvents').textContent = events.length;
-      $('openEvents').textContent = events.filter(e => e.registration_enabled).length;
-      $('paidEvents').textContent = events.filter(e => e.payment_required).length;
-      $('subsegmentEvents').textContent = events.filter(e => e.has_subsegments).length;
+      setText('totalEvents', events.length);
+      setText('openEvents', events.filter(e => e.registration_enabled).length);
+      setText('paidEvents', events.filter(e => e.payment_required).length);
+      setText('subsegmentEvents', events.filter(e => e.has_subsegments).length);
     }
 
     async function getEventRegistrationCount(eventId) {
@@ -894,7 +903,11 @@
       }
     }
 
-    init();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>
