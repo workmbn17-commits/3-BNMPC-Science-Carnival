@@ -586,6 +586,7 @@
     async function openEventEditor(eventId) {
       const event = state.events.find(item => item.id === eventId);
       if (!event) return;
+
       state.currentEvent = event;
       $('eventModalTitle').textContent = 'Edit event';
       $('eventModalSubtitle').textContent = `${event.name} · ${event.slug}`;
@@ -605,9 +606,23 @@
       $('registrationOpensAt').value = toDatetimeLocal(event.registration_opens_at);
       $('registrationClosesAt').value = toDatetimeLocal(event.registration_closes_at);
       $('rulesText').value = event.rules_text || '';
+
       updateTeamSizeFields();
-      renderClassGroups('classGroupList', await loadEventClassGroups(event.id));
+
+      // Open the editor immediately. A class-group read failure must never make
+      // the Edit button appear dead.
       openModal('eventModalOverlay');
+
+      const classGroupList = $('classGroupList');
+      classGroupList.innerHTML = '<div class="form-help">Loading eligible class groups…</div>';
+      try {
+        const selectedIds = await loadEventClassGroups(event.id);
+        renderClassGroups('classGroupList', selectedIds);
+      } catch (error) {
+        console.error(error);
+        classGroupList.innerHTML = '<div class="form-help">Unable to load eligible class groups. You can still edit the event settings.</div>';
+        showError(error?.message || 'Unable to load eligible class groups.');
+      }
     }
 
     function updateTeamSizeFields() {
