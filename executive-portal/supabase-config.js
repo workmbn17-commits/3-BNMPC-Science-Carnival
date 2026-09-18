@@ -4,13 +4,16 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG
 /* Global navigation: keep the executive sidebar usable even if a page-specific data script fails. */
 (function mountGlobalNavigation(){
   const safeRoutes = new Set(['dashboard.html','events.html','registrations.html','payments.html','staff.html','assignments.html','checkin.html','reports.html','settings.html']);
+  const pageBuild='20260918-r4';
   document.addEventListener('click', event => {
     const button = event.target.closest('[data-route]');
     if(!button) return;
     const route = button.dataset.route;
     if(!safeRoutes.has(route)) return;
     event.preventDefault();
-    window.location.assign(new URL(route, window.location.href).href);
+    const url = new URL(route, window.location.href);
+    if(/^(registrations|assignments|payments|staff|reports|settings|checkin|events|dashboard)\\.html$/.test(route)) url.searchParams.set('v',pageBuild);
+    window.location.assign(url.href);
   });
 })();
 
