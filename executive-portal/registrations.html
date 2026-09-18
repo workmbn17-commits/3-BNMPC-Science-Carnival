@@ -6,6 +6,7 @@
 <title>Registrations — 3ʳᵈ BNMPC National Science Carnival</title>
 <link rel="stylesheet" href="assets/css/design-system.css">
 <link rel="stylesheet" href="assets/css/executive-shell.css">
+  <link rel="stylesheet" href="assets/css/mobile-responsive.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=20260918-r4"></script>
 <style>
@@ -212,5 +213,6 @@ function closeDetails(){$('detailOverlay').classList.remove('open');$('detailOve
 async function boot(){try{hideError();$('loading').style.display='flex';$('pageContent').style.display='none';if(!(await loadProfile()))return;await loadData();$('loading').style.display='none';$('pageContent').style.display='block'}catch(e){console.error(e);$('loading').style.display='none';showError(e.message||'Unable to load registrations. Please refresh and try again.')}}
 $('searchInput').addEventListener('input',applyFilters);$('statusFilter').addEventListener('change',applyFilters);$('paymentFilter').addEventListener('change',applyFilters);$('refreshButton').addEventListener('click',boot);$('detailClose').addEventListener('click',closeDetails);$('detailOverlay').addEventListener('click',e=>{if(e.target===$('detailOverlay'))closeDetails()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetails()});$('logoutButton').addEventListener('click',async()=>{await client.auth.signOut();location.href='login.html'});document.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.route)location.href=b.dataset.route}));boot();
 </script>
+<script src="assets/js/mobile-nav.js" defer></script>
 </body>
 </html>
