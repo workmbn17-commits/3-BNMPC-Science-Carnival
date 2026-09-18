@@ -1,3 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <meta name="description" content="Event management console for the 3ʳᵈ BNMPC National Science Carnival">
+  <title>Events — 3ʳᵈ BNMPC National Science Carnival</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="assets/css/executive-shell.css">
+  <link rel="stylesheet" href="assets/css/events-theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    .events-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .toolbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .error{padding:12px 14px;margin-bottom:16px;border:1px solid rgba(217,93,93,.45);background:rgba(217,93,93,.06);color:#ef9b9b;font-size:12px}
+    @media(max-width:860px){.events-toolbar{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
 <body class="ep-app-body">
   <div class="ep-app">
     <aside class="ep-sidebar">
@@ -858,5 +878,4 @@
     init();
   </script>
 </body>
-</html>
 </html>
