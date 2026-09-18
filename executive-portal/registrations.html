@@ -102,7 +102,7 @@
 </div>
 <div class="detail-overlay" id="detailOverlay" aria-hidden="true"><article class="detail-panel" role="dialog" aria-modal="true"><header class="detail-head"><div><div class="detail-number" id="detailNumber">REGISTRATION</div><div class="detail-title" id="detailTitle">Registration</div><div class="detail-subtitle" id="detailSubtitle">—</div></div><button class="detail-close" id="detailClose" type="button">×</button></header><div class="detail-body" id="detailBody"></div></article></div>
 <script>
-const BUILD='2026-09-18-registration-v11';console.info('[BNMPC Registration]',BUILD);
+const BUILD='2026-09-18-registration-v12-core-event-directory';console.info('[BNMPC Registration]',BUILD);
 const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);
 const state={profile:null,events:[],subs:[],regs:[],visible:[]};
 const ROLE_LABELS={supreme_executive:'Core Executive',higher_executive:'Core Executive',core_executive:'Core Executive',segment_executive:'Segment Manager',segment_manager:'Segment Manager',member:'Volunteer',volunteer:'Volunteer'};
@@ -134,8 +134,8 @@ async function loadData(){
   const r=canonicalRole(state.profile.role);
   const coreAccount = isCore(r) || /^(supreme|higher)_?executive$/.test(r) || r.includes('core_executive');
   if(coreAccount){
-    const {data,error}=await client.rpc('get_registration_event_directory');
-    if(error)throw new Error('Event directory: '+error.message);
+    const {data,error}=await client.rpc('get_core_event_directory');
+    if(error)throw new Error('Core event directory: '+error.message);
     const em=new Map();state.subs=[];
     (data||[]).forEach(x=>{
       if(!em.has(x.event_id))em.set(x.event_id,{id:x.event_id,name:x.event_name,slug:x.event_slug,has_subsegments:!!x.has_subsegments,sort_order:x.event_sort_order});
