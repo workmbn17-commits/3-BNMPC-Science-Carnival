@@ -94,7 +94,7 @@
                   <th>Participation</th>
                   <th>Capacity</th>
                   <th>Team size</th>
-                  <th>Actions</th>
+                  <th id="actionsHeader">Actions</th>
                 </tr>
               </thead>
               <tbody id="eventTableBody">
@@ -516,6 +516,10 @@
     }
   </style>
 
+  <style id="ep-role-visibility">
+    .role-hidden { display: none !important; }
+  </style>
+
   <script>
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
@@ -565,6 +569,25 @@
 
     function clearError() {
       $('errorBox').style.display = 'none';
+    }
+
+    function applyRoleVisibility() {
+      const isCore = ['supreme_executive','higher_executive'].includes(state.profile?.role);
+      const summary = $('eventSummary');
+      const actionsHeader = $('actionsHeader');
+      const tableSubtitle = document.querySelector('.table-header .table-subtitle');
+      const pageKicker = document.querySelector('.events-toolbar .ep-kicker');
+      const pageDescription = document.querySelector('.events-toolbar .ep-page-description');
+
+      if (summary) summary.classList.toggle('role-hidden', !isCore);
+      if (actionsHeader) actionsHeader.classList.toggle('role-hidden', !isCore);
+      document.querySelectorAll('.event-actions-cell').forEach(cell => cell.classList.toggle('role-hidden', !isCore));
+
+      if (!isCore) {
+        if (pageKicker) pageKicker.textContent = 'Operations / Event Information';
+        if (pageDescription) pageDescription.textContent = 'Read-only event information. Event configuration and segment management are restricted to Core Executives.';
+        if (tableSubtitle) tableSubtitle.textContent = 'View the event catalog and operational settings.';
+      }
     }
 
     function openModal(id) {
@@ -639,14 +662,15 @@
       const profile = data?.[0];
       if (!profile) throw new Error('No staff profile found.');
       if (profile.account_status !== 'active') throw new Error('Your staff account is not active.');
-      const coreRoles = ['supreme_executive', 'higher_executive'];
-      if (!coreRoles.includes(profile.role)) {
-        throw new Error('Only Core Executives can manage the event catalog.');
+      const allowedRoles = ['supreme_executive','higher_executive','segment_executive','member'];
+      if (!allowedRoles.includes(profile.role)) {
+        throw new Error('This staff role is not permitted to access event information.');
       }
       state.profile = profile;
       setText('sideUserName', profile.full_name || 'Executive');
       setText('sideUserRole', formatRole(profile.role));
       setText('avatar', initials(profile.full_name));
+      applyRoleVisibility();
     }
 
     async function loadClassGroups() {
@@ -690,6 +714,7 @@
         body.innerHTML = '<tr><td colspan="7"><div class="empty">No events configured</div></td></tr>';
         return;
       }
+      const isCore = ['supreme_executive','higher_executive'].includes(state.profile?.role);
       body.innerHTML = state.events.map(event => `
         <tr>
           <td>
@@ -707,7 +732,7 @@
             </div>
           </td>
           <td>${event.participation_type === 'individual' ? '1' : `${event.min_team_size ?? '—'}–${event.max_team_size ?? '—'}`}</td>
-          <td>
+          <td class="event-actions-cell${isCore ? '' : ' role-hidden'}">
             <div class="action-group">
               <button class="edit-button" data-edit-event="${event.id}">Edit</button>
               <button class="subsegment-button" data-manage-subsegments="${event.id}">Manage segments</button>
@@ -785,6 +810,10 @@
     }
 
     async function openEventEditor(eventId) {
+      if (!['supreme_executive','higher_executive'].includes(state.profile?.role)) {
+        showError('Event editing is available only to Core Executives.');
+        return;
+      }
       const event = state.events.find(item => item.id === eventId);
       if (!event) return;
 
@@ -902,6 +931,10 @@
     }
 
     async function openSubsegmentManager(eventId) {
+      if (!['supreme_executive','higher_executive'].includes(state.profile?.role)) {
+        showError('Segment management is available only to Core Executives.');
+        return;
+      }
       const event = state.events.find(item => item.id === eventId);
       if (!event) return;
       state.currentSubsegmentEvent = event;
@@ -1132,7 +1165,11 @@
           return;
         }
         await loadProfile();
-        await Promise.all([loadClassGroups(), loadEvents()]);
+        const tasks = [loadEvents()];
+        if (['supreme_executive','higher_executive'].includes(state.profile?.role)) {
+          tasks.push(loadClassGroups());
+        }
+        await Promise.all(tasks);
       } catch (error) {
         showError(error.message || 'Unable to load events management.');
       }
