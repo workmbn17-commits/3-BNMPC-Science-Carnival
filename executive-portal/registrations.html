@@ -9,8 +9,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=20260918-r4"></script>
 <style>
-button.event-header,button.subsegment-header,button.registration-row{appearance:none;-webkit-appearance:none;font:inherit;font-family:var(--font-sans);margin:0;box-sizing:border-box;outline:none}
-.event-header,.subsegment-header{display:grid!important;align-items:center!important;color:var(--text-primary)!important;border:0!important;text-decoration:none!important;box-shadow:none!important;background:var(--surface-panel)!important}
+.event-header,.subsegment-header{display:grid!important;align-items:center!important;color:var(--text-primary)!important;border:0!important;text-decoration:none!important;box-shadow:none!important;background:var(--surface-panel)!important;box-sizing:border-box!important;font-family:var(--font-sans)!important;margin:0!important;outline:none!important}
+.event-header,.subsegment-header{user-select:none}
 .event-header:hover,.subsegment-header:hover{background:var(--surface-hover)!important}
 .registration-tools{display:grid;grid-template-columns:minmax(0,1fr) 180px 180px auto;gap:10px;margin-bottom:18px}
 .tool-label{display:block;margin-bottom:6px;color:var(--text-muted);font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -102,7 +102,7 @@ button.event-header,button.subsegment-header,button.registration-row{appearance:
 </div>
 <div class="detail-overlay" id="detailOverlay" aria-hidden="true"><article class="detail-panel" role="dialog" aria-modal="true"><header class="detail-head"><div><div class="detail-number" id="detailNumber">REGISTRATION</div><div class="detail-title" id="detailTitle">Registration</div><div class="detail-subtitle" id="detailSubtitle">—</div></div><button class="detail-close" id="detailClose" type="button">×</button></header><div class="detail-body" id="detailBody"></div></article></div>
 <script>
-const BUILD='2026-09-18-registration-v10';console.info('[BNMPC Registration]',BUILD);
+const BUILD='2026-09-18-registration-v11';console.info('[BNMPC Registration]',BUILD);
 const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);
 const state={profile:null,events:[],subs:[],regs:[],visible:[]};
 const ROLE_LABELS={supreme_executive:'Core Executive',higher_executive:'Core Executive',core_executive:'Core Executive',segment_executive:'Segment Manager',segment_manager:'Segment Manager',member:'Volunteer',volunteer:'Volunteer'};
@@ -182,15 +182,23 @@ function render(){
     if(!eventShouldShow(e))return;shown++;
     const regs=state.visible.filter(r=>r.event_id===e.id);const subs=state.subs.filter(s=>s.event_id===e.id);
     const card=document.createElement('section');card.className='event-folder open';
-    const subHtml=subs.map(s=>{const sr=regs.filter(r=>r.subsegment_id===s.id);return '<section class="subsegment"><button class="subsegment-header" type="button"><span class="event-icon">›</span><span><span class="subsegment-name">'+esc(s.name)+'</span><span class="subsegment-meta">Subsegment · '+sr.length+' registration'+(sr.length===1?'':'s')+'</span></span><span class="subsegment-count">'+sr.length+'</span><span class="tree-arrow">›</span></button><div class="subsegment-content">'+(sr.length?'<div class="registration-list">'+sr.map(regRow).join('')+'</div>':'<div class="empty-state"><div class="empty-state-title">No registrations yet</div><div class="empty-state-copy">This configured subsegment has no registration records.</div></div>')+'</div></section>'}).join('');
+    const subHtml=subs.map(s=>{const sr=regs.filter(r=>r.subsegment_id===s.id);return '<section class="subsegment"><div class="subsegment-header" role="button" tabindex="0"><span class="event-icon">›</span><span><span class="subsegment-name">'+esc(s.name)+'</span><span class="subsegment-meta">Subsegment · '+sr.length+' registration'+(sr.length===1?'':'s')+'</span></span><span class="subsegment-count">'+sr.length+'</span><span class="tree-arrow">›</span></div><div class="subsegment-content">'+(sr.length?'<div class="registration-list">'+sr.map(regRow).join('')+'</div>':'<div class="empty-state"><div class="empty-state-title">No registrations yet</div><div class="empty-state-copy">This configured subsegment has no registration records.</div></div>')+'</div></section>'}).join('');
     const direct=regs.filter(r=>!r.subsegment_id);
     const directHtml='<section class="subsegment"><div class="subsegment-header direct-header"><span class="event-icon">›</span><span><span class="subsegment-name">'+(subs.length?'Main-event registrations':'Direct registrations')+'</span><span class="subsegment-meta">Direct registrations · '+direct.length+' record'+(direct.length===1?'':'s')+'</span></span><span class="subsegment-count">'+direct.length+'</span><span></span></div><div class="subsegment-content" style="display:block">'+(direct.length?'<div class="registration-list">'+direct.map(regRow).join('')+'</div>':'<div class="empty-state"><div class="empty-state-title">No registrations yet</div><div class="empty-state-copy">No direct registrations have been submitted for this event.</div></div>')+'</div></section>';
-    card.innerHTML='<button class="event-header" type="button"><span class="event-icon">▣</span><span><span class="event-name">'+esc(e.name)+'</span><span class="event-meta">Main event · '+(e.has_subsegments?(subs.length+' configured subsegment'+(subs.length===1?'':'s')):'direct registrations')+' · '+regs.length+' registration'+(regs.length===1?'':'s')+'</span></span><span class="event-count">'+regs.length+'</span><span class="tree-arrow">›</span></button><div class="event-content">'+subHtml+directHtml+'</div>';
+    card.innerHTML='<div class="event-header" role="button" tabindex="0"><span class="event-icon">▣</span><span><span class="event-name">'+esc(e.name)+'</span><span class="event-meta">Main event · '+(e.has_subsegments?(subs.length+' configured subsegment'+(subs.length===1?'':'s')):'direct registrations')+' · '+regs.length+' registration'+(regs.length===1?'':'s')+'</span></span><span class="event-count">'+regs.length+'</span><span class="tree-arrow">›</span></div><div class="event-content">'+subHtml+directHtml+'</div>';
     d.appendChild(card);
   });
   if(!shown)d.innerHTML='<div class="empty-state"><div class="empty-state-title">No matching events</div><div class="empty-state-copy">The current filters do not match any accessible event or registration.</div></div>';
-  d.querySelectorAll('.event-header').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
-  d.querySelectorAll('.subsegment-header:not(.direct-header)').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
+  d.querySelectorAll('.event-header').forEach(b=>{
+    const toggle=()=>b.parentElement.classList.toggle('open');
+    b.addEventListener('click',toggle);
+    b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  });
+  d.querySelectorAll('.subsegment-header:not(.direct-header)').forEach(b=>{
+    const toggle=()=>b.parentElement.classList.toggle('open');
+    b.addEventListener('click',toggle);
+    b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  });
   d.querySelectorAll('[data-registration-id]').forEach(b=>b.addEventListener('click',()=>openDetails(b.dataset.registrationId)));
 }
 function field(label,value){return '<div class="detail-item"><div class="detail-label">'+esc(label)+'</div><div class="detail-value">'+esc(value??'—')+'</div></div>'}
