@@ -391,6 +391,61 @@
     max-width: 100%;
   }
 
+  /* Event-management page: the desktop table intentionally stays wide,
+     but the wrapper must become a touch-scroll viewport on phones. */
+  .table-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .table-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .table-wrapper table {
+    width: max-content !important;
+    min-width: 1180px !important;
+  }
+
+  .events-toolbar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .event-summary {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Keep the event editor fully inside the viewport. */
+  #eventModalOverlay .modal,
+  #subsegmentEditOverlay .modal {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    min-width: 0 !important;
+    margin: 10px auto !important;
+  }
+
+  #eventModalOverlay .modal-body,
+  #subsegmentEditOverlay .modal-body {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  #eventForm,
+  #subsegmentForm {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
   .ep-loading-wrap {
     min-height: 240px;
   }
