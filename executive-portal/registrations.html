@@ -164,7 +164,7 @@ function eventShouldShow(e){
   const s=$('statusFilter').value,p=$('paymentFilter').value,q=norm($('searchInput').value);
   if(s==='all'&&p==='all'&&!q)return true;
   if(q){
-    if[norm(e.name),norm(e.slug)].join(' ').includes(q) || state.subs.some(x=>x.event_id===e.id&&[norm(x.name),norm(x.slug)].join(' ').includes(q)))return true;
+    if([norm(e.name),norm(e.slug)].join(' ').includes(q) || state.subs.some(x=>x.event_id===e.id&&[norm(x.name),norm(x.slug)].join(' ').includes(q)))return true;
   }
   return state.visible.some(r=>r.event_id===e.id);
 }
