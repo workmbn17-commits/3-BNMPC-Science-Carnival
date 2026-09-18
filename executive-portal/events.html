@@ -708,13 +708,19 @@
             <span>${escapeHtml(segment.slug)} · ${escapeHtml(segment.participation_type || 'individual')} · ${segment.payment_required ? 'paid' : 'free'} · ${segment.registration_enabled ? 'open' : 'closed'}</span>
           </div>
           <div class="subsegment-actions">
-            <button class="subsegment-button" data-edit-subsegment="${segment.id}">Edit</button>
-            <button class="subsegment-button" data-delete-subsegment="${segment.id}">Remove</button>
+            <button type="button" class="subsegment-button" data-edit-subsegment="${segment.id}">Edit</button>
+            <button type="button" class="subsegment-button" data-delete-subsegment="${segment.id}">Remove</button>
           </div>
         </div>
       `).join('');
 
-      container.querySelectorAll('[data-edit-subsegment]').forEach(button => button.addEventListener('click', () => editSubsegment(button.dataset.editSubsegment)));
+      container.querySelectorAll('[data-edit-subsegment]').forEach(button => button.addEventListener('click', async () => {
+        try {
+          await editSubsegment(button.dataset.editSubsegment);
+        } catch (error) {
+          showError(error?.message || 'Unable to open segment editor.');
+        }
+      }));
       container.querySelectorAll('[data-delete-subsegment]').forEach(button => button.addEventListener('click', () => deleteSubsegment(button.dataset.deleteSubsegment)));
     }
 
@@ -737,10 +743,22 @@
       $('subsegmentRegistrationClosesAt').value = toDatetimeLocal(subsegment?.registration_closes_at || subsegment?.close_at);
       $('subsegmentDescription').value = subsegment?.description || '';
       $('subsegmentRulesText').value = subsegment?.rules_text || '';
-      await renderSubsegmentClassGroups('subsegmentClassGroupList', subsegment?.id);
-      updateSubsegmentTeamSizeFields();
       $('subsegmentEditTitle').textContent = subsegment ? 'Edit segment' : 'Add segment';
+
+      // Open the editor immediately. Loading the class-group checklist should never prevent
+      // the edit window from appearing.
       openModal('subsegmentEditOverlay');
+
+      const classGroupList = $('subsegmentClassGroupList');
+      classGroupList.innerHTML = '<div class="form-help">Loading eligible class groups…</div>';
+      try {
+        await renderSubsegmentClassGroups('subsegmentClassGroupList', subsegment?.id);
+      } catch (error) {
+        classGroupList.innerHTML = '<div class="form-help">Unable to load eligible class groups. You can close this window and try again.</div>';
+        showError(error?.message || 'Unable to load eligible class groups.');
+      }
+
+      updateSubsegmentTeamSizeFields();
     }
 
     async function renderSubsegmentClassGroups(containerId, subsegmentId) {
