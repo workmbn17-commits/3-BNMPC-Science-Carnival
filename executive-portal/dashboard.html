@@ -8,6 +8,7 @@
   <title>Executive Dashboard — 3ʳᵈ BNMPC National Science Carnival</title>
   <link rel="stylesheet" href="assets/css/design-system.css" />
   <link rel="stylesheet" href="assets/css/executive-shell.css" />
+  <link rel="stylesheet" href="assets/css/mobile-responsive.css">
   <style>
     .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px;margin-top:18px}
     .dashboard-grid-wide{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:18px}
@@ -118,5 +119,6 @@
   $('logoutButton').addEventListener('click',async()=>{const{error}=await supabaseClient.auth.signOut();if(error){alert('Unable to sign out. Please try again.');return}window.location.href='login.html'});
   loadDashboard();
 </script>
+<script src="assets/js/mobile-nav.js" defer></script>
 </body>
 </html>
