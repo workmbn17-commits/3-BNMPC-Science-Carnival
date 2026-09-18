@@ -219,6 +219,25 @@
     min-height: 42px;
   }
 
+  /* Dashboard: keep the Event Operations action fully inside the phone viewport. */
+  .event-operations-header {
+    width: 100%;
+    box-sizing: border-box;
+    gap: 10px;
+  }
+
+  .event-operations-copy {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .event-operations-manage {
+    flex: 0 0 auto;
+    min-width: 118px;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
   .ep-command-strip {
     grid-template-columns: 1fr;
   }
