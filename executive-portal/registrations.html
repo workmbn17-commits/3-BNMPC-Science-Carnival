@@ -106,7 +106,7 @@ const BUILD='2026-09-18-registration-v10';console.info('[BNMPC Registration]',BU
 const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);
 const state={profile:null,events:[],subs:[],regs:[],visible:[]};
 const ROLE_LABELS={supreme_executive:'Core Executive',higher_executive:'Core Executive',core_executive:'Core Executive',segment_executive:'Segment Manager',segment_manager:'Segment Manager',member:'Volunteer',volunteer:'Volunteer'};
-const norm=v=>String(v??'').trim().toLowerCase();const canonicalRole=v=>norm(v).replace(/[\\s-]+/g,'_');
+const norm=v=>String(v??'').trim().toLowerCase();const canonicalRole=v=>norm(v).replace(/[\s-]+/g,'_');
 const isCore=v=>['supreme_executive','higher_executive','core_executive'].includes(canonicalRole(v));
 const isSegment=v=>['segment_executive','segment_manager'].includes(canonicalRole(v));
 const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
@@ -122,7 +122,9 @@ async function loadProfile(){
   const {data,error}=await client.rpc('get_my_staff_profile');if(error)throw new Error(error.message||'Unable to load your staff profile.');
   const p=Array.isArray(data)?data[0]:data;if(!p)throw new Error('No staff profile was found for this account.');
   const r=canonicalRole(p.role);if(norm(p.account_status)!=='active')throw new Error('Your staff account is not active.');
-  if(!(isCore(r)||isSegment(r)))throw new Error('Registration management is available to Core Executives and Segment Managers.');
+  const coreAccount = isCore(r) || /^(supreme|higher)_?executive$/.test(r) || r.includes('core_executive');
+  const segmentAccount = isSegment(r) || r.includes('segment_executive') || r.includes('segment_manager');
+  if(!(coreAccount||segmentAccount))throw new Error('Registration management is available to Core Executives and Segment Managers.');
   state.profile={...p,role:r};$('sideUserName').textContent=p.full_name||'Executive';$('sideUserRole').textContent=roleLabel(r);$('avatar').textContent=initials(p.full_name);
   $('pageDescription').textContent=isCore(r)?'Browse all carnival events, every configured subsegment, and all visible registrations.':'Browse registrations inside the events and subsegments assigned to this Segment Manager.';
   return true;
@@ -130,13 +132,16 @@ async function loadProfile(){
 async function loadData(){
   hideError();
   const r=canonicalRole(state.profile.role);
-  if(isCore(r)){
-    const [{data:events,error:ee},{data:subs,error:se}]=await Promise.all([
-      client.from('events').select('id,name,slug,has_subsegments,sort_order').order('sort_order',{ascending:true}).order('name',{ascending:true}),
-      client.from('subsegments').select('id,event_id,name,slug,sort_order').order('sort_order',{ascending:true}).order('name',{ascending:true})
-    ]);
-    if(ee)throw new Error('Events: '+ee.message);if(se)throw new Error('Subsegments: '+se.message);
-    state.events=events||[];state.subs=subs||[];
+  const coreAccount = isCore(r) || /^(supreme|higher)_?executive$/.test(r) || r.includes('core_executive');
+  if(coreAccount){
+    const {data,error}=await client.rpc('get_registration_event_directory');
+    if(error)throw new Error('Event directory: '+error.message);
+    const em=new Map();state.subs=[];
+    (data||[]).forEach(x=>{
+      if(!em.has(x.event_id))em.set(x.event_id,{id:x.event_id,name:x.event_name,slug:x.event_slug,has_subsegments:!!x.has_subsegments,sort_order:x.event_sort_order});
+      if(x.subsegment_id)state.subs.push({id:x.subsegment_id,event_id:x.event_id,name:x.subsegment_name,slug:x.subsegment_slug,sort_order:x.subsegment_sort_order});
+    });
+    state.events=Array.from(em.values()).sort((a,b)=>Number(a.sort_order??999999)-Number(b.sort_order??999999)||String(a.name).localeCompare(String(b.name)));
   }else{
     const {data,error}=await client.rpc('get_registration_event_directory');
     if(error)throw new Error('Assigned event scope: '+error.message);
