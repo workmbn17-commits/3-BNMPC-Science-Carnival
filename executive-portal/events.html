@@ -1,203 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Events Management — 3ʳᵈ BNMPC Science Carnival</title>
-
-  <link rel="stylesheet" href="assets/css/design-system.css">
-  <link rel="stylesheet" href="assets/css/executive-shell.css">
-  <link rel="stylesheet" href="assets/css/events-theme.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-
-  <style>
-    .events-toolbar {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .toolbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .event-summary {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0;
-    }
-
-    .summary-item {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-    }
-
-    .summary-label {
-      display: block;
-    }
-
-    .event-capacity-wrap {
-      min-width: 118px;
-    }
-
-    .capacity-track {
-      width: 100%;
-      max-width: 118px;
-      height: 4px;
-      margin-bottom: 5px;
-      background: var(--surface-raised);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .capacity-fill {
-      height: 100%;
-      width: 0;
-      background: var(--brand-green-500);
-    }
-
-    .subsegment-panel {
-      margin-top: 14px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-raised);
-    }
-
-    .subsegment-header {
-      min-height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 0 14px;
-      border-bottom: 1px solid var(--border-default);
-    }
-
-    .subsegment-list {
-      display: grid;
-      gap: 7px;
-      padding: 10px;
-    }
-
-    .subsegment-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 11px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-input);
-    }
-
-    .subsegment-copy strong {
-      display: block;
-      color: var(--text-primary);
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .subsegment-copy span {
-      display: block;
-      margin-top: 3px;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 8px;
-    }
-
-    .subsegment-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      padding: 14px 20px;
-    }
-
-    @media (max-width: 860px) {
-      .events-toolbar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .event-summary {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div>
-          <div class="brand-title">3ʳᵈ BNMPC</div>
-          <div class="brand-subtitle">National Science Carnival</div>
+<body class="ep-app-body">
+  <div class="ep-app">
+    <aside class="ep-sidebar">
+      <div class="ep-brand">
+        <div class="ep-brand-mark">B</div>
+        <div class="ep-brand-copy">
+          <div class="ep-brand-title">3ʳᵈ BNMPC</div>
+          <div class="ep-brand-subtitle">National Science Carnival</div>
         </div>
       </div>
 
-      <div class="nav-section">Control</div>
-      <nav>
-        <button class="nav-button" onclick="window.location.href='dashboard.html'">Dashboard</button>
-        <button class="nav-button active" onclick="window.location.href='events.html'">Events</button>
-        <button class="nav-button" onclick="window.location.href='registrations.html'">Registrations</button>
-        <button class="nav-button" onclick="comingSoon('Payment Center')">Payments</button>
-      </nav>
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Control</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="dashboard.html"><span class="ep-nav-icon">▦</span><span>Dashboard</span></button>
+          <button class="ep-nav-button active" data-route="events.html"><span class="ep-nav-icon">≡</span><span>Events</span></button>
+          <button class="ep-nav-button" data-route="registrations.html"><span class="ep-nav-icon">□</span><span>Registrations</span></button>
+          <button class="ep-nav-button" data-route="payments.html"><span class="ep-nav-icon">¤</span><span>Payments</span></button>
+        </nav>
+      </div>
 
-      <div class="nav-section">People</div>
-      <nav>
-        <button class="nav-button" onclick="window.location.href='staff.html'">Staff</button>
-        <button class="nav-button" onclick="window.location.href='assignments.html'">Assignments</button>
-      </nav>
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">People</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="staff.html"><span class="ep-nav-icon">◎</span><span>Staff</span></button>
+          <button class="ep-nav-button" data-route="assignments.html"><span class="ep-nav-icon">↔</span><span>Assignments</span></button>
+        </nav>
+      </div>
 
-      <div class="nav-section">Operations</div>
-      <nav>
-        <button class="nav-button" onclick="comingSoon('QR Check-in')">QR Check-in</button>
-        <button class="nav-button" onclick="comingSoon('Reports')">Reports</button>
-        <button class="nav-button" onclick="comingSoon('Settings')">Settings</button>
-      </nav>
+      <div class="ep-sidebar-section">
+        <div class="ep-sidebar-label">Operations</div>
+        <nav class="ep-nav">
+          <button class="ep-nav-button" data-route="checkin.html"><span class="ep-nav-icon">⌗</span><span>QR Check-in</span><span class="ep-nav-meta">DAY</span></button>
+          <button class="ep-nav-button" data-route="reports.html"><span class="ep-nav-icon">▥</span><span>Reports</span></button>
+          <button class="ep-nav-button" data-route="settings.html"><span class="ep-nav-icon">⚙</span><span>Settings</span></button>
+        </nav>
+      </div>
 
-      <div class="sidebar-bottom">
-        <button class="logout-button" id="logoutButton">Sign out</button>
+      <div class="ep-sidebar-bottom">
+        <div class="ep-user-card">
+          <div class="ep-avatar" id="sideAvatar">EX</div>
+          <div class="ep-user-copy">
+            <div class="ep-user-name" id="sideUserName">Executive</div>
+            <div class="ep-user-role" id="sideUserRole">Loading...</div>
+          </div>
+        </div>
       </div>
     </aside>
 
-    <main class="main">
-      <header class="topbar">
-        <div class="page-title">Events</div>
-        <div class="user-area">
-          <div class="user-info">
-            <div class="user-name" id="topUserName">Executive</div>
-            <div class="user-role" id="topUserRole">Loading...</div>
-          </div>
-          <div class="user-avatar" id="userAvatar">EX</div>
+    <main class="ep-main">
+      <header class="ep-header">
+        <div class="ep-header-title">
+          <span class="ep-header-kicker">Executive Control</span>
+          <span class="ep-header-divider"></span>
+          <span class="ep-header-name">Events</span>
+        </div>
+        <div class="ep-header-right">
+          <div class="ep-system-state"><span class="ep-system-dot"></span><span>Live event data</span></div>
+          <button class="ep-signout" id="logoutButton">Sign out</button>
         </div>
       </header>
 
-      <section class="content">
+      <section class="ep-page">
         <div id="errorBox" class="error" style="display:none;"></div>
 
         <div class="events-toolbar">
-          <div class="page-heading" style="margin-bottom:0;">
+          <div class="ep-page-intro" style="margin-bottom:0;align-items:flex-end;">
             <div>
-              <h1>Event Management</h1>
-              <p>Configure registration rules, capacity, fees, participation, eligibility and subsegments.</p>
+              <div class="ep-kicker">Operations / Event Catalog</div>
+              <h1 class="ep-page-title">Event Management</h1>
+              <p class="ep-page-description">Configure registration rules, capacity, fees, participation, eligibility and subsegments.</p>
             </div>
           </div>
           <div class="toolbar-actions">
-            <button class="refresh-button" id="refreshButton">Refresh</button>
+            <button class="ep-btn ep-btn-primary" id="refreshButton">Refresh</button>
           </div>
         </div>
 
@@ -236,6 +111,13 @@
         </section>
       </section>
     </main>
+
+    <nav class="ep-mobile-bar" aria-label="Mobile navigation">
+      <button data-route="dashboard.html">Home</button>
+      <button data-route="events.html" class="active">Events</button>
+      <button data-route="assignments.html">Assignments</button>
+      <button data-route="checkin.html">Check-in</button>
+    </nav>
   </div>
 
   <div class="modal-overlay" id="eventModalOverlay">
@@ -502,10 +384,6 @@
 
     const $ = (id) => document.getElementById(id);
 
-    function comingSoon(name) {
-      alert(`${name} is coming in a later Executive Panel project.`);
-    }
-
     function formatRole(role) {
       const roles = {
         core_executive: 'Core Executive',
@@ -577,13 +455,13 @@
       const profile = data?.[0];
       if (!profile) throw new Error('No staff profile found.');
       if (profile.account_status !== 'active') throw new Error('Your staff account is not active.');
-      if (profile.role !== 'core_executive' && !['supreme_executive', 'higher_executive'].includes(profile.role)) {
+      if (!['supreme_executive', 'higher_executive'].includes(profile.role)) {
         throw new Error('Only Core Executives can manage the event catalog.');
       }
       state.profile = profile;
-      $('topUserName').textContent = profile.full_name || 'Executive';
-      $('topUserRole').textContent = formatRole(profile.role);
-      $('userAvatar').textContent = initials(profile.full_name);
+      $('sideUserName').textContent = profile.full_name || 'Executive';
+      $('sideUserRole').textContent = formatRole(profile.role);
+      $('sideAvatar').textContent = initials(profile.full_name);
     }
 
     async function loadClassGroups() {
@@ -1007,4 +885,5 @@
     init();
   </script>
 </body>
+</html>
 </html>
