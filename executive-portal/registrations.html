@@ -6,6 +6,9 @@
 <link rel="stylesheet" href="assets/css/design-system.css"><link rel="stylesheet" href="assets/css/executive-shell.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=20260918-r3"></script>
 <style>
+button.event-header,button.subsegment-header,button.registration-row{appearance:none;-webkit-appearance:none;font:inherit;font-family:var(--font-sans);margin:0;box-sizing:border-box;background:transparent;outline:none}
+.event-header,.subsegment-header{display:grid!important;align-items:center!important;color:var(--text-primary)!important;border:0!important;text-decoration:none!important;box-shadow:none!important}
+.registration-row{appearance:none!important;-webkit-appearance:none!important}
 .registration-tools{display:grid;grid-template-columns:minmax(0,1fr) 180px 180px auto;gap:10px;margin-bottom:18px}.tool-label{display:block;margin-bottom:6px;color:var(--text-muted);font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.tool-control{width:100%;min-height:40px;border:1px solid var(--border-default);background:var(--surface-input);color:var(--text-primary);padding:0 12px;border-radius:0;outline:none}.tool-control:focus{border-color:var(--brand-green-600);box-shadow:var(--shadow-focus)}
 .directory-surface{overflow:hidden}.directory-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 16px;border-bottom:1px solid var(--border-default)}.directory-summary{color:var(--text-muted);font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase}.directory{padding:10px;background:var(--surface-app)}
 .event-folder{margin-bottom:8px;border:1px solid var(--border-default);background:var(--surface-panel)}.event-folder:last-child{margin-bottom:0}.event-header{width:100%;min-height:64px;display:grid;grid-template-columns:28px minmax(0,1fr) auto 18px;align-items:center;gap:10px;padding:0 14px;border:0;background:transparent;color:var(--text-primary);text-align:left;cursor:pointer}.event-header:hover{background:var(--surface-hover)}.event-icon{color:var(--brand-green-500);font-family:var(--font-mono);font-weight:800;text-align:center}.event-name{font-size:13px;font-weight:750}.event-meta{display:block;margin-top:4px;color:var(--text-muted);font-family:var(--font-mono);font-size:10px;letter-spacing:.03em;text-transform:uppercase}.event-count{min-width:32px;padding:4px 7px;border:1px solid var(--border-default);background:var(--surface-raised);color:var(--gray-200);font-family:var(--font-mono);font-size:10px;font-weight:750;text-align:center}.tree-arrow{color:var(--gray-500);font-family:var(--font-mono);font-size:13px;transition:transform 120ms ease}.event-folder.open>.event-header .tree-arrow{transform:rotate(90deg);color:var(--brand-green-500)}.event-content{display:none;padding:8px;border-top:1px solid var(--border-default)}.event-folder.open>.event-content{display:block}
@@ -35,7 +38,54 @@ const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replac
 function showError(m){const el=$('errorBox');if(!el)return;el.textContent=m;el.style.display='block'}
 function statusChip(v){return `<span class="status-chip ${norm(v)}">${esc(v||'—')}</span>`}function date(v){if(!v)return'—';const d=new Date(v);return Number.isNaN(d.getTime())?String(v):d.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'})}
 async function loadProfile(){const {data,error}=await client.rpc('get_my_staff_profile');if(error)throw new Error(error.message||'Unable to load your staff profile.');const p=Array.isArray(data)?data[0]:data;if(!p)throw new Error('No staff profile was found for this account.');const raw=canonicalRole(p.role);if(norm(p.account_status)!=='active')throw new Error('Your staff account is not active.');state.profile={...p,role:raw};$('sideUserName').textContent=p.full_name||'Executive';$('sideUserRole').textContent=roleLabel(raw)||'Core Executive';$('avatar').textContent=initials(p.full_name);$('pageDescription').textContent=isSegmentRole(raw)?'Browse registrations for your assigned events and subsegments.':'Browse all carnival events and their registrations.';return true}
-async function loadData(){const role=canonicalRole(state.profile?.role);const {data:catalog,error:catalogError}=await client.rpc('get_registration_event_directory');if(catalogError)throw new Error(catalogError.message||'Unable to load the accessible event catalog.');const rows=catalog||[];state.events=[];state.subs=[];const eventMap=new Map();rows.forEach(r=>{if(!eventMap.has(r.event_id)){eventMap.set(r.event_id,{id:r.event_id,name:r.event_name,slug:r.event_slug,has_subsegments:r.has_subsegments,sort_order:r.event_sort_order})}if(r.subsegment_id){state.subs.push({id:r.subsegment_id,event_id:r.event_id,name:r.subsegment_name,slug:r.subsegment_slug})}});state.events=Array.from(eventMap.values()).sort((a,b)=>{const sa=Number(a.sort_order??999999),sb=Number(b.sort_order??999999);return sa-sb||String(a.name||'').localeCompare(String(b.name||''))});const {data:regs,error:re}=await client.from('registration_management_directory').select('*');if(re)throw new Error(re.message||'Unable to load registrations.');state.regs=(regs||[]).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));if(isCoreRole(role)&&state.events.length===0)throw new Error('Core Executive event catalog returned no events. Check the registration event-access RPC.');applyFilters()}
+async function loadData(){
+  const role=canonicalRole(state.profile?.role);
+  let catalogRows=[];
+
+  if(isCoreRole(role)){
+    const [{data:events,error:eventError},{data:subs,error:subError}]=await Promise.all([
+      client.from('events').select('id,name,slug,has_subsegments,sort_order').order('sort_order',{ascending:true}).order('name',{ascending:true}),
+      client.from('subsegments').select('id,event_id,name,slug,sort_order').order('event_id').order('sort_order',{ascending:true}).order('name',{ascending:true})
+    ]);
+    if(eventError) throw new Error(eventError.message||'Unable to load the full event catalog.');
+    if(subError) throw new Error(subError.message||'Unable to load the subsegment catalog.');
+    state.events=(events||[]).map(e=>({
+      id:e.id,name:e.name,slug:e.slug,has_subsegments:!!e.has_subsegments,sort_order:e.sort_order
+    }));
+    state.subs=(subs||[]).map(s=>({
+      id:s.id,event_id:s.event_id,name:s.name,slug:s.slug,sort_order:s.sort_order
+    }));
+  }else if(isSegmentRole(role)){
+    const {data:catalog,error:catalogError}=await client.rpc('get_registration_event_directory');
+    if(catalogError) throw new Error(catalogError.message||'Unable to load the assigned event catalog.');
+    const eventMap=new Map();
+    state.subs=[];
+    (catalog||[]).forEach(r=>{
+      if(!eventMap.has(r.event_id)){
+        eventMap.set(r.event_id,{
+          id:r.event_id,name:r.event_name,slug:r.event_slug,
+          has_subsegments:!!r.has_subsegments,sort_order:r.event_sort_order
+        });
+      }
+      if(r.subsegment_id){
+        state.subs.push({
+          id:r.subsegment_id,event_id:r.event_id,name:r.subsegment_name,slug:r.subsegment_slug
+        });
+      }
+    });
+    state.events=Array.from(eventMap.values()).sort((a,b)=>{
+      const sa=Number(a.sort_order??999999),sb=Number(b.sort_order??999999);
+      return sa-sb||String(a.name||'').localeCompare(String(b.name||''));
+    });
+  }else{
+    throw new Error('This account does not have registration access.');
+  }
+
+  const {data:regs,error:re}=await client.from('registration_management_directory').select('*');
+  if(re) throw new Error(re.message||'Unable to load registrations.');
+  state.regs=(regs||[]).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+  applyFilters();
+}
 
 function applyFilters(){const q=norm($('searchInput').value),s=$('statusFilter').value,p=$('paymentFilter').value;state.visible=state.regs.filter(r=>{if(s!=='all'&&norm(r.registration_status)!==s)return false;if(p!=='all'&&norm(r.payment_status)!==p&&!(p==='not_required'&&!r.payment_required))return false;if(!q)return true;return[r.registration_number,r.participant_name,r.institution,r.team_name,r.project_name,r.event_name,r.subsegment_name,r.email,r.phone].map(norm).join(' ').includes(q)});render()}
 function updateStats(){$('eventCount').textContent=state.events.length;$('registrationCount').textContent=state.visible.length;$('pendingCount').textContent=state.visible.filter(r=>norm(r.registration_status)==='pending').length;$('checkedInCount').textContent=state.visible.filter(r=>r.checked_in===true).length;$('directorySummary').textContent=`${state.visible.length} visible record${state.visible.length===1?'':'s'} across ${state.events.length} event${state.events.length===1?'':'s'}`}
