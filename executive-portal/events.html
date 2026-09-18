@@ -73,7 +73,7 @@
           <div class="summary-item"><span class="summary-label">Total events</span><strong class="summary-value" id="totalEvents">—</strong></div>
           <div class="summary-item"><span class="summary-label">Open</span><strong class="summary-value" id="openEvents">—</strong></div>
           <div class="summary-item"><span class="summary-label">Paid</span><strong class="summary-value" id="paidEvents">—</strong></div>
-          <div class="summary-item"><span class="summary-label">With subsegments</span><strong class="summary-value" id="subsegmentEvents">—</strong></div>
+          <div class="summary-item"><span class="summary-label">With segments</span><strong class="summary-value" id="subsegmentEvents">—</strong></div>
         </div>
 
         <section class="table-panel">
@@ -185,10 +185,10 @@
               <input class="form-input" id="hardCapacity" type="number" min="0" step="1">
             </div>
             <div class="form-group">
-              <label class="form-label" for="hasSubsegments">Subsegments</label>
+              <label class="form-label" for="hasSubsegments">Segments</label>
               <select class="form-select" id="hasSubsegments">
-                <option value="false">No subsegments</option>
-                <option value="true">Use subsegments</option>
+                <option value="false">No segments</option>
+                <option value="true">Use segments</option>
               </select>
             </div>
           </div>
@@ -240,7 +240,7 @@
     <div class="modal modal-large">
       <div class="modal-header">
         <div>
-          <div class="modal-title" id="subsegmentModalTitle">Manage subsegments</div>
+          <div class="modal-title" id="subsegmentModalTitle">Manage segments</div>
           <div class="modal-subtitle" id="subsegmentModalSubtitle">Configure subsegments for this event.</div>
         </div>
         <button class="close-button" id="closeSubsegmentModal" aria-label="Close">×</button>
@@ -250,7 +250,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="refresh-button" id="cancelSubsegmentButton">Close</button>
-        <button type="button" class="edit-button" id="addSubsegmentButton">Add subsegment</button>
+        <button type="button" class="edit-button" id="addSubsegmentButton">Add segment</button>
       </div>
     </div>
   </div>
@@ -259,8 +259,8 @@
     <div class="modal">
       <div class="modal-header">
         <div>
-          <div class="modal-title" id="subsegmentEditTitle">Add subsegment</div>
-          <div class="modal-subtitle">Subsegment configuration</div>
+          <div class="modal-title" id="subsegmentEditTitle">Add segment</div>
+          <div class="modal-subtitle">Segment configuration</div>
         </div>
         <button class="close-button" id="closeSubsegmentEdit" aria-label="Close">×</button>
       </div>
@@ -278,7 +278,7 @@
           <div class="switch-row">
             <div>
               <div class="switch-title">Registration enabled</div>
-              <div class="switch-description">Allow registrations for this subsegment.</div>
+              <div class="switch-description">Allow registrations for this segment.</div>
             </div>
             <label class="switch">
               <input id="subsegmentRegistrationEnabled" type="checkbox">
@@ -340,7 +340,7 @@
               <input class="form-input" id="subsegmentRegistrationClosesAt" type="datetime-local">
             </div>
           </div>
-          <div class="form-help">Individual subsegments are normalized to team size 1 by the database.</div>
+          <div class="form-help">Individual segments are normalized to team size 1 by the database.</div>
           <div class="form-group">
             <label class="form-label">Eligible class groups</label>
             <div id="subsegmentClassGroupList"></div>
@@ -356,7 +356,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="refresh-button" id="cancelSubsegmentEdit">Cancel</button>
-          <button type="submit" class="edit-button">Save subsegment</button>
+          <button type="submit" class="edit-button">Save segment</button>
         </div>
       </form>
     </div>
@@ -454,7 +454,7 @@
       state.profile = profile;
       $('sideUserName').textContent = profile.full_name || 'Executive';
       $('sideUserRole').textContent = formatRole(profile.role);
-      $('sideAvatar').textContent = initials(profile.full_name);
+      $('avatar').textContent = initials(profile.full_name);
     }
 
     async function loadClassGroups() {
@@ -518,7 +518,7 @@
           <td>
             <div class="action-group">
               <button class="edit-button" data-edit-event="${event.id}">Edit</button>
-              ${event.has_subsegments ? `<button class="subsegment-button" data-manage-subsegments="${event.id}">Subsegments</button>` : ''}
+              <button class="subsegment-button" data-manage-subsegments="${event.id}">Manage segments</button>
             </div>
           </td>
         </tr>
@@ -689,7 +689,7 @@
     function renderSubsegmentList() {
       const container = $('subsegmentListContainer');
       if (!state.subsegments.length) {
-        container.innerHTML = '<div class="empty">No subsegments configured.</div>';
+        container.innerHTML = '<div class="empty">No segments configured.</div>';
         return;
       }
       container.innerHTML = state.subsegments.map(segment => `
@@ -730,7 +730,7 @@
       $('subsegmentRulesText').value = subsegment?.rules_text || '';
       await renderSubsegmentClassGroups('subsegmentClassGroupList', subsegment?.id);
       updateSubsegmentTeamSizeFields();
-      $('subsegmentEditTitle').textContent = subsegment ? 'Edit subsegment' : 'Add subsegment';
+      $('subsegmentEditTitle').textContent = subsegment ? 'Edit segment' : 'Add segment';
       openModal('subsegmentEditOverlay');
     }
 
@@ -787,6 +787,13 @@
         p_class_group_codes: classCodes
       });
       if (classError) throw classError;
+
+      const { error: segmentFlagError } = await supabaseClient.rpc('set_event_segments_enabled', {
+        p_event_id: event.id,
+        p_enabled: true
+      });
+      if (segmentFlagError) throw segmentFlagError;
+
       closeModal('subsegmentEditOverlay');
       await loadSubsegments(event.id);
       renderSubsegmentList();
@@ -794,13 +801,25 @@
     }
 
     async function deleteSubsegment(subsegmentId) {
-      if (!confirm('Remove this subsegment? The database will prevent removal if registrations already exist.')) return;
+      if (!confirm('Remove this segment? The database will prevent removal if registrations already exist.')) return;
       const { error } = await supabaseClient.rpc('delete_subsegment', { p_subsegment_id: subsegmentId });
       if (error) {
         showError(error.message);
         return;
       }
       await loadSubsegments(state.currentSubsegmentEvent.id);
+
+      if (state.subsegments.length === 0) {
+        const { error: segmentFlagError } = await supabaseClient.rpc('set_event_segments_enabled', {
+          p_event_id: state.currentSubsegmentEvent.id,
+          p_enabled: false
+        });
+        if (segmentFlagError) {
+          showError(segmentFlagError.message || 'Unable to update the event segment state.');
+          return;
+        }
+      }
+
       renderSubsegmentList();
       await loadEvents();
     }
