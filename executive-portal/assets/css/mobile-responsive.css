@@ -19,6 +19,10 @@
     overflow: hidden;
   }
 
+  .ep-mobile-bar {
+    display: none !important;
+  }
+
   .ep-sidebar {
     display: flex;
     width: min(310px, 88vw);
