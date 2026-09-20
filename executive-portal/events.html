@@ -66,6 +66,7 @@
             </div>
           </div>
           <div class="toolbar-actions">
+            <button class="ep-btn ep-btn-primary" id="addEventButton">Add event</button>
             <button class="ep-btn ep-btn-primary" id="refreshButton">Refresh</button>
           </div>
         </div>
@@ -867,11 +868,43 @@
     }
 
     async function saveEvent(event) {
-      if (!event) throw new Error('No event selected.');
       const participationType = $('participationType').value;
       const minTeam = participationType === 'individual' ? null : ($('minTeamSize').value === '' ? null : Number($('minTeamSize').value));
       const maxTeam = participationType === 'individual' ? null : ($('maxTeamSize').value === '' ? null : Number($('maxTeamSize').value));
 
+      if (!event) {
+        const { data: newEventId, error: createError } = await supabaseClient.rpc('create_event', {
+          p_name: $('eventName').value.trim(),
+          p_slug: $('eventSlug').value.trim(),
+          p_description: $('eventDescription').value.trim() || null,
+          p_registration_enabled: $('registrationEnabled').checked,
+          p_participation_type: participationType,
+          p_payment_required: $('paymentRequired').value === 'true',
+          p_fee: Number($('fee').value || 0),
+          p_warning_capacity: Number($('warningCapacity').value || 0),
+          p_hard_capacity: Number($('hardCapacity').value || 0),
+          p_has_subsegments: $('hasSubsegments').value === 'true',
+          p_min_team_size: minTeam,
+          p_max_team_size: maxTeam,
+          p_registration_opens_at: fromDatetimeLocal($('registrationOpensAt').value),
+          p_registration_closes_at: fromDatetimeLocal($('registrationClosesAt').value),
+          p_rules_text: $('rulesText').value.trim() || null
+        });
+        if (createError) throw createError;
+
+        const classCodes = [...document.querySelectorAll('#classGroupList input[type="checkbox"]:checked')].map(input => input.value);
+        if (!classCodes.length) throw new Error('At least one class group must be selected.');
+
+        const { error: classError } = await supabaseClient.rpc('set_event_class_groups', {
+          p_event_id: newEventId,
+          p_class_group_codes: classCodes
+        });
+        if (classError) throw classError;
+
+        await loadEvents();
+        closeModal('eventModalOverlay');
+        return;
+      }
       const metadataPayload = {
         p_event_id: event.id,
         p_name: $('eventName').value.trim(),
@@ -1122,6 +1155,35 @@
       } catch (error) {
         showError(error.message || 'Unable to save subsegment.');
       }
+    });
+
+    $('addEventButton').addEventListener('click', async () => {
+      if (!['supreme_executive','higher_executive'].includes(state.profile?.role)) {
+        showError('Adding events is available only to Core Executives.');
+        return;
+      }
+      state.currentEvent = null;
+      $('eventModalTitle').textContent = 'Add event';
+      $('eventModalSubtitle').textContent = 'Create a new event';
+      $('eventId').value = '';
+      $('eventName').value = '';
+      $('eventSlug').value = '';
+      $('eventDescription').value = '';
+      $('registrationEnabled').checked = false;
+      $('participationType').value = 'individual';
+      $('paymentRequired').value = 'false';
+      $('fee').value = 0;
+      $('warningCapacity').value = 0;
+      $('hardCapacity').value = 0;
+      $('hasSubsegments').value = 'false';
+      $('minTeamSize').value = '';
+      $('maxTeamSize').value = '';
+      $('registrationOpensAt').value = '';
+      $('registrationClosesAt').value = '';
+      $('rulesText').value = '';
+      updateTeamSizeFields();
+      renderClassGroups('classGroupList', []);
+      openModal('eventModalOverlay');
     });
 
     $('refreshButton').addEventListener('click', async () => {
