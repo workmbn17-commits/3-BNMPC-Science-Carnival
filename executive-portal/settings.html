@@ -97,7 +97,7 @@
               <div class="ep-surface-header">
                 <div>
                   <div class="ep-surface-heading">Registration system</div>
-                  <div class="ep-surface-subheading">Master switch for participant registration</div>
+                  <div class="ep-surface-subheading">Master switch for all participant registrations</div>
                 </div>
                 <div class="settings-state-chip" id="registrationStateChip">DISABLED</div>
               </div>
@@ -105,7 +105,7 @@
                 <div class="master-switch-row">
                   <div>
                     <div class="setting-title">Accept new registrations</div>
-                    <div class="setting-copy">When disabled, the participant website should stop accepting new submissions. Existing records remain unchanged.</div>
+                    <div class="setting-copy">ON immediately opens every event and subsegment that has capacity. OFF immediately closes every event and subsegment. Existing records remain unchanged.</div>
                   </div>
                   <label class="switch" aria-label="Accept new registrations">
                     <input type="checkbox" id="registrationToggle" />
@@ -114,12 +114,12 @@
                 </div>
 
                 <div class="warning-box" id="registrationWarning" style="display:none;">
-                  <div class="warning-title">Opening registration changes the public system state.</div>
-                  <div class="warning-copy">Save only when the event setup, fees, payment channels, and registration windows are ready.</div>
+                  <div class="warning-title">Opening registration opens all eligible events and subsegments.</div>
+                  <div class="warning-copy">Events or subsegments that have already reached their hard capacity remain closed.</div>
                 </div>
 
                 <div class="settings-actions">
-                  <button class="ep-btn ep-btn-primary" id="saveRegistrationButton" type="button">Save registration state</button>
+                  <button class="ep-btn ep-btn-primary" id="saveRegistrationButton" type="button">Apply to all events</button>
                   <span class="save-note" id="registrationSavedAt">Not saved in this session</span>
                 </div>
               </div>
@@ -185,9 +185,9 @@
             </div>
             <div class="ep-surface-body">
               <div class="note-grid">
-                <div class="note-item"><span class="note-index">01</span><div><strong>System switch</strong><p>The master registration switch is separate from each event's own registration_enabled setting.</p></div></div>
+                <div class="note-item"><span class="note-index">01</span><div><strong>System switch</strong><p>Turning the master switch ON opens all eligible events and subsegments; turning it OFF closes them all. Individual event controls remain available afterward.</p></div></div>
                 <div class="note-item"><span class="note-index">02</span><div><strong>Payment safety</strong><p>Payment channels are restricted to Core Executives. Event fees and payment_required remain under Events.</p></div></div>
-                <div class="note-item"><span class="note-index">03</span><div><strong>Live data</strong><p>Every value shown here is read from Supabase. No demo registrations or fabricated totals are used.</p></div></div>
+                <div class="note-item"><span class="note-index">03</span><div><strong>Live data</strong><p>Every value shown here is read from Supabase. When an event or subsegment reaches its hard capacity, registration closes automatically.</p></div></div>
               </div>
             </div>
           </section>
