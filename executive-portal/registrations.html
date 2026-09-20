@@ -51,7 +51,7 @@
 .detail-close{width:32px;height:32px;border:1px solid var(--border-default);background:var(--surface-raised);color:var(--text-primary);border-radius:0;cursor:pointer;font-size:18px}.detail-body{padding:16px}
 .detail-section{margin-bottom:16px;border:1px solid var(--border-default);background:var(--surface-input)}.detail-section-head{padding:10px 12px;border-bottom:1px solid var(--border-subtle);color:var(--brand-green-300);font-family:var(--font-mono);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--border-subtle)}.detail-item{padding:11px 12px;background:var(--surface-input)}
-.detail-label{color:var(--text-muted);font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase}.detail-value{margin-top:4px;color:var(--gray-100);font-size:11px;font-weight:650;word-break:break-word}.detail-statuses{display:flex;gap:6px;flex-wrap:wrap;padding:12px}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;padding:12px}.detail-action{min-height:38px;padding:0 14px;border:1px solid var(--border-default);background:var(--surface-raised);color:var(--text-primary);font:700 11px var(--font-mono);cursor:pointer}.detail-action.primary{border-color:rgba(27,189,120,.45);color:var(--brand-green-300)}.detail-action.danger{border-color:rgba(217,93,93,.45);color:#ef9b9b}.detail-action:disabled{opacity:.55;cursor:not-allowed}.detail-label{color:var(--text-muted);font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase}.detail-value{margin-top:4px;color:var(--gray-100);font-size:11px;font-weight:650;word-break:break-word}.detail-statuses{display:flex;gap:6px;flex-wrap:wrap;padding:12px}
 @media(max-width:1000px){.registration-tools{grid-template-columns:1fr 1fr}.registration-row{grid-template-columns:minmax(0,1fr) auto}.registration-row>.row-meta{display:none}}
 @media(max-width:620px){.registration-tools{grid-template-columns:1fr}.detail-overlay{padding:0}.detail-panel{max-height:100vh;height:100vh;width:100%}.detail-grid{grid-template-columns:1fr}}
 </style>
@@ -103,7 +103,7 @@
 </div>
 <div class="detail-overlay" id="detailOverlay" aria-hidden="true"><article class="detail-panel" role="dialog" aria-modal="true"><header class="detail-head"><div><div class="detail-number" id="detailNumber">REGISTRATION</div><div class="detail-title" id="detailTitle">Registration</div><div class="detail-subtitle" id="detailSubtitle">—</div></div><button class="detail-close" id="detailClose" type="button">×</button></header><div class="detail-body" id="detailBody"></div></article></div>
 <script>
-const BUILD='2026-09-18-registration-v12-core-event-directory';console.info('[BNMPC Registration]',BUILD);
+const BUILD='2026-09-20-registration-review-actions';console.info('[BNMPC Registration]',BUILD);
 const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);
 const state={profile:null,events:[],subs:[],regs:[],visible:[]};
 const ROLE_LABELS={supreme_executive:'Core Executive',higher_executive:'Core Executive',core_executive:'Core Executive',segment_executive:'Segment Manager',segment_manager:'Segment Manager',member:'Volunteer',volunteer:'Volunteer'};
@@ -206,8 +206,33 @@ function field(label,value){return '<div class="detail-item"><div class="detail-
 function openDetails(id){
   const r=state.regs.find(x=>String(x.id)===String(id));if(!r)return;
   $('detailNumber').textContent=r.registration_number||'REGISTRATION';$('detailTitle').textContent=r.participant_name||'Registration';$('detailSubtitle').textContent=[r.event_name,r.subsegment_name].filter(Boolean).join(' / ')||'—';
-  $('detailBody').innerHTML='<section class="detail-section"><div class="detail-section-head">Status</div><div class="detail-statuses">'+statusChip(r.registration_status)+(r.payment_required?statusChip(r.payment_status):statusChip('not required'))+statusChip(r.confirmation_status)+(r.checked_in?statusChip('checked in'):statusChip('not checked in'))+'</div></section><section class="detail-section"><div class="detail-section-head">Participant</div><div class="detail-grid">'+field('Name',r.participant_name)+field('Institution',r.institution)+field('Class',r.class_group_name||r.class_group_code)+field('Participation',r.participation_type)+field('Email',r.email)+field('Phone',r.phone)+field('Team',r.team_name)+field('Project',r.project_name)+'</div></section><section class="detail-section"><div class="detail-section-head">Event</div><div class="detail-grid">'+field('Main event',r.event_name)+field('Subsegment',r.subsegment_name)+field('Created',formatDate(r.created_at))+field('Updated',formatDate(r.updated_at))+'</div></section><section class="detail-section"><div class="detail-section-head">Payment</div><div class="detail-grid">'+field('Required',r.payment_required?'Yes':'No')+field('Fee',r.fee_amount!=null?'৳'+r.fee_amount:'—')+field('Method',r.payment_method)+field('Transaction ID',r.transaction_id)+field('Payment reviewed',formatDate(r.payment_reviewed_at))+'</div></section>';
+  const canReview=['supreme_executive','higher_executive','segment_executive'].includes(canonicalRole(state.profile?.role));
+  const reviewActions=canReview&&norm(r.registration_status)==='pending'?'<section class="detail-section"><div class="detail-section-head">Review</div><div class="detail-actions"><button class="detail-action danger" id="rejectRegistrationButton" type="button">Reject registration</button><button class="detail-action primary" id="approveRegistrationButton" type="button">Approve registration</button></div></section>':'';
+  $('detailBody').innerHTML=reviewActions+'<section class="detail-section"><div class="detail-section-head">Status</div><div class="detail-statuses">'+statusChip(r.registration_status)+(r.payment_required?statusChip(r.payment_status):statusChip('not required'))+statusChip(r.confirmation_status)+(r.checked_in?statusChip('checked in'):statusChip('not checked in'))+'</div></section><section class="detail-section"><div class="detail-section-head">Participant</div><div class="detail-grid">'+field('Name',r.participant_name)+field('Institution',r.institution)+field('Class',r.class_group_name||r.class_group_code)+field('Participation',r.participation_type)+field('Email',r.email)+field('Phone',r.phone)+field('Team',r.team_name)+field('Project',r.project_name)+'</div></section><section class="detail-section"><div class="detail-section-head">Event</div><div class="detail-grid">'+field('Main event',r.event_name)+field('Subsegment',r.subsegment_name)+field('Created',formatDate(r.created_at))+field('Updated',formatDate(r.updated_at))+'</div></section><section class="detail-section"><div class="detail-section-head">Payment</div><div class="detail-grid">'+field('Required',r.payment_required?'Yes':'No')+field('Fee',r.fee_amount!=null?'৳'+r.fee_amount:'—')+field('Method',r.payment_method)+field('Transaction ID',r.transaction_id)+field('Payment reviewed',formatDate(r.payment_reviewed_at))+'</div></section>';
+  if(canReview&&norm(r.registration_status)==='pending'){
+    $('approveRegistrationButton').addEventListener('click',()=>reviewRegistration(r.id,'approved'));
+    $('rejectRegistrationButton').addEventListener('click',()=>reviewRegistration(r.id,'rejected'));
+  }
   $('detailOverlay').classList.add('open');$('detailOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+}
+async function reviewRegistration(id,newStatus){
+  const button=$(newStatus==='approved'?'approveRegistrationButton':'rejectRegistrationButton');
+  let reason=null;
+  if(newStatus==='rejected'){
+    reason=window.prompt('Enter the rejection reason:','');
+    if(reason===null)return;
+    reason=reason.trim();
+    if(!reason){alert('A rejection reason is required.');return;}
+  }
+  if(!confirm(newStatus==='approved'?'Approve this registration?':'Reject this registration?'))return;
+  if(button){button.disabled=true;button.textContent=newStatus==='approved'?'Approving…':'Rejecting…'}
+  try{
+    const {error}=await client.rpc('review_registration',{p_registration_id:id,p_new_status:newStatus,p_rejection_reason:reason});
+    if(error)throw error;
+    closeDetails();
+    await loadData();
+    alert(newStatus==='approved'?'Registration approved.':'Registration rejected.');
+  }catch(e){console.error(e);alert('Unable to review registration.\\n\\n'+(e.message||e));if(button){button.disabled=false;button.textContent=newStatus==='approved'?'Approve registration':'Reject registration'}}
 }
 function closeDetails(){$('detailOverlay').classList.remove('open');$('detailOverlay').setAttribute('aria-hidden','true');document.body.style.overflow=''}
 async function boot(){try{hideError();$('loading').style.display='flex';$('pageContent').style.display='none';if(!(await loadProfile()))return;await loadData();$('loading').style.display='none';$('pageContent').style.display='block'}catch(e){console.error(e);$('loading').style.display='none';showError(e.message||'Unable to load registrations. Please refresh and try again.')}}
