@@ -16,6 +16,8 @@
     .events-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
     .toolbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .error{padding:12px 14px;margin-bottom:16px;border:1px solid rgba(217,93,93,.45);background:rgba(217,93,93,.06);color:#ef9b9b;font-size:12px}
+    .delete-event-button{border:1px solid rgba(217,93,93,.45);background:transparent;color:#ef9b9b;padding:8px 10px;font:inherit;font-size:11px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}
+    .delete-event-button:hover{background:rgba(217,93,93,.10);border-color:rgba(217,93,93,.7)}
     @media(max-width:860px){.events-toolbar{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
@@ -737,6 +739,7 @@
             <div class="action-group">
               <button class="edit-button" data-edit-event="${event.id}">Edit</button>
               <button class="subsegment-button" data-manage-subsegments="${event.id}">Manage segments</button>
+              <button class="delete-event-button" data-delete-event="${event.id}">Remove</button>
             </div>
           </td>
         </tr>
@@ -777,6 +780,14 @@
             console.error(error);
             showError(error?.message || 'Unable to open segment manager.');
           });
+          return;
+        }
+        const deleteButton = event.target.closest('[data-delete-event]');
+        if (deleteButton && body.contains(deleteButton)) {
+          event.preventDefault();
+          event.stopPropagation();
+          const eventId = deleteButton.getAttribute('data-delete-event');
+          void deleteEvent(eventId);
         }
       };
     }
@@ -808,6 +819,33 @@
         .eq('event_id', eventId);
       if (error) throw error;
       return (data || []).map(row => row.class_group_id);
+    }
+
+    async function deleteEvent(eventId) {
+      if (!['supreme_executive','higher_executive'].includes(state.profile?.role)) {
+        showError('Removing events is available only to Core Executives.');
+        return;
+      }
+
+      const event = state.events.find(item => item.id === eventId);
+      if (!event) {
+        showError('Event not found.');
+        return;
+      }
+
+      const confirmed = window.confirm(
+        'Remove “' + event.name + '” permanently? This also removes its staff assignments, class-group configuration, and segments. An event with registration records cannot be removed.'
+      );
+      if (!confirmed) return;
+
+      clearError();
+      const { error } = await supabaseClient.rpc('delete_event', { p_event_id: eventId });
+      if (error) {
+        showError(error.message || 'Unable to remove event.');
+        return;
+      }
+
+      await loadEvents();
     }
 
     async function openEventEditor(eventId) {
