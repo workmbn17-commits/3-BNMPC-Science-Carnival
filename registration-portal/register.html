@@ -1,1 +1,186 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0047AB"><title>Register — 3rd BNMPC National Science Carnival</title><link rel="stylesheet" href="assets/css/theme.css"><style>#participationWrap[hidden]{display:none!important}</style></head><body><header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">3</span><span><b>3rd BNMPC</b><small>National Science Carnival 2026</small></span></a><nav><a href="events.html">Events</a><a class="nav-cta active" href="register.html">Register</a></nav></header><main class="page"><section class="page-heading"><p class="eyebrow">Registration</p><h1>Enter the carnival</h1><p>Complete the form below. Your submission will be reviewed by the carnival team.</p></section><form id="registrationForm" class="form-shell"><div class="form-section"><div class="section-title">Event selection</div><div class="form-grid"><label>Event<select id="eventSelect" required><option value="">Loading events…</option></select></label><label id="segmentWrap">Subsegment<select id="segmentSelect"><option value="">Select an event first</option></select></label><label id="participationWrap" hidden>Participation<select id="participationType" required><option value="individual">Individual</option><option value="team">Team</option></select></label><label>Class group<select id="classGroup" required><option value="">Select class group</option></select></label></div></div><div class="form-section"><div class="section-title">Participant</div><div class="form-grid"><label>Full name<input id="participantName" required></label><label>Email<input id="email" type="email" required></label><label>Phone<input id="phone" required></label><label>Institution<input id="institution" required></label><label class="full">Address<textarea id="address" rows="2"></textarea></label></div></div><div class="form-section team-section" id="teamSection"><div class="section-title">Team details</div><div class="form-grid"><label>Team name<input id="teamName"></label></div><div id="teamMembers" class="team-members"></div><button type="button" class="button ghost small" id="addMember">+ Add member</button></div><div class="form-section project-section" id="projectSection"><div class="section-title">Project / submission</div><div class="form-grid"><label class="full">Project / submission title<input id="projectName"></label></div></div><div class="form-section payment-section" id="paymentSection"><div class="section-title">Payment</div><p id="feeNotice"></p><div class="form-grid"><label>Payment method<input id="paymentMethod" placeholder="e.g. bKash / Nagad"></label><label>Transaction ID<input id="transactionId"></label></div></div><div id="rulesBox" class="rules-box"></div><div id="error" class="error" hidden></div><button class="button primary submit" type="submit">Submit registration <span>→</span></button></form></main><footer><span>3rd BNMPC National Science Carnival</span><span>Registration Portal</span></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/app.js"></script><script src="assets/js/register-final-clean.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0047AB"><title>Register — 3rd BNMPC National Science Carnival</title><link rel="stylesheet" href="assets/css/theme.css"><style>#participationWrap[hidden],.project-section{display:none!important}</style></head><body><header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">3</span><span><b>3rd BNMPC</b><small>National Science Carnival 2026</small></span></a><nav><a href="events.html">Events</a><a class="nav-cta active" href="register.html">Register</a></nav></header><main class="page"><section class="page-heading"><p class="eyebrow">Registration</p><h1>Enter the carnival</h1><p>Complete the form below. Your submission will be reviewed by the carnival team.</p></section><form id="registrationForm" class="form-shell"><div class="form-section"><div class="section-title">Event selection</div><div class="form-grid"><label>Event<select id="eventSelect" required><option value="">Loading events…</option></select></label><label id="segmentWrap">Subsegment<select id="segmentSelect"><option value="">Select an event first</option></select></label><label id="participationWrap" hidden>Participation<select id="participationType" required><option value="individual">Individual</option><option value="team">Team</option></select></label><label>Class group<select id="classGroup" required><option value="">Select class group</option></select></label></div></div><div class="form-section"><div class="section-title">Participant</div><div class="form-grid"><label>Full name<input id="participantName" required></label><label>Email<input id="email" type="email" required></label><label>Phone<input id="phone" required></label><label>Institution<input id="institution" required></label><label class="full">Address<textarea id="address" rows="2"></textarea></label></div></div><div class="form-section team-section" id="teamSection"><div class="section-title">Team details</div><div class="form-grid"><label>Team name<input id="teamName"></label></div><div id="teamMembers" class="team-members"></div><button type="button" class="button ghost small" id="addMember">+ Add member</button></div><div class="form-section project-section" id="projectSection"><div class="section-title">Project / submission</div><div class="form-grid"><label class="full">Project / submission title<input id="projectName"></label></div></div><div class="form-section payment-section" id="paymentSection"><div class="section-title">Payment</div><p id="feeNotice"></p><div class="form-grid"><label>Payment method<input id="paymentMethod" placeholder="e.g. bKash / Nagad"></label><label>Transaction ID<input id="transactionId"></label></div></div><div id="rulesBox" class="rules-box"></div><div id="error" class="error" hidden></div><button class="button primary submit" type="submit">Submit registration <span>→</span></button></form></main><footer><span>3rd BNMPC National Science Carnival</span><span>Registration Portal</span></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+(() => {
+  const client=window.supabase.createClient(
+    "https://tbwrjorqzumjyiptglkf.supabase.co",
+    "sb_publishable_4M5j4srqXIEb3CjvG_gEQQ_0pqss3FG"
+  );
+  const $=id=>document.getElementById(id);
+  const form=$("registrationForm"), eventSelect=$("eventSelect"), segmentSelect=$("segmentSelect");
+  const participation=$("participationType"), participationWrap=$("participationWrap");
+  const classGroup=$("classGroup"), teamSection=$("teamSection"), projectSection=$("projectSection");
+  const teamMembers=$("teamMembers"), addMember=$("addMember"), paymentSection=$("paymentSection");
+  const feeNotice=$("feeNotice"), rulesBox=$("rulesBox"), errorBox=$("error");
+  let catalog=[], selectedEvent=null, selectedSegment=null, selectedGroups=[];
+
+  const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const groups=()=>Array.isArray(selectedSegment?.class_groups?.length?selectedSegment.class_groups:selectedEvent?.class_groups)?(selectedSegment?.class_groups?.length?selectedSegment.class_groups:selectedEvent.class_groups):[];
+  const type=()=>selectedSegment?.participation_type||selectedEvent?.participation_type||"individual";
+  const projectAllowed=()=>["wall-magazine","project-display"].includes(selectedEvent?.slug);
+
+  function refreshGroups(){
+    const seen=new Set();
+    selectedGroups=groups().map(c=>({id:String(c?.id??""),name:String(c?.name||c?.code||"").trim()}))
+      .filter(c=>c.id&&c.name&&!seen.has(c.id)&&seen.add(c.id));
+  }
+
+  function fillSelect(select,items,current=""){
+    select.replaceChildren(new Option("Select class group",""));
+    items.forEach(item=>select.appendChild(new Option(item.name,item.id)));
+    if(current&&items.some(item=>item.id===String(current)))select.value=String(current);
+  }
+
+  function memberClassOptions(select){
+    fillSelect(select,selectedGroups,select.value);
+  }
+
+  function bounds(){
+    const source=selectedSegment||selectedEvent||{};
+    const min=Math.max(1,Number(source.min_team_size)||1);
+    const raw=Number(source.max_team_size)||0;
+    const max=raw>0?Math.max(min,raw):9999;
+    return {min,max};
+  }
+
+  function renumber(){
+    [...teamMembers.children].forEach((card,i)=>{
+      const title=card.querySelector(".member-head strong");
+      if(title)title.textContent="Team member "+(i+1);
+    });
+  }
+
+  function teamControls(){
+    const {min,max}=bounds();
+    const count=teamMembers.children.length;
+    [...teamMembers.children].forEach((card,i)=>{
+      const btn=card.querySelector(".remove-member");
+      if(btn){
+        const allowed=count>min&&i>=min;
+        btn.hidden=!allowed;
+        btn.disabled=!allowed;
+      }
+    });
+    addMember.hidden=count>=max;
+    addMember.disabled=count>=max;
+  }
+
+  function addMemberCard(){
+    const {max}=bounds();
+    if(teamMembers.children.length>=max)return;
+    const card=document.createElement("div");
+    card.className="member-card";
+    card.innerHTML='<div class="member-head"><strong>Team member '+(teamMembers.children.length+1)+'</strong><button type="button" class="button ghost small remove-member" hidden>Remove</button></div><div class="member-grid"><label>Name<input class="m-name" required></label><label>Email<input class="m-email" type="email" required></label><label>Phone<input class="m-phone" required></label><label>Institution<input class="m-institution" required></label><label>Class group<select class="m-class" required></select></label><label>Address<input class="m-address"></label></div>';
+    teamMembers.appendChild(card);
+    memberClassOptions(card.querySelector(".m-class"));
+    card.querySelector(".remove-member").onclick=()=>{
+      const {min}=bounds();
+      if(teamMembers.children.length<=min)return;
+      card.remove();renumber();teamControls();
+    };
+    renumber();teamControls();
+  }
+
+  function ensureMin(){
+    const {min,max}=bounds();
+    while(teamMembers.children.length<min&&teamMembers.children.length<max)addMemberCard();
+    teamControls();
+  }
+
+  function syncSegments(){
+    const all=selectedEvent?.subsegments||[];
+    const open=all.filter(s=>s.registration_enabled);
+    const required=!!selectedEvent?.has_subsegments;
+    segmentSelect.required=required;
+    segmentSelect.replaceChildren(new Option(required?"Select one subsegment":"Main event / no segment",""));
+    all.forEach(s=>{
+      const o=new Option(s.registration_enabled?s.name:s.name+" (Closed)",String(s.id));
+      o.disabled=!s.registration_enabled;
+      segmentSelect.appendChild(o);
+    });
+    if(selectedSegment&&open.some(s=>String(s.id)===String(selectedSegment.id))){
+      segmentSelect.value=String(selectedSegment.id);
+    }else if(required&&open.length===1){
+      selectedSegment=open[0];
+      segmentSelect.value=String(open[0].id);
+    }else{
+      selectedSegment=null;
+    }
+    refreshGroups();
+    $("segmentWrap").style.display=(open.length||required)?"grid":"none";
+  }
+
+  function syncFields(){
+    refreshGroups();
+    const fixedTeam=type()==="team";
+    participation.replaceChildren(
+      ...(type()==="both"?[new Option("Individual","individual"),new Option("Team","team")]:[new Option(type().charAt(0).toUpperCase()+type().slice(1),type())])
+    );
+    participation.value=fixedTeam?"team":(participation.value||type());
+    participationWrap.hidden=fixedTeam;
+    participationWrap.style.display=fixedTeam?"none":"grid";
+    fillSelect(classGroup,selectedGroups,classGroup.value);
+    teamMembers.querySelectorAll(".m-class").forEach(memberClassOptions);
+    teamSection.style.display=(fixedTeam||participation.value==="team")?"block":"none";
+    projectSection.style.display=projectAllowed()?"block":"none";
+    if(!projectAllowed())$("projectName").value="";
+    const paid=!!(selectedSegment?.payment_required||(!selectedSegment&&selectedEvent?.payment_required));
+    paymentSection.style.display=paid?"block":"none";
+    feeNotice.textContent=paid?"Registration fee: ৳"+((selectedSegment?.fee)||(selectedEvent?.fee)||0)+". Payment details will be reviewed by the carnival team.":"This registration is free.";
+    rulesBox.textContent=selectedSegment?.rules_text||selectedEvent?.rules_text||"Please review your event details before submitting your registration.";
+    if(fixedTeam||participation.value==="team")ensureMin();
+    else{teamMembers.replaceChildren();teamControls();}
+  }
+
+  function selectEvent(){
+    selectedEvent=catalog.find(e=>String(e.id)===String(eventSelect.value))||null;
+    selectedSegment=null;selectedGroups=[];teamMembers.replaceChildren();
+    syncSegments();syncFields();
+  }
+
+  eventSelect.onchange=selectEvent;
+  segmentSelect.onchange=()=>{
+    selectedSegment=(selectedEvent?.subsegments||[]).find(s=>String(s.id)===String(segmentSelect.value)&&s.registration_enabled)||null;
+    syncFields();
+    if(selectedSegment)segmentSelect.value=String(selectedSegment.id);
+  };
+  participation.onchange=syncFields;
+  addMember.onclick=addMemberCard;
+
+  function showError(msg){errorBox.hidden=false;errorBox.textContent=msg;errorBox.scrollIntoView({behavior:"smooth",block:"center");}
+  function clearError(){errorBox.hidden=true;errorBox.textContent="";}
+
+  form.onsubmit=async e=>{
+    e.preventDefault();clearError();
+    if(!selectedEvent)return showError("Please select an event.");
+    if(selectedEvent.has_subsegments&&!selectedSegment)return showError("Please select one subsegment for this event.");
+    const isTeam=participation.value==="team", {min,max}=bounds();
+    const cards=[...teamMembers.querySelectorAll(".member-card")];
+    if(isTeam&&(cards.length<min||cards.length>max))return showError("This team must contain between "+min+" and "+max+" members.");
+    const members=cards.map(card=>({participant_name:card.querySelector(".m-name").value.trim(),email:card.querySelector(".m-email").value.trim(),phone:card.querySelector(".m-phone").value.trim(),institution:card.querySelector(".m-institution").value.trim(),class_group_id:card.querySelector(".m-class").value,address:card.querySelector(".m-address").value.trim()}));
+    const paid=!!(selectedSegment?.payment_required||(!selectedSegment&&selectedEvent?.payment_required));
+    const payload={event_id:selectedEvent.id,subsegment_id:selectedSegment?.id||null,participation_type:participation.value,class_group_id:classGroup.value,participant_name:$("participantName").value.trim(),email:$("email").value.trim(),phone:$("phone").value.trim(),institution:$("institution").value.trim(),address:$("address").value.trim(),team_name:$("teamName").value.trim(),project_name:$("projectName").value.trim(),payment_method:$("paymentMethod").value.trim(),transaction_id:$("transactionId").value.trim(),team_members:members};
+    const btn=form.querySelector(".submit");btn.disabled=true;btn.textContent="Submitting…";
+    try{
+      const r=await client.rpc("submit_public_registration",{p_payload:payload});
+      if(r.error)throw r.error;
+      location.href="success.html?number="+encodeURIComponent(r.data.registration_number)+"&payment="+(paid?"true":"false");
+    }catch(err){showError(err.message||"Unable to submit registration.");}
+    finally{btn.disabled=false;btn.innerHTML='Submit registration <span>→</span>';}
+  };
+
+  async function boot(){
+    try{
+      const r=await client.rpc("get_registration_catalog");
+      if(r.error)throw r.error;
+      catalog=Array.isArray(r.data)?r.data:[];
+      if(!catalog.length)throw new Error("No events are currently open for registration.");
+      eventSelect.replaceChildren(new Option("Select an event",""));
+      catalog.forEach(e=>eventSelect.appendChild(new Option(e.name,String(e.id))));
+      const slug=new URLSearchParams(location.search).get("event");
+      const match=catalog.find(e=>e.slug===slug);
+      if(match){eventSelect.value=String(match.id);selectedEvent=match;}
+      syncSegments();syncFields();
+    }catch(err){showError(err.message||"Unable to load registration options.");}
+  }
+  boot();
+})();
+</script></body></html>
