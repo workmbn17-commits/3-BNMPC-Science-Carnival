@@ -189,3 +189,27 @@ footer{background:transparent!important}
     background-position:0 0,27px 17px,61px 41px!important;
   }
 }
+
+/* Event logo — fill the box using the SVG's native 1376:768 aspect ratio */
+.event-logo-panel{
+  width:min(560px,100%)!important;
+  aspect-ratio:1376/768!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.event-logo-panel img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:fill!important;
+  margin:0!important;
+}
+@media(max-width:850px){
+  .event-logo-panel{
+    width:100%!important;
+    aspect-ratio:1376/768!important;
+    padding:0!important;
+  }
+}
