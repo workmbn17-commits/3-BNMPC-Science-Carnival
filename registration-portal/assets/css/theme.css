@@ -133,3 +133,31 @@
  .floating-logo-panel span{font-size:6px}
  .event-logo-panel{padding:7px 9px}
 }
+
+/* Final homepage logo sizing — keep each official logo comfortably inside its demo box */
+.floating-logo-college .floating-logo-panel img{width:72px;height:72px;max-width:72px;max-height:72px}
+.floating-logo-club .floating-logo-panel img{width:82px;height:82px;max-width:82px;max-height:82px}
+.event-logo-panel{width:min(560px,100%);aspect-ratio:2.05/1;padding:18px 24px}
+.event-logo-panel img{width:58%;height:68%;max-width:58%;max-height:68%;object-fit:contain;justify-self:center;align-self:center}
+@media(max-width:1050px){
+ .floating-logo-college .floating-logo-panel img{width:62px;height:62px;max-width:62px;max-height:62px}
+ .floating-logo-club .floating-logo-panel img{width:70px;height:70px;max-width:70px;max-height:70px}
+ .event-logo-panel img{width:56%;height:64%;max-width:56%;max-height:64%}
+}
+@media(max-width:850px){
+ .floating-logo-college .floating-logo-panel img{width:52px;height:52px;max-width:52px;max-height:52px}
+ .floating-logo-club .floating-logo-panel img{width:58px;height:58px;max-width:58px;max-height:58px}
+ .event-logo-panel{padding:12px 16px}
+ .event-logo-panel img{width:62%;height:68%;max-width:62%;max-height:68%}
+}
+@media(max-width:560px){
+ .floating-logo-college .floating-logo-panel img{width:46px;height:46px;max-width:46px;max-height:46px}
+ .floating-logo-club .floating-logo-panel img{width:52px;height:52px;max-width:52px;max-height:52px}
+ .event-logo-panel{padding:9px 12px}
+ .event-logo-panel img{width:68%;height:70%;max-width:68%;max-height:70%}
+}
+@media(max-width:380px){
+ .floating-logo-college .floating-logo-panel img{width:42px;height:42px;max-width:42px;max-height:42px}
+ .floating-logo-club .floating-logo-panel img{width:48px;height:48px;max-width:48px;max-height:48px}
+ .event-logo-panel img{width:72%;height:72%;max-width:72%;max-height:72%}
+}
