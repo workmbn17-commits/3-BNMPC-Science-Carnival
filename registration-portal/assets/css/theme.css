@@ -161,3 +161,13 @@
  .floating-logo-club .floating-logo-panel img{width:48px;height:48px;max-width:48px;max-height:48px}
  .event-logo-panel img{width:72%;height:72%;max-width:72%;max-height:72%}
 }
+
+/* Global background matched to the official event-logo artwork: deep black space with fine stars */
+:root{--bg:#02040A;--dark:#02040A}
+html,body{background-color:#02040A}
+body{background:#02040A!important;background-image:radial-gradient(rgba(255,255,255,.28) .65px,transparent .75px),radial-gradient(rgba(111,199,255,.16) .6px,transparent .7px),radial-gradient(rgba(255,255,255,.10) .45px,transparent .6px)!important;background-size:74px 74px,121px 121px,187px 187px!important;background-position:0 0,31px 19px,73px 47px!important;background-attachment:fixed!important}
+.site-header{background:rgba(2,4,10,.90)!important}
+.hero{background:transparent!important}
+.hero:before{display:none!important}
+.intro-grid,.page,.success-page,footer{background:transparent!important}
+@media(max-width:700px){body{background-size:68px 68px,112px 112px,173px 173px!important;background-position:0 0,27px 17px,61px 41px!important}}
