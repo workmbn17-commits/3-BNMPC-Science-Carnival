@@ -138,7 +138,7 @@
 .floating-logo-college .floating-logo-panel img{width:72px;height:72px;max-width:72px;max-height:72px}
 .floating-logo-club .floating-logo-panel img{width:82px;height:82px;max-width:82px;max-height:82px}
 .event-logo-panel{width:min(560px,100%);aspect-ratio:2.05/1;padding:18px 24px}
-.event-logo-panel img{width:58%;height:68%;max-width:58%;max-height:68%;object-fit:contain;justify-self:center;align-self:center}
+.event-logo-panel img{width:92%;height:92%;max-width:92%;max-height:92%;object-fit:contain;justify-self:center;align-self:center}
 @media(max-width:1050px){
  .floating-logo-college .floating-logo-panel img{width:62px;height:62px;max-width:62px;max-height:62px}
  .floating-logo-club .floating-logo-panel img{width:70px;height:70px;max-width:70px;max-height:70px}
